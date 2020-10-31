@@ -1,36 +1,35 @@
-import java.net.*;
 import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
-import java.util.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.HashSet;
 
-public class Server {
 
-    private static final int sPort = 8000;   //The server will be listening on this port number
+public class Peer {
+    private static final int sPort = 8001;   //The server will be listening on this port number
 
     public static void main(String[] args) throws Exception {
-        System.out.println("The server is running.");
+
+        System.out.println("Server has started");
         ServerSocket listener = new ServerSocket(sPort);
         int clientNum = 1;
+        HashSet<Integer> connectedClients = new HashSet();
         try {
             while(true) {
-                new Handler(listener.accept(),clientNum).start();
-                System.out.println("Client "  + clientNum + " is connected!");
-                clientNum++;
+                new Server.Handler(listener.accept(),clientNum).start();
+                //System.out.println("Client "  + clientNum + " is connected!");
+
             }
         } finally {
             listener.close();
         }
-
     }
-
     /**
      * A handler thread class.  Handlers are spawned from the listening
      * loop and are responsible for dealing with a single client's requests.
      */
     private static class Handler extends Thread {
-        private String message;    //message received from the client
-        private String MESSAGE;    //uppercase message send to the client
+        //private String message;    //message received from the client
+        //private String MESSAGE;    //uppercase message send to the client
         private Socket connection;
         private ObjectInputStream in;	//stream read from the socket
         private ObjectOutputStream out;    //stream write to the socket
@@ -39,8 +38,7 @@ public class Server {
         public Handler(Socket connection, int no) {
             this.connection = connection;
             this.no = no;
-            System.out.println("connection" + connection);
-
+            //System.out.println("connection" + connection);
         }
 
         public void run() {
@@ -53,13 +51,12 @@ public class Server {
                     while(true)
                     {
                         //receive the message sent from the client
-                        message = (String)in.readObject();
-
-                        System.out.println("Receive message: " + message + " from client " + no);
+                        //message = (String)in.readObject();
+                        //System.out.println("Receive message: " + message + " from client " + no);
                         //Capitalize all letters in the message
-                        MESSAGE = message.toUpperCase();
+                        //MESSAGE = message.toUpperCase();
                         //send MESSAGE back to the client
-                        sendMessage(MESSAGE);
+                        //sendMessage(MESSAGE);
                     }
                 }
                 catch(ClassNotFoundException classnot){
@@ -97,3 +94,4 @@ public class Server {
     }
 
 }
+
