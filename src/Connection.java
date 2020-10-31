@@ -1,27 +1,41 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Connection {
-    public static void startConnection() {
+    static int line;
+    static RemotePeerInfo[] hosts = new RemotePeerInfo[4];
+    public static List<RemotePeerInfo> getPeerInfo(String peer){
+        List<RemotePeerInfo> allPeersBefore = new ArrayList<>();
+        for(int i=0;i<line;i++){
+           if (peer.equals(hosts[i].peerId)){
+               allPeersBefore.add(hosts[i]);
+                break;
+           }
+           allPeersBefore.add(hosts[i]);
+           }
+        return allPeersBefore;
+        }
+
+    public static void fileReader() {
         try {
-            RemotePeerInfo[] array = new RemotePeerInfo[4];
+
             File peerInfoConfigFile = new File("peerInfo.cfg");
-            int line = 0;
+            //int line = 0;
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;
             while ((st = br.readLine()) != null) {
                 String[] rows = st.split(" ");
-                array[line] = new RemotePeerInfo(rows[0],rows[1],rows[2],rows[3]);
+                hosts[line] = new RemotePeerInfo(rows[0],rows[1],rows[2],rows[3]);
                 line++;
             }
-            System.out.println(array[0].peerId);
+            //System.out.println(array[0].peerId);
         }
         catch(Exception e){
             System.out.println("exception");
         }
     }
-    public static void main(String[] args){
-        startConnection();
-    }
+
 }
