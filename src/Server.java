@@ -4,41 +4,42 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.util.*;
 
-public class Server {
+public class Server extends Thread {
 
-    private static final int sPort = 8000;   //The server will be listening on this port number
-
-    public static void main(String[] args) throws Exception {
-        System.out.println("The server is running.");
-        ServerSocket listener = new ServerSocket(sPort);
-        int clientNum = 1;
-        try {
-            while(true) {
-                new Handler(listener.accept(),clientNum).start();
-                System.out.println("Client "  + clientNum + " is connected!");
-                clientNum++;
-            }
-        } finally {
-            listener.close();
-        }
-
-    }
+//    private static final int sPort = 8000;   //The server will be listening on this port number
+//
+//    public static void main(String[] args) throws Exception {
+//        System.out.println("The server is running.");
+//        ServerSocket listener = new ServerSocket(sPort);
+//        int clientNum = 1;
+//        try {
+//            while(true) {
+//                new Handler(listener.accept(),clientNum).start();
+//                System.out.println("Client "  + clientNum + " is connected!");
+//                clientNum++;
+//            }
+//        } finally {
+//            listener.close();
+//        }
+//
+//    }
 
     /**
      * A handler thread class.  Handlers are spawned from the listening
      * loop and are responsible for dealing with a single client's requests.
      */
-    private static class Handler extends Thread {
-        private String message;    //message received from the client
+        private byte[] message;    //message received from the client
         private String MESSAGE;    //uppercase message send to the client
         private Socket connection;
         private ObjectInputStream in;	//stream read from the socket
         private ObjectOutputStream out;    //stream write to the socket
         private int no;		//The index number of the client
+        private FileLogger serverLog;
 
-        public Handler(Socket connection, int no) {
+        public Server(Socket connection, FileLogger fl) {
             this.connection = connection;
-            this.no = no;
+            System.out.println("connection" + connection);
+            this.serverLog = fl;
         }
 
         public void run() {
@@ -51,11 +52,16 @@ public class Server {
                     while(true)
                     {
                         //receive the message sent from the client
-                        message = (String)in.readObject();
+                        message = (byte[])in.readObject();
 
                         System.out.println("Receive message: " + message + " from client " + no);
+
+                        //Build a message object
+                        //Need to update the peerObject*
+                        Message messageObj = new Message(message, serverLog, null);
+                        messageObj.extractMessage();
                         //Capitalize all letters in the message
-                        MESSAGE = message.toUpperCase();
+//                        MESSAGE = message.toUpperCase();
                         //send MESSAGE back to the client
                         sendMessage(MESSAGE);
                     }
@@ -94,4 +100,4 @@ public class Server {
 
     }
 
-}
+

@@ -11,10 +11,21 @@ public class RemotePeerInfo {
     public String peerId;
     public String peerAddress;
     public String peerPort;
-
-    public RemotePeerInfo(String pId, String pAddress, String pPort) {
+    public String fileAvailable;
+    public byte[] bitfield;
+    public RemotePeerInfo(String pId, String pAddress, String pPort, String fileAvailable) {
         peerId = pId;
         peerAddress = pAddress;
         peerPort = pPort;
+        this.fileAvailable = fileAvailable;
+        bitfield = new byte[Peer.FileSize/Peer.PieceSize];
+    }
+
+    public void setBitfield(byte[] bitfield) {
+        this.bitfield = bitfield;
+    }
+
+    public void updateBitField(int pieceIndex) {
+        this.bitfield[pieceIndex] = 1;
     }
 }
