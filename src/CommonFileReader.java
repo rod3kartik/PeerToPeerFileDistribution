@@ -66,8 +66,6 @@ public class CommonFileReader {
     }
 
 
-
-
     public static void main(String[] args) {
         confReader();
     }

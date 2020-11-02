@@ -1,8 +1,10 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 
@@ -14,6 +16,30 @@ public class Peer {
     static String FileName;
     static int FileSize;
     static int PieceSize;
+
+    //Mapping of message type to value
+    public Map<String, Integer> messageTypeToVal = new HashMap<>() {{
+        put("choke", 0);
+        put("unchoke", 1);
+        put("interested", 2);
+        put("not interested", 3);
+        put("have", 4);
+        put("bitfield", 5);
+        put("request", 6);
+        put("piece", 7)
+    }};
+
+    //mapping of value to corresponding message type
+    public Map<Integer, String> valToMessageType = new HashMap<>() {{
+        put(0,"choke");
+        put(1, "unchoke");
+        put(2, "interested");
+        put(3, "not interested");
+        put(4, "have");
+        put(5, "bitfield");
+        put(6, "request");
+        put(7, "piece");
+    }};
 
     public static void main(String[] args) throws Exception {
 
@@ -59,12 +85,6 @@ public class Peer {
 //
 //        }
     }
-    /**
-     * A handler thread class.  Handlers are spawned from the listening
-     * loop and are responsible for dealing with a single client's requests.
-     */
-
-
 }
 
 
