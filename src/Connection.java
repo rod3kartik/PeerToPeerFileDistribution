@@ -22,7 +22,7 @@ public class Connection {
     public static void fileReader() {
         try {
 
-            File peerInfoConfigFile = new File("peerInfo.cfg");
+            File peerInfoConfigFile = new File("C:\\Users\\kartz\\IdeaProjects\\CN\\src\\peerInfo.cfg");
             //int line = 0;
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;
