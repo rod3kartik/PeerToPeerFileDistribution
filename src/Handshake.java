@@ -9,16 +9,20 @@ public class Handshake {
     private byte[] zeroBytes;
     private int peerId;
     public String headerHandshake ="P2PFILESHARINGPROJ";
+
+    // contructor
     public Handshake(int peerId){
         this.handshakeHeader = headerHandshake;
         this.zeroBytes = new byte[10];
         this.peerId = peerId;
     }
 
+    // generates handshake message with the proper format
     public String generateMessage(String handshakeHeader,byte[] zeroBytes, int peerId){
         return handshakeHeader + zeroBytes.toString() + peerId;
     }
 
+    // send handshake message through the socket
     public void sendHandshake(Socket socket){
         try {
             ObjectOutputStream out;
@@ -32,6 +36,7 @@ public class Handshake {
         }
     }
 
+    // checks if the received messahe is a handshake message
     public int isHandshake(String msg) {
         try {
 //            ObjectInputStream in;

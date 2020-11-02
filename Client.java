@@ -22,31 +22,33 @@ public class Client {
 	String message;                //message send to the server
 	String MESSAGE;                //capitalized message read from the server
 
+	// constructor
 	public void Client() {}
 
+	// thread executes
 	void run()
 	{
 		try{
-			//create a socket to connect to the server
+			// create a socket to connect to the server
 			requestSocket = new Socket("localhost", 8000);
 			System.out.println("Connected to localhost in port 8000");
-			//initialize inputStream and outputStream
+			// initialize inputStream and outputStream
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
 			
-			//get Input from standard input
+			// get Input from standard input
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			while(true)
 			{
 				System.out.print("Hello, please input a sentence: ");
-				//read a sentence from the standard input
+				// read a sentence from the standard input
 				message = bufferedReader.readLine();
-				//Send the sentence to the server
+				// Send the sentence to the server
 				sendMessage(message);
-				//Receive the upperCase sentence from the server
+				// Receive the upperCase sentence from the server
 				MESSAGE = (String)in.readObject();
-				//show the message to the user
+				// show the message to the user
 				System.out.println("Receive message: " + MESSAGE);
 			}
 		}
@@ -63,7 +65,7 @@ public class Client {
 			ioException.printStackTrace();
 		}
 		finally{
-			//Close connections
+			// Close connections
 			try{
 				in.close();
 				out.close();
@@ -86,7 +88,7 @@ public class Client {
 			ioException.printStackTrace();
 		}
 	}
-	//main method
+	// main method
 	public static void main(String args[])
 	{
 		Client client = new Client();

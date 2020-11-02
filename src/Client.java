@@ -11,12 +11,15 @@ public class Client extends Thread {
     String message;                //message send to the server
     String MESSAGE;                //capitalized message read from the server
     int port;
+
+    // contsructor
     public Client(String connection, String port) throws Exception {
         this.requestSocket = new Socket("localhost",Integer.parseInt(port));
         this.port = Integer.parseInt(port);
         System.out.println("connection" + connection);
     }
 
+    // thread executes
     public void run()
     {
         try{

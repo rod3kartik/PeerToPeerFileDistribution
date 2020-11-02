@@ -66,6 +66,7 @@ public class Peer {
         fl.downloadCompleteLog();
         Connection.fileReader();
 
+        // connecting to other peers and starting Client and Server
         List<RemotePeerInfo> allBeforePeerInfo = Connection.getPeerInfo(peerFromCommandLine);
         RemotePeerInfo selfInfo = allBeforePeerInfo.get(allBeforePeerInfo.size()-1);
         allBeforePeerInfo.remove(allBeforePeerInfo.size()-1);
