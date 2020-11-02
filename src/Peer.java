@@ -8,10 +8,24 @@ import java.util.concurrent.ExecutionException;
 
 public class Peer {
     private static int sPort;   //The server will be listening on this port number
+    static int NumberOfPreferredNeighbors;
+    static int UnchokingInterval;
+    static int OptimisticUnchokingInterval;
+    static String FileName;
+    static int FileSize;
+    static int PieceSize;
 
     public static void main(String[] args) throws Exception {
 
         String peerFromCommandLine = args[0];
+
+        //Setting configuration variables
+        NumberOfPreferredNeighbors = CommonFileReader.getNumberOfPreferredNeighbours();
+        UnchokingInterval = CommonFileReader.getUnchokingInterval();
+        OptimisticUnchokingInterval = CommonFileReader.getOptimisticUnchokingInterval();
+        FileName = CommonFileReader.getFileName();
+        FileSize = CommonFileReader.getFileSize();
+        PieceSize = CommonFileReader.getPieceSize();
 
         FileLogger fl = new FileLogger(peerFromCommandLine);
         fl.downloadCompleteLog();
