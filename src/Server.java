@@ -4,31 +4,30 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.util.*;
 
-public class Server {
+public class Server extends Thread {
 
-    private static final int sPort = 8000;   //The server will be listening on this port number
-
-    public static void main(String[] args) throws Exception {
-        System.out.println("The server is running.");
-        ServerSocket listener = new ServerSocket(sPort);
-        int clientNum = 1;
-        try {
-            while(true) {
-                new Handler(listener.accept(),clientNum).start();
-                System.out.println("Client "  + clientNum + " is connected!");
-                clientNum++;
-            }
-        } finally {
-            listener.close();
-        }
-
-    }
+//    private static final int sPort = 8000;   //The server will be listening on this port number
+//
+//    public static void main(String[] args) throws Exception {
+//        System.out.println("The server is running.");
+//        ServerSocket listener = new ServerSocket(sPort);
+//        int clientNum = 1;
+//        try {
+//            while(true) {
+//                new Handler(listener.accept(),clientNum).start();
+//                System.out.println("Client "  + clientNum + " is connected!");
+//                clientNum++;
+//            }
+//        } finally {
+//            listener.close();
+//        }
+//
+//    }
 
     /**
      * A handler thread class.  Handlers are spawned from the listening
      * loop and are responsible for dealing with a single client's requests.
      */
-    private static class Handler extends Thread {
         private String message;    //message received from the client
         private String MESSAGE;    //uppercase message send to the client
         private Socket connection;
@@ -36,9 +35,8 @@ public class Server {
         private ObjectOutputStream out;    //stream write to the socket
         private int no;		//The index number of the client
 
-        public Handler(Socket connection, int no) {
+        public Server(Socket connection) {
             this.connection = connection;
-            this.no = no;
             System.out.println("connection" + connection);
 
         }
@@ -96,4 +94,4 @@ public class Server {
 
     }
 
-}
+

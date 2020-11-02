@@ -36,7 +36,7 @@ public class StartRemotePeers {
                 //}
                 //System.out.println("tokens end ----");
 
-                peerInfoVector.addElement(new RemotePeerInfo(tokens[0], tokens[1], tokens[2]));
+                //peerInfoVector.addElement(new RemotePeerInfo(tokens[0], tokens[1], tokens[2]));
 
             }
 

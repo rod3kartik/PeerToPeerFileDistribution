@@ -4,21 +4,25 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.util.*;
 
-public class Client {
+public class Client extends Thread {
     Socket requestSocket;           //socket connect to the server
     ObjectOutputStream out;         //stream write to the socket
     ObjectInputStream in;          //stream read from the socket
     String message;                //message send to the server
     String MESSAGE;                //capitalized message read from the server
+    int port;
+    public Client(String connection, String port) throws Exception {
+        this.requestSocket = new Socket("localhost",Integer.parseInt(port));
+        this.port = Integer.parseInt(port);
+        System.out.println("connection" + connection);
+    }
 
-    public void Client() {}
-
-    void run()
+    public void run()
     {
         try{
             //create a socket to connect to the server
-            requestSocket = new Socket("localhost", 8000);
-            System.out.println("Connected to localhost in port 8000");
+            requestSocket = new Socket("localhost",port);
+            System.out.println("Connected to localhost in port " + port);
             System.out.println(requestSocket);
             //initialize inputStream and outputStream
             out = new ObjectOutputStream(requestSocket.getOutputStream());
@@ -77,10 +81,10 @@ public class Client {
         }
     }
     //main method
-    public static void main(String args[])
-    {
-        Client client = new Client();
-        client.run();
-    }
+//    public static void main(String args[])
+//    {
+//        Client client = new Client();
+//        client.run();
+//    }
 
 }
