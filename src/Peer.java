@@ -1,10 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 
@@ -17,8 +14,20 @@ public class Peer {
     static int FileSize;
     static int PieceSize;
 
+    // getter for chokeMap
+    public Map<Integer,Integer> getPeerChokeList() {
+        return peerChokeMap;
+    }
+
+    //Setting values to choke Map
+    public void setPeerChokeMap(int nodeId, int value) {
+        peerChokeMap.put(nodeId,value);
+    }
+
+    //static or non-static
+    private static Map<Integer,Integer> peerChokeMap = new HashMap<>();
     //Mapping of message type to value
-    public Map<String, Integer> messageTypeToVal = new HashMap<>() {{
+    public Map<String, Integer> messageTypeToVal = new HashMap() {{
         put("choke", 0);
         put("unchoke", 1);
         put("interested", 2);
@@ -26,11 +35,11 @@ public class Peer {
         put("have", 4);
         put("bitfield", 5);
         put("request", 6);
-        put("piece", 7)
+        put("piece", 7);
     }};
 
     //mapping of value to corresponding message type
-    public Map<Integer, String> valToMessageType = new HashMap<>() {{
+    public Map<Integer, String> valToMessageType = new HashMap() {{
         put(0,"choke");
         put(1, "unchoke");
         put(2, "interested");
@@ -71,7 +80,7 @@ public class Peer {
                 new Client("localhost",allBeforePeerInfo.get(i).peerPort).start();
             }
             System.out.println("server to be started");
-            new Server(listener.accept()).start();
+            new Server(listener.accept(), fl).start();
         }
         catch(Exception e){
         }
