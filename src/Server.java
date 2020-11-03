@@ -36,12 +36,14 @@ public class Server extends Thread {
         private int no;		//The index number of the client
         private FileLogger serverLog;
 
+        // constructor
         public Server(Socket connection, FileLogger fl) {
             this.connection = connection;
             System.out.println("connection" + connection);
             this.serverLog = fl;
         }
 
+        // Thread executes
         public void run() {
             try{
                 //initialize Input and Output streams
@@ -86,6 +88,7 @@ public class Server extends Thread {
             }
         }
 
+        // sends message to Client
         public void sendMessage(String msg)
         {
             try{

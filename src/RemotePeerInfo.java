@@ -21,10 +21,12 @@ public class RemotePeerInfo {
         bitfield = new byte[Peer.FileSize/Peer.PieceSize];
     }
 
+    // sets bitfield of a peer
     public void setBitfield(byte[] bitfield) {
         this.bitfield = bitfield;
     }
 
+    // updates bitfield after downloading a piece
     public void updateBitField(int pieceIndex) {
         this.bitfield[pieceIndex] = 1;
     }

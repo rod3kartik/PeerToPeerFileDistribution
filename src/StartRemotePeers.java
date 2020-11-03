@@ -20,6 +20,7 @@ public class StartRemotePeers {
 
     public Vector<RemotePeerInfo> peerInfoVector;
 
+    // reads the PeerInfo.cfg file
     public void getConfiguration()
     {
         String st;
@@ -50,6 +51,8 @@ public class StartRemotePeers {
     /**
      * @param args
      */
+
+    // main method
     public static void main(String[] args) {
         // TODO Auto-generated method stub
         try {
