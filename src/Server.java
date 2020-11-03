@@ -28,17 +28,18 @@ public class Server extends Thread {
      * A handler thread class.  Handlers are spawned from the listening
      * loop and are responsible for dealing with a single client's requests.
      */
-        private String message;    //message received from the client
+        private byte[] message;    //message received from the client
         private String MESSAGE;    //uppercase message send to the client
         private Socket connection;
         private ObjectInputStream in;	//stream read from the socket
         private ObjectOutputStream out;    //stream write to the socket
         private int no;		//The index number of the client
+        private FileLogger serverLog;
 
-        public Server(Socket connection) {
+        public Server(Socket connection, FileLogger fl) {
             this.connection = connection;
             System.out.println("connection" + connection);
-
+            this.serverLog = fl;
         }
 
         public void run() {
@@ -51,11 +52,16 @@ public class Server extends Thread {
                     while(true)
                     {
                         //receive the message sent from the client
-                        message = (String)in.readObject();
+                        message = (byte[])in.readObject();
 
                         System.out.println("Receive message: " + message + " from client " + no);
+
+                        //Build a message object
+                        //Need to update the peerObject*
+                        Message messageObj = new Message(message, serverLog, null);
+                        messageObj.extractMessage();
                         //Capitalize all letters in the message
-                        MESSAGE = message.toUpperCase();
+//                        MESSAGE = message.toUpperCase();
                         //send MESSAGE back to the client
                         sendMessage(MESSAGE);
                     }
