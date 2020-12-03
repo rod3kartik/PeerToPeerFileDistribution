@@ -12,3 +12,19 @@
   <thread>1</thread>
   <message>Peer 1001 has downloaded the complete file</message>
 </record>
+<?xml version="1.0" encoding="windows-1252" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2020-12-03T20:52:19.795961200Z</date>
+  <millis>1607028739795</millis>
+  <nanos>961200</nanos>
+  <sequence>0</sequence>
+  <logger>P2P.Log.File</logger>
+  <level>INFO</level>
+  <class>FileLogger</class>
+  <method>downloadCompleteLog</method>
+  <thread>1</thread>
+  <message>Peer 1001 has downloaded the complete file</message>
+</record>
+</log>
