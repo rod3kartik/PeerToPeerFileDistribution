@@ -4,7 +4,6 @@ import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-
 public class Peer {
     private static int sPort;   //The server will be listening on this port number
     static int NumberOfPreferredNeighbors;
@@ -55,6 +54,7 @@ public class Peer {
         String peerFromCommandLine = args[0];
 
         //Setting configuration variables
+        CommonFileReader.confReader();
         NumberOfPreferredNeighbors = CommonFileReader.getNumberOfPreferredNeighbours();
         UnchokingInterval = CommonFileReader.getUnchokingInterval();
         OptimisticUnchokingInterval = CommonFileReader.getOptimisticUnchokingInterval();
@@ -78,8 +78,10 @@ public class Peer {
             System.out.println("Client to be started");
             for(int i = 0; i < allBeforePeerInfo.size();i++){
                 new Client("localhost",allBeforePeerInfo.get(i).peerPort).start();
+                //System.out.println(i);
             }
             System.out.println("server to be started");
+            //System.out.println("hello");
             new Server(listener.accept(), fl).start();
         }
         catch(Exception e){

@@ -30,6 +30,7 @@ public class CommonFileReader {
             while ((st = br.readLine()) != null) {
                 String[] row = st.split(" ");
                 configurationVariables.put(row[0], row[1]);
+                System.out.println("here2");
             }
             br.close();
             //System.out.println(configurationVariables.keySet());
