@@ -25,10 +25,10 @@ public class Client extends Thread {
             System.out.println("Connected to localhost in port " + port);
             System.out.println(requestSocket);
             //initialize inputStream and outputStream
-            out = new ObjectOutputStream(requestSocket.getOutputStream());
-            out.flush();
+            // out = new ObjectOutputStream(requestSocket.getOutputStream());
+            // out.flush();
             in = new ObjectInputStream(requestSocket.getInputStream());
-
+            System.out.println("loooool");
             //get Input from standard input
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
             while(true)
@@ -80,11 +80,5 @@ public class Client extends Thread {
             ioException.printStackTrace();
         }
     }
-    //main method
-//    public static void main(String args[])
-//    {
-//        Client client = new Client();
-//        client.run();
-//    }
 
 }

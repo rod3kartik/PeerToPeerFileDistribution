@@ -29,44 +29,50 @@ public class Server extends Thread {
      * loop and are responsible for dealing with a single client's requests.
      */
         private byte[] message;    //message received from the client
-        private String MESSAGE;    //uppercase message send to the client
-        private Socket connection;
+        private byte[] MESSAGE;    //uppercase message send to the client
+        private int serverPort;
         private ObjectInputStream in;	//stream read from the socket
         private ObjectOutputStream out;    //stream write to the socket
         private int no;		//The index number of the client
         private FileLogger serverLog;
 
-        public Server(Socket connection, FileLogger fl) {
-            this.connection = connection;
-            System.out.println("connection" + connection);
+        public Server(int port, FileLogger fl) {
+            this.serverPort = port;
+//            System.out.println("connection" + connection);
             this.serverLog = fl;
         }
 
         public void run() {
             try{
                 //initialize Input and Output streams
-                out = new ObjectOutputStream(connection.getOutputStream());
+            	
+            	Socket inputSocket = new Socket("localhost", this.serverPort);
+                out = new ObjectOutputStream(inputSocket.getOutputStream());
                 out.flush();
-                in = new ObjectInputStream(connection.getInputStream());
+                in = new ObjectInputStream(inputSocket.getInputStream());
                 try{
                     while(true)
-                    {
+                    {   
+                        System.out.println("Hey there");
                         //receive the message sent from the client
-                        message = (byte[])in.readObject();
+                        message = in.readAllBytes();
 
                         System.out.println("Receive message: " + message + " from client " + no);
 
                         //Build a message object
                         //Need to update the peerObject*
-                        Message messageObj = new Message(message, serverLog, null);
-                        messageObj.extractMessage();
+//                        Message messageObj = new Message(message, serverLog, null);
+//                        messageObj.extractMessage();
                         //Capitalize all letters in the message
 //                        MESSAGE = message.toUpperCase();
                         //send MESSAGE back to the client
-                        sendMessage(MESSAGE);
+                        String temp = new String(message);
+                        temp += " from server";
+                        System.out.println("Message created in server " + temp);
+                        sendMessage(temp);
                     }
                 }
-                catch(ClassNotFoundException classnot){
+                catch(Exception e){
                     System.err.println("Data received in unknown format");
                 }
             }
@@ -78,7 +84,7 @@ public class Server extends Thread {
                 try{
                     in.close();
                     out.close();
-                    connection.close();
+                    // connection.close();
                 }
                 catch(IOException ioException){
                     System.out.println("Disconnect with Client " + no);

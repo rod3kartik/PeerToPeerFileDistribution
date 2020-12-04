@@ -11,6 +11,7 @@ public class Connection {
         List<RemotePeerInfo> allPeersBefore = new ArrayList<>();
         for(int i=0;i<line;i++){
            if (peer.equals(hosts[i].peerId)){
+               System.out.println("Line "+ line);
                allPeersBefore.add(hosts[i]);
                 break;
            }
@@ -18,12 +19,23 @@ public class Connection {
            }
         return allPeersBefore;
         }
+    
+    public static List<RemotePeerInfo> getAfterPeersInfo(String peer){
+        List<RemotePeerInfo> allPeersAfter = new ArrayList<>();
+        for(int i=line-1;i<-1;i++){
+            if (peer.equals(hosts[i].peerId)){
+                 break;
+            }
+            allPeersAfter.add(hosts[i]);
+            }
+        return allPeersAfter;
+        }
 
     public static void fileReader() {
         try {
 
-            File peerInfoConfigFile = new File("C:\\Users\\kartz\\IdeaProjects\\CN\\src\\peerInfo.cfg");
-            //int line = 0;
+            File peerInfoConfigFile = new File("peerInfo.cfg");
+            line = 0;
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;
             while ((st = br.readLine()) != null) {
