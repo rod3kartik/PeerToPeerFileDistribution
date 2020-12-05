@@ -9,9 +9,11 @@ public class Constants {
     public static String FileName;
     public static int FileSize;
     public static int PieceSize;
-
+    public static RemotePeerInfo[] listOfAllPeers = new RemotePeerInfo[4];
+    public static String headerHandshake ="P2PFILESHARINGPROJ";
+    public static HashSet<Integer> handshakedPeers = new HashSet<>();
     //Mapping of message type to value
-    public Map<String, Integer> messageTypeToVal = new HashMap() {{
+    public static Map<String, Integer> messageTypeToVal = new HashMap() {{
         put("choke", 0);
         put("unchoke", 1);
         put("interested", 2);
@@ -23,7 +25,7 @@ public class Constants {
     }};
 
     //mapping of value to corresponding message type
-    public Map<Integer, String> valToMessageType = new HashMap() {{
+    public static Map<Integer, String> valToMessageType = new HashMap() {{
         put(0,"choke");
         put(1, "unchoke");
         put(2, "interested");
@@ -34,7 +36,7 @@ public class Constants {
         put(7, "piece");
     }};
 
-    public Map<String, Integer> socketToPeerID = new HashMap<>();
+    public static Map<String, Integer> socketToPeerID = new HashMap<>();
 
     Constants(){
         //Setting configuration variables
@@ -45,5 +47,14 @@ public class Constants {
         FileName = CommonFileReader.getFileName();
         FileSize = CommonFileReader.getFileSize();
         PieceSize = CommonFileReader.getPieceSize();
+        listOfAllPeers = Connection.fileReader();
+        generateMapOfSocketToPeerID();
+    }
+
+    public void generateMapOfSocketToPeerID() {
+        for (RemotePeerInfo peer : listOfAllPeers) {
+            System.out.println(peer.peerAddress + peer.peerId);
+            socketToPeerID.put(peer.peerAddress + ":" + peer.peerPort, Integer.parseInt(peer.peerId));
+        }
     }
 }

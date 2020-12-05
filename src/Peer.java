@@ -28,8 +28,6 @@ public class Peer {
         Constants constantVariables = new Constants();
 
         FileLogger fl = new FileLogger(peerFromCommandLine);
-        // fl.downloadCompleteLog();
-        Connection.fileReader();
 
         List<RemotePeerInfo> allBeforePeerInfo = Connection.getPeerInfo(peerFromCommandLine);
         System.out.println(allBeforePeerInfo);
@@ -49,7 +47,7 @@ public class Peer {
             ObjectOutputStream wt = new ObjectOutputStream(neighborPeer.getOutputStream());
             wt.writeObject("hello there");
             wt.flush();
-            new PeerHandler(neighborPeer, Integer.parseInt(outgoingPeer.peerId)).start();
+            new PeerHandler(neighborPeer).start();
         }
         
         List<RemotePeerInfo> afterPeers = Connection.getAfterPeersInfo(peerFromCommandLine);

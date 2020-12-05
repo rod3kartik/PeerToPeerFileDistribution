@@ -31,7 +31,7 @@ public class Connection {
         return allPeersAfter;
         }
 
-    public static void fileReader() {
+    public static RemotePeerInfo[] fileReader() {
         try {
 
             File peerInfoConfigFile = new File("peerInfo.cfg");
@@ -49,6 +49,7 @@ public class Connection {
         catch(Exception e){
             System.out.println("exception");
         }
+        return hosts;
     }
 
 }
