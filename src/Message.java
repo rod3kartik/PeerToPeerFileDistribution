@@ -42,10 +42,10 @@ public class Message {
         String message = Arrays.toString(this.MessageType);
         switch (message){
             case "0":
-                updatePeerChokeList(Integer.parseInt(peerObject.peerId),0);
+                updatePeerChokeList(Integer.parseInt(peerObject.peerID),0);
                 break;
             case "1":
-                updatePeerChokeList(Integer.parseInt(peerObject.peerId),1);
+                updatePeerChokeList(Integer.parseInt(peerObject.peerID),1);
                 break;
             case "2":
                 interested();

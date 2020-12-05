@@ -10,7 +10,7 @@ public class Connection {
     public static List<RemotePeerInfo> getPeerInfo(String peer){
         List<RemotePeerInfo> allPeersBefore = new ArrayList<>();
         for(int i=0;i<line;i++){
-           if (peer.equals(hosts[i].peerId)){
+           if (peer.equals(hosts[i].peerID)){
                System.out.println("Line "+ line);
                allPeersBefore.add(hosts[i]);
                 break;
@@ -23,7 +23,7 @@ public class Connection {
     public static List<RemotePeerInfo> getAfterPeersInfo(String peer){
         List<RemotePeerInfo> allPeersAfter = new ArrayList<>();
         for(int i=line-1;i<-1;i++){
-            if (peer.equals(hosts[i].peerId)){
+            if (peer.equals(hosts[i].peerID)){
                  break;
             }
             allPeersAfter.add(hosts[i]);
@@ -44,7 +44,6 @@ public class Connection {
                 line++;
             }
             br.close();
-            //System.out.println(array[0].peerId);
         }
         catch(Exception e){
             System.out.println("exception");

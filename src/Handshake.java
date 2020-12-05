@@ -2,18 +2,19 @@
 
 import java.net.*;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.io.*;
 import java.util.Arrays;
 
 public class Handshake {
     private byte[] handshakeHeader;
     private byte[] zeroBytes;
-    private byte[] peerId;
+    private byte[] peerID;
     
-    public Handshake(int peerId){
-        this.handshakeHeader = Constants.headerHandshake.getBytes();
+    public Handshake(){
+        this.handshakeHeader = Constants.headerHandshake.getBytes(StandardCharsets.UTF_8);
         this.zeroBytes = new byte[10];
-        this.peerId = ByteBuffer.allocate(4).putInt(peerId).array();
+        this.peerID = ByteBuffer.allocate(4).putInt(Integer.parseInt(Constants.listOfAllPeers[Constants.selfPeerIndex].peerID)).array();
     }
 
     public byte[] generateByteArrayMessage(byte[] handshakeHeader, byte[] zeroBytes, byte[] peerId){
@@ -28,12 +29,10 @@ public class Handshake {
         return outputStream.toByteArray();
     }
 
-    public void sendHandshake(Socket socket){
-        try {
-            ObjectOutputStream out;
-            out = new ObjectOutputStream(socket.getOutputStream());
-            byte[] finalMsg = generateByteArrayMessage(this.handshakeHeader, this.zeroBytes, this.peerId);
-            System.out.println(finalMsg.toString());
+    public void sendHandshake(OutputStream out){
+        try {       
+            byte[] finalMsg = generateByteArrayMessage(this.handshakeHeader, this.zeroBytes, this.peerID);
+            System.out.println("sent message: "+ finalMsg.toString());
             out.write(finalMsg);
             out.flush();
         }
@@ -64,7 +63,8 @@ public class Handshake {
 
     public void handleHandShakeMessage(byte[] bytePeerID){
         int peerID = utilities.fromFourByteArrayToInteger(bytePeerID);
-        Constants.handshakedPeers.add(peerID);
+        Constants.handshakedPeers.put(Integer.toString(peerID), true);
         System.out.println("PeerID received in handshake " + peerID);
+        System.out.println(Constants.handshakedPeers);
     }
 }

@@ -8,13 +8,13 @@
  */
 
 public class RemotePeerInfo {
-    public String peerId;
+    public String peerID;
     public String peerAddress;
     public String peerPort;
     public String fileAvailable;
     public byte[] bitfield;
     public RemotePeerInfo(String pId, String pAddress, String pPort, String fileAvailable) {
-        peerId = pId;
+        peerID = pId;
         peerAddress = pAddress;
         peerPort = pPort;
         this.fileAvailable = fileAvailable;

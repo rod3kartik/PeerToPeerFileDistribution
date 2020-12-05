@@ -2,24 +2,26 @@ import java.net.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class PeerHandler extends Thread{
     private Socket peerSocket;
-    private ObjectInputStream in;	//stream read from the socket
-    private ObjectOutputStream out;    //stream write to the socket
-    private int peerId;
+    private InputStream in;	//stream read from the socket
+    private OutputStream out;    //stream write to the socket
+    private RemotePeerInfo peer;
 
-    PeerHandler(Socket socket) {
+    PeerHandler(Socket socket, int peerIndex) {
         this.peerSocket = socket;
-    
+        System.out.println(peerIndex + " " + Constants.listOfAllPeers.length);
+
         try {
-            this.in = new ObjectInputStream(socket.getInputStream());
-            this.out = new ObjectOutputStream(socket.getOutputStream());
-            out.flush();
+            this.in = socket.getInputStream();
+            this.out = socket.getOutputStream();
             System.out.println(socket.getRemoteSocketAddress().toString().substring(1));
-            peerId = Constants.socketToPeerID.get(socket.getRemoteSocketAddress().toString().substring(1));
-            System.out.println("PeerID " + peerId);
+            peer = Constants.listOfAllPeers[peerIndex];
+            // peerId = Constants.socketToPeerID.get(socket.getre.toString().substring(1));
+            System.out.println("PeerID " + peer.peerID);
         } catch (Exception e) {
             System.out.println("Cought an exception in PeerHandler");
             e.printStackTrace();
@@ -29,29 +31,40 @@ public class PeerHandler extends Thread{
 
     public void run(){
         System.out.println("From handler");
-        try {
-            String b = (String)in.readObject();
-            System.out.println(b);
-        } catch (Exception e) {
-            //TODO: handle exception
-        }
-        Handshake h = new Handshake(peerId);
-        if(!Constants.handshakedPeers.contains(peerId)){
-            h.sendHandshake(peerSocket);
-        }
+        Handshake h = new Handshake();
+        if(!Constants.handshakedPeers.containsKey(peer.peerID)){
+            Constants.handshakedPeers.put(peer.peerID, false);
+            h.sendHandshake(out);
+            System.out.println(Constants.handshakedPeers.get(peer.peerID));
+        } else if (!Constants.handshakedPeers.get(peer.peerID)) {
+            Constants.handshakedPeers.put(peer.peerID, true);
+            h.sendHandshake(out);
+            System.out.println(Constants.handshakedPeers.get(peer.peerID));
 
+        }
+        
         try {
             
             while(true) {
-                byte[] incomingMessage = in.readAllBytes();
+                System.out.println( " IN the while");
+                byte[] incomingMessage = new byte[32];
+                in.read(incomingMessage);
+                // System.out.println( " IN the while 2");
+                
+                System.out.println("incoming message received " + incomingMessage);
                 byte[] isHandShakeHeader = Arrays.copyOfRange(incomingMessage, 0, 18);
-                if(isHandShakeHeader.toString().equals(Constants.headerHandshake)){
+                String tempHeader = new String(isHandShakeHeader, StandardCharsets.UTF_8);
+                System.out.println("header received " + tempHeader);
+                if(tempHeader.equals(Constants.headerHandshake)){
                     h.handleHandShakeMessage(Arrays.copyOfRange(incomingMessage, 28, 32));
                 }
+                break;
 
             }
         } catch (Exception e) {
             //TODO: handle exception
+            System.out.println( " exception in disconnection");
+
         }
     }
 

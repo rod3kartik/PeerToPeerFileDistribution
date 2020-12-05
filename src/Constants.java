@@ -11,7 +11,8 @@ public class Constants {
     public static int PieceSize;
     public static RemotePeerInfo[] listOfAllPeers = new RemotePeerInfo[4];
     public static String headerHandshake ="P2PFILESHARINGPROJ";
-    public static HashSet<Integer> handshakedPeers = new HashSet<>();
+    public static HashMap<String, Boolean> handshakedPeers = new HashMap();
+    public static int selfPeerIndex = 0;
     //Mapping of message type to value
     public static Map<String, Integer> messageTypeToVal = new HashMap() {{
         put("choke", 0);
@@ -53,8 +54,12 @@ public class Constants {
 
     public void generateMapOfSocketToPeerID() {
         for (RemotePeerInfo peer : listOfAllPeers) {
-            System.out.println(peer.peerAddress + peer.peerId);
-            socketToPeerID.put(peer.peerAddress + ":" + peer.peerPort, Integer.parseInt(peer.peerId));
+            System.out.println(peer.peerAddress + peer.peerID);
+            socketToPeerID.put(peer.peerAddress + ":" + peer.peerPort, Integer.parseInt(peer.peerID));
         }
+    }
+
+    public void printMap(HashMap map) {
+        System.out.println(map);
     }
 }
