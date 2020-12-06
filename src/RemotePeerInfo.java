@@ -18,6 +18,7 @@ public class RemotePeerInfo {
     public String fileAvailable;
     public BitSet bitfield = new BitSet(Constants.fileChunks.length);
     public float downloadRate = 0;
+    public boolean isUnchoked = false;
 
     public RemotePeerInfo(String pId, String pAddress, String pPort, String fileAvailable) {
         peerID = pId;
