@@ -38,6 +38,8 @@ public class Peer {
 
         //Global self peer index
         Constants.selfPeerIndex = allBeforePeerInfo.size()-1;
+        Constants.setSelfBit();
+        Constants.setChunksLeft();
         try {
             allBeforePeerInfo.remove(allBeforePeerInfo.size()-1);
         } catch (Exception e) {

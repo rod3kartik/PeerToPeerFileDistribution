@@ -15,7 +15,7 @@ public class Message {
     private byte[] messageLength;
     private byte[] messagePayload;
     private FileLogger fl;
-    private RemotePeerInfo peerObject;
+    private RemotePeerInfo peer;
     private String remotePeerID;
 
     // getter methods
@@ -41,8 +41,8 @@ public class Message {
 
     public Message(byte[] receivedMessage, String peerID){
         messageLength = Arrays.copyOfRange(receivedMessage, 0, 4);
-        messageType = Arrays.copyOfRange(receivedMessage, 4, 5);
-        messagePayload = Arrays.copyOfRange(receivedMessage, 5, receivedMessage.length);
+        messageType = Arrays.copyOfRange(receivedMessage, 4, 8);
+        messagePayload = Arrays.copyOfRange(receivedMessage, 8, receivedMessage.length);
         remotePeerID = peerID;
     }
 
@@ -51,12 +51,13 @@ public class Message {
     public void extractMessage(){
         // String message = Arrays.toString(this.messageType);
         int msgType = (int)utilities.fromByteArrayToInteger(this.messageType);
+        System.out.println("message type: "+ msgType);
         switch (msgType){
             case 0:
-                updatePeerChokeList(Integer.parseInt(peerObject.peerID),0);
+                //updatePeerChokeList(Integer.parseInt(peerObject.peerID),0);
                 break;
             case 1:
-                updatePeerChokeList(Integer.parseInt(peerObject.peerID),1);
+                // updatePeerChokeList(Integer.parseInt(peerObject.peerID),1);
                 break;
             case 2:
                 interested();
@@ -130,7 +131,7 @@ public class Message {
 
     // updates the bitfiled with the recent piece that has been downloaded
     private void updateBitField(int pieceIndex){
-        peerObject.updateBitField(pieceIndex);
+        // peerObject.updateBitField(pieceIndex);
     }
 
  

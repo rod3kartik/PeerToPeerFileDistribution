@@ -22,10 +22,10 @@ public class RemotePeerInfo {
         peerPort = pPort;
         this.fileAvailable = fileAvailable;
         bitfield.clear(0, Constants.fileChunks.length);
-        if(fileAvailable == "1"){
+        if(fileAvailable.equals("1")){
             bitfield.set(0, Constants.fileChunks.length);
         }
-        System.out.println(bitfield.size());
+        System.out.println("Chunksize: " + Constants.fileChunks.length + bitfield.length() + " " + fileAvailable + " "+ bitfield);
     }
 
     public void setBitfield(int bit) {

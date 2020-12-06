@@ -54,11 +54,13 @@ public class Constants {
         fileChunks = utilities.readFileIntoChunks();
         listOfAllPeers = Connection.fileReader();
         System.out.println(listOfAllPeers.length);
-        selfBitfield = listOfAllPeers[selfPeerIndex].bitfield;
+        printListOfAllPairs();
+        
         //chunksLeft = listOfAllPeers[selfPeerIndex].bitfield.clone();
-        chunksLeft = listOfAllPeers[selfPeerIndex].bitfield;
-        //chunksLeft.flip(); 
-        chunksLeft.flip(0, chunksLeft.length());
+        // System.out.println("selfBitField: " + selfBitfield);
+        // BitSet chunksLeft = (BitSet) listOfAllPeers[selfPeerIndex].bitfield.clone();
+        // //chunksLeft.flip(); 
+        // chunksLeft.flip(0, chunksLeft.length());
     }
 
     // public void generateMapOfSocketToPeerID() {
@@ -67,4 +69,19 @@ public class Constants {
     //         socketToPeerID.put(peer.peerAddress + ":" + peer.peerPort, Integer.parseInt(peer.peerID));
     //     }
     // }
+
+    public void printListOfAllPairs() {
+        for (RemotePeerInfo peer : listOfAllPeers) {
+            System.out.println(peer.peerID + peer.bitfield);
+        }
+    }
+
+    public static void setSelfBit() {
+        selfBitfield = listOfAllPeers[selfPeerIndex].bitfield;
+    }
+
+    public static void setChunksLeft() {
+        chunksLeft = (BitSet)selfBitfield.clone();
+        chunksLeft.flip(0, chunksLeft.length());
+    }
 }
