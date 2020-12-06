@@ -16,6 +16,8 @@ public class RemotePeerInfo {
     public String peerPort;
     public String fileAvailable;
     public BitSet bitfield = new BitSet(Constants.fileChunks.length);
+    public float downloadRate = 0;
+
     public RemotePeerInfo(String pId, String pAddress, String pPort, String fileAvailable) {
         peerID = pId;
         peerAddress = pAddress;
@@ -33,8 +35,16 @@ public class RemotePeerInfo {
         
     }
 
+    public float getDownloadRate(){
+        return downloadRate;
+    }
     // updates bitfield after downloading a piece
     public void updateBitField(int pieceIndex) {
         bitfield.set(pieceIndex);
     }
+
+    // @Override
+    // public int compareTo(RemotePeerInfo p1) {
+    //     return this.getDownloadRate().compareTo(p1.getDownloadRate());
+    // }
 }

@@ -11,13 +11,15 @@ public class Constants {
     public static int PieceSize;
     public static RemotePeerInfo[] listOfAllPeers = new RemotePeerInfo[4];
     public static String headerHandshake ="P2PFILESHARINGPROJ";
-    public static HashMap<String, Boolean> handshakedPeers = new HashMap();
+    public static HashMap<String, Boolean> handshakedPeers = new HashMap<>();
     public static int selfPeerIndex = 0;
     public static Piece[] fileChunks;
     public static BitSet selfBitfield;
     public static BitSet chunksLeft;
+    public static HashMap<String, Boolean> chokeUnchokeMap = new HashMap<>();
+    public static List<RemotePeerInfo> interestedNeighbors = new ArrayList<>();
     //Mapping of message type to value
-    public static Map<String, Integer> messageTypeToVal = new HashMap() {{
+    public static Map<String, Integer> messageTypeToVal = new HashMap(){{
         put("choke", 0);
         put("unchoke", 1);
         put("interested", 2);
@@ -55,12 +57,6 @@ public class Constants {
         listOfAllPeers = Connection.fileReader();
         System.out.println(listOfAllPeers.length);
         printListOfAllPairs();
-        
-        //chunksLeft = listOfAllPeers[selfPeerIndex].bitfield.clone();
-        // System.out.println("selfBitField: " + selfBitfield);
-        // BitSet chunksLeft = (BitSet) listOfAllPeers[selfPeerIndex].bitfield.clone();
-        // //chunksLeft.flip(); 
-        // chunksLeft.flip(0, chunksLeft.length());
     }
 
     // public void generateMapOfSocketToPeerID() {

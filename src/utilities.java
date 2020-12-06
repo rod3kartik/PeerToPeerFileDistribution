@@ -2,12 +2,19 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
+import java.nio.*;
+import java.io.*;
+import java.util.*;
+
+//import java.util.stream.Collector;
+
+//import org.graalvm.util.CollectionsUtil;
+
+
 
 public class utilities {
     
-
+    
     public static long fromByteArrayToInteger(byte[] value) 
     {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
@@ -37,6 +44,39 @@ public class utilities {
         return data;
     }
     
+    public static List<RemotePeerInfo> getKPreferredNeighbors(){
+        List<RemotePeerInfo> kPreferredNeighbors = new ArrayList();
+        int k = Constants.NumberOfPreferredNeighbors;
+        RemotePeerInfo[] allPeers = Constants.listOfAllPeers;
+        // List<RemotePeerInfo> otherPeers = new ArrayList<>();
+        // for(int i=0; i<allPeers.length; i++){
+        //     if(i == Constants.selfPeerIndex) continue;
+        //     otherPeers.add(allPeers[i]);
+        // }
+        RemotePeerInfo[] peers = removeObjectByIndexFromArray(allPeers, Constants.selfPeerIndex);
+        Arrays.sort(peers, Comparator.comparing(RemotePeerInfo::getDownloadRate));
+        for (RemotePeerInfo remotePeerInfo : peers) {
+            if(k == 0) break;
+            if(Constants.interestedNeighbors.contains(remotePeerInfo)){
+                kPreferredNeighbors.add(remotePeerInfo);
+                k -= 1;
+            }
+        }
+        return kPreferredNeighbors;
+    }
+
+    public static RemotePeerInfo[] removeObjectByIndexFromArray(RemotePeerInfo[] peers, int index){
+        RemotePeerInfo[] returnPeers = new RemotePeerInfo[peers.length - 1];
+        int count = 0;
+        for (int i = 0; i < peers.length; i++) {
+            if(i == index){
+                continue;
+            }
+            returnPeers[count] = peers[i];
+            count += 1;
+        }
+        return returnPeers;
+    }
     
     private static byte[][] convertToBytes(String[] strings) {
         byte[][] data = new byte[strings.length][];
