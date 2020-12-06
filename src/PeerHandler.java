@@ -62,6 +62,7 @@ public class PeerHandler extends Thread{
                             byte[] bitFieldTooByteArray = Constants.selfBitfield.toByteArray();
                             System.out.println("byte array: "+ bitFieldTooByteArray);
                             Message msg = new Message(bitFieldTooByteArray.length + 4, 5, bitFieldTooByteArray);
+
                             byte[] bitFieldMessage = msg.createMessage();
                             out.write(bitFieldMessage);
                             out.flush();
@@ -90,7 +91,7 @@ public class PeerHandler extends Thread{
                             e.printStackTrace();
                         }
                         System.out.println(this.peer + this.peer.peerID);
-                        Message messageObj = new Message(outputBuffer.toByteArray(), this.peer.peerID);
+                        Message messageObj = new Message(outputBuffer.toByteArray(), this.peer.peerID, out);
                         messageObj.extractMessage();
                         System.out.println("Map is " + Constants.peerIDToBitfield);
                     } catch (Exception e) {
