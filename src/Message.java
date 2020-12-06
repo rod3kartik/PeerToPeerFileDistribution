@@ -45,31 +45,32 @@ public class Message {
     }
 
     public void extractMessage(){
-        String message = Arrays.toString(this.messageType);
-        switch (message){
-            case "0":
+        // String message = Arrays.toString(this.messageType);
+        int msgType = (int)utilities.fromByteArrayToInteger(this.messageType)
+        switch (msgType){
+            case 0:
                 updatePeerChokeList(Integer.parseInt(peerObject.peerID),0);
                 break;
-            case "1":
+            case 1:
                 updatePeerChokeList(Integer.parseInt(peerObject.peerID),1);
                 break;
-            case "2":
+            case 2:
                 interested();
                 break;
 
-            case "4":
+            case 4:
                 notInterested();
                 break;
 
-            case "5":
+            case 5:
                 initBitField(messagePayload);
                 break;
 
-            case "6":
+            case 6:
                 sendRequestedMessage(messagePayload);
                 break;
 
-            case "7":
+            case 7:
                 downloadPiece(messagePayload);
         }
 
@@ -86,7 +87,7 @@ public class Message {
         }
         return outputStream.toByteArray();
     }
-    
+
     private void updatePeerChokeList(int peerId, int mType) {
         new Peer().setPeerChokeMap(peerId,mType);
     }
@@ -100,7 +101,7 @@ public class Message {
     }
 
     private void initBitField(byte[] newBitField){
-        // peerObject.setBitfield(newBitField);
+        
     }
 
     private void sendRequestedMessage(byte[] messageIndex){

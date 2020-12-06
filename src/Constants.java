@@ -39,7 +39,7 @@ public class Constants {
         put(7, "piece");
     }};
 
-    public static Map<String, Integer> socketToPeerID = new HashMap<>();
+    public static Map<String, Integer> peerIDToBitField = new HashMap<>();
 
     Constants(){
         //Setting configuration variables
@@ -50,17 +50,17 @@ public class Constants {
         FileName = CommonFileReader.getFileName();
         FileSize = CommonFileReader.getFileSize();
         PieceSize = CommonFileReader.getPieceSize();
-        listOfAllPeers = Connection.fileReader();
-        generateMapOfSocketToPeerID();
         fileChunks = utilities.readFileIntoChunks();
+        listOfAllPeers = Connection.fileReader();
+        System.out.println(listOfAllPeers.length);
         selfBitfield = listOfAllPeers[selfPeerIndex].bitfield;
 
     }
 
-    public void generateMapOfSocketToPeerID() {
-        for (RemotePeerInfo peer : listOfAllPeers) {
-            System.out.println(peer.peerAddress + peer.peerID);
-            socketToPeerID.put(peer.peerAddress + ":" + peer.peerPort, Integer.parseInt(peer.peerID));
-        }
-    }
+    // public void generateMapOfSocketToPeerID() {
+    //     for (RemotePeerInfo peer : listOfAllPeers) {
+    //         System.out.println(peer.peerAddress + peer.peerID);
+    //         socketToPeerID.put(peer.peerAddress + ":" + peer.peerPort, Integer.parseInt(peer.peerID));
+    //     }
+    // }
 }

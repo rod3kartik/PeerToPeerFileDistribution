@@ -15,17 +15,17 @@ public class RemotePeerInfo {
     public String peerAddress;
     public String peerPort;
     public String fileAvailable;
-    public BitSet bitfield;
+    public BitSet bitfield = new BitSet(Constants.fileChunks.length);
     public RemotePeerInfo(String pId, String pAddress, String pPort, String fileAvailable) {
         peerID = pId;
         peerAddress = pAddress;
         peerPort = pPort;
         this.fileAvailable = fileAvailable;
+        bitfield.clear(0, Constants.fileChunks.length);
         if(fileAvailable == "1"){
-            for(int i=0; i<Constants.fileChunks.length; i++){
-                bitfield.set(i);
-            }
+            bitfield.set(0, Constants.fileChunks.length);
         }
+        System.out.println(bitfield.size());
     }
 
     public void setBitfield(int bit) {
