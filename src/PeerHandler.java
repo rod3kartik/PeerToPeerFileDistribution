@@ -56,22 +56,26 @@ public class PeerHandler extends Thread{
                     if(tempHeader.equals(Constants.headerHandshake)){
                         h.handleHandShakeMessage(Arrays.copyOfRange(incomingMessage, 28, 32));
                     }
-            
+                    
+                
                     Message msg = new Message(Constants.selfBitfield.size() + 1, 5, Constants.selfBitfield.toByteArray());
                     byte[] bitFieldMessage = msg.createMessage();
                     out.write(bitFieldMessage);
                     out.flush();
+                    
     
                 } catch (Exception e) {
-                    System.out.println( " exception in disconnection");
+                    System.out.println( "exception in disconnection");
+                    e.printStackTrace();
                 }
                 firstTime = false;
             }
             else {
-                incomingMessage = new byte[Integer.MAX_VALUE];
+                incomingMessage = new byte[100000];
                 try {
                     byte[] messageLength = in.readNBytes(4);
                     int msgLength = (int)utilities.fromByteArrayToInteger(messageLength);
+                    System.out.println("Received message length: " + msgLength);
                     incomingMessage = in.readNBytes(msgLength);
                     ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream( );
                     try {
@@ -80,7 +84,8 @@ public class PeerHandler extends Thread{
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    new Message(outputBuffer.toByteArray());
+                    Message messageObj = new Message(outputBuffer.toByteArray());
+                    messageObj.extractMessage();
 
                 } catch (Exception e) {
                     System.out.println( " exception in handler");

@@ -1,4 +1,5 @@
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +26,25 @@ public class utilities {
                ((bytes[1] & 0xFF) << 16) | 
                ((bytes[2] & 0xFF) << 8 ) | 
                ((bytes[3] & 0xFF) << 0 );
+    }
+
+    public static String[] convertToStrings(byte[][] byteStrings) {
+        String[] data = new String[byteStrings.length];
+        for (int i = 0; i < byteStrings.length; i++) {
+            data[i] = new String(byteStrings[i], Charset.defaultCharset());
+    
+        }
+        return data;
+    }
+    
+    
+    private static byte[][] convertToBytes(String[] strings) {
+        byte[][] data = new byte[strings.length][];
+        for (int i = 0; i < strings.length; i++) {
+            String string = strings[i];
+            data[i] = string.getBytes(Charset.defaultCharset()); // you can chose charset
+        }
+        return data;
     }
 
    public static Piece[] readFileIntoChunks() {
