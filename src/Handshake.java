@@ -20,9 +20,9 @@ public class Handshake {
     public byte[] generateByteArrayMessage(byte[] handshakeHeader, byte[] zeroBytes, byte[] peerId){
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         try {
-            outputStream.write(handshakeHeader);
-            outputStream.writeBytes(zeroBytes);
-            outputStream.writeBytes(peerId);    
+            outputStream.write(this.handshakeHeader);
+            outputStream.writeBytes(this.zeroBytes);
+            outputStream.writeBytes(this.peerID);    
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,8 +62,8 @@ public class Handshake {
     // }
 
     public void handleHandShakeMessage(byte[] bytePeerID){
-        int peerID = utilities.fromFourByteArrayToInteger(bytePeerID);
-        Constants.handshakedPeers.put(Integer.toString(peerID), true);
+        long peerID = utilities.fromByteArrayToInteger(bytePeerID);
+        Constants.handshakedPeers.put(Long.toString(peerID), true);
         System.out.println("PeerID received in handshake " + peerID);
         System.out.println(Constants.handshakedPeers);
     }

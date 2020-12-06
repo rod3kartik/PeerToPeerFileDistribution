@@ -28,6 +28,7 @@ public class Peer {
 
         new Constants();
 
+        System.out.println(Constants.fileChunks);
         FileLogger fl = new FileLogger(peerFromCommandLine);
 
         List<RemotePeerInfo> allBeforePeerInfo = Connection.getPeerInfo(peerFromCommandLine);
@@ -44,14 +45,12 @@ public class Peer {
         
         sPort = Integer.parseInt(selfInfo.peerPort);
         
-        
         for (int outgoingPeer = 0; outgoingPeer < Constants.selfPeerIndex; outgoingPeer++) {
             System.out.println("Outgoing peer " + allBeforePeerInfo.get(outgoingPeer));
             Socket neighborPeer = new Socket(allBeforePeerInfo.get(outgoingPeer).peerAddress, Integer.parseInt(allBeforePeerInfo.get(outgoingPeer).peerPort));
             new PeerHandler(neighborPeer, outgoingPeer).start();
         }
         
-        List<RemotePeerInfo> afterPeers = Connection.getAfterPeersInfo(peerFromCommandLine);
         ServerSocket serverSocket = new ServerSocket(sPort);
         for(int incomingPeers = Constants.selfPeerIndex + 1; incomingPeers< Constants.listOfAllPeers.length; incomingPeers++){
             Socket peerSocket = serverSocket.accept();
