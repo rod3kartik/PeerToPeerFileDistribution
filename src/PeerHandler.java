@@ -2,24 +2,28 @@ import java.net.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class PeerHandler extends Thread{
     private Socket peerSocket;
     private ObjectInputStream in;	//stream read from the socket
     private ObjectOutputStream out;    //stream write to the socket
-    private int peerId;
+    private RemotePeerInfo peer;
+    private boolean firstTime = true;
 
-    PeerHandler(Socket socket) {
+    PeerHandler(Socket socket, int peerIndex) {
         this.peerSocket = socket;
-    
+        System.out.println(peerIndex + " " + Constants.listOfAllPeers.length);
+
         try {
-            this.in = new ObjectInputStream(socket.getInputStream());
+            
             this.out = new ObjectOutputStream(socket.getOutputStream());
-            out.flush();
+            this.in = new ObjectInputStream(socket.getInputStream());
             System.out.println(socket.getRemoteSocketAddress().toString().substring(1));
-            peerId = Constants.socketToPeerID.get(socket.getRemoteSocketAddress().toString().substring(1));
-            System.out.println("PeerID " + peerId);
+            peer = Constants.listOfAllPeers[peerIndex];
+            // peerId = Constants.socketToPeerID.get(socket.getre.toString().substring(1));
+            System.out.println("PeerID " + peer.peerID);
         } catch (Exception e) {
             System.out.println("Cought an exception in PeerHandler");
             e.printStackTrace();
@@ -29,29 +33,61 @@ public class PeerHandler extends Thread{
 
     public void run(){
         System.out.println("From handler");
-        try {
-            String b = (String)in.readObject();
-            System.out.println(b);
-        } catch (Exception e) {
-            //TODO: handle exception
-        }
-        Handshake h = new Handshake(peerId);
-        if(!Constants.handshakedPeers.contains(peerId)){
-            h.sendHandshake(peerSocket);
-        }
+        Handshake h = new Handshake();
+        byte[] incomingMessage;
 
-        try {
-            
-            while(true) {
-                byte[] incomingMessage = in.readAllBytes();
-                byte[] isHandShakeHeader = Arrays.copyOfRange(incomingMessage, 0, 18);
-                if(isHandShakeHeader.toString().equals(Constants.headerHandshake)){
-                    h.handleHandShakeMessage(Arrays.copyOfRange(incomingMessage, 28, 32));
+        while(true){
+            if(firstTime){
+                if(!Constants.handshakedPeers.containsKey(peer.peerID)){
+                    Constants.handshakedPeers.put(peer.peerID, false);
+                    h.sendHandshake(out);
+                    System.out.println(Constants.handshakedPeers.get(peer.peerID));
                 }
-
+    
+                try {
+                    incomingMessage = new byte[32];
+                    in.read(incomingMessage);
+                    // System.out.println( " IN the while 2");
+                    
+                    System.out.println("incoming message received " + incomingMessage);
+                    byte[] isHandShakeHeader = Arrays.copyOfRange(incomingMessage, 0, 18);
+                    String tempHeader = new String(isHandShakeHeader, StandardCharsets.UTF_8);
+                    System.out.println("header received " + tempHeader);
+                    if(tempHeader.equals(Constants.headerHandshake)){
+                        h.handleHandShakeMessage(Arrays.copyOfRange(incomingMessage, 28, 32));
+                    }
+            
+                    Message msg = new Message(Constants.selfBitfield.size() + 1, 5, Constants.selfBitfield.toByteArray());
+                    byte[] bitFieldMessage = msg.createMessage();
+                    out.write(bitFieldMessage);
+                    out.flush();
+    
+                } catch (Exception e) {
+                    System.out.println( " exception in disconnection");
+                }
+                firstTime = false;
             }
-        } catch (Exception e) {
-            //TODO: handle exception
+            else {
+                incomingMessage = new byte[Integer.MAX_VALUE];
+                try {
+                    byte[] messageLength = in.readNBytes(4);
+                    int msgLength = (int)utilities.fromByteArrayToInteger(messageLength);
+                    incomingMessage = in.readNBytes(msgLength);
+                    ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream( );
+                    try {
+                        outputBuffer.write(messageLength);
+                        outputBuffer.write(incomingMessage);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    new Message(outputBuffer.toByteArray());
+
+                } catch (Exception e) {
+                    System.out.println( " exception in handler");
+                    e.printStackTrace();
+                }
+            }
+    
         }
     }
 

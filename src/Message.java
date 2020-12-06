@@ -1,7 +1,9 @@
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 
 public class Message {
@@ -9,7 +11,7 @@ public class Message {
 //        CHOKE, UNCHOKE, INTERESTED, NOTINTERESTED, HAVE, BITFIELD, REQUEST, PIECE, HANDSHAKE;
 //    }
 
-    private byte[] MessageType;
+    private byte[] messageType;
     private byte[] messageLength;
     private byte[] messagePayload;
     private FileLogger fl;
@@ -17,7 +19,7 @@ public class Message {
 
     // getter methods
     public byte[] getMessageType() {
-        return MessageType;
+        return messageType;
     }
 
     public byte[] getMessageLength() {
@@ -28,26 +30,30 @@ public class Message {
         return messagePayload;
     }
 
-    // contructor
-    public Message(byte[] message, FileLogger fl, RemotePeerInfo peer){
-        this.messageLength = Arrays.copyOfRange(message,0,4);
-        this.MessageType = Arrays.copyOfRange(message,4,5);
-        int length = Integer.parseInt(messageLength.toString()) - 1;
-        this.messagePayload = Arrays.copyOfRange(message,5,message.length);
-        this.fl = fl;
-        this.peerObject = peer;
+
+    public Message(int msgLength, int type, byte[] payload){
+        this.messageLength = ByteBuffer.allocate(4).putInt(msgLength).array();
+        this.messageType = ByteBuffer.allocate(4).putInt(type).array();
+        this.messagePayload = payload;
+        System.out.println("Message payload is " + messagePayload);
+    }
+
+    public Message(byte[] receivedMessage){
+        messageLength = Arrays.copyOfRange(receivedMessage, 0, 4);
+        messageType = Arrays.copyOfRange(receivedMessage, 4, 5);
+        messagePayload = Arrays.copyOfRange(receivedMessage, 5, receivedMessage.length);
     }
 
     // extracts the received message, determines the type of the message, 
     // and sends it for the next process as per its type
     public void extractMessage(){
-        String message = Arrays.toString(this.MessageType);
+        String message = Arrays.toString(this.messageType);
         switch (message){
             case "0":
-                updatePeerChokeList(Integer.parseInt(peerObject.peerId),0);
+                updatePeerChokeList(Integer.parseInt(peerObject.peerID),0);
                 break;
             case "1":
-                updatePeerChokeList(Integer.parseInt(peerObject.peerId),1);
+                updatePeerChokeList(Integer.parseInt(peerObject.peerID),1);
                 break;
             case "2":
                 interested();
@@ -71,7 +77,18 @@ public class Message {
 
     }
 
-    // updates peer choke list using setter method 
+    public byte[] createMessage(){
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+        try {
+            outputStream.write(messageLength);
+            outputStream.write(messageType);
+            outputStream.write(messagePayload);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return outputStream.toByteArray();
+    }
+    
     private void updatePeerChokeList(int peerId, int mType) {
         new Peer().setPeerChokeMap(peerId,mType);
     }
@@ -89,7 +106,7 @@ public class Message {
 
     // initializes the bitfield using the setter method
     private void initBitField(byte[] newBitField){
-        peerObject.setBitfield(newBitField);
+        // peerObject.setBitfield(newBitField);
     }
 
     // sends request message to the peer with the piece that is required
@@ -110,4 +127,6 @@ public class Message {
     private void updateBitField(int pieceIndex){
         peerObject.updateBitField(pieceIndex);
     }
+
+ 
 }

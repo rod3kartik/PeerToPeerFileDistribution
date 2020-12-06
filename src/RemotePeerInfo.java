@@ -1,3 +1,6 @@
+import java.util.BitSet;
+import java.util.HashSet;
+
 /*
  *                     CEN5501C Project2
  * This is the program starting remote processes.
@@ -8,26 +11,29 @@
  */
 
 public class RemotePeerInfo {
-    public String peerId;
+    public String peerID;
     public String peerAddress;
     public String peerPort;
     public String fileAvailable;
-    public byte[] bitfield;
+    public BitSet bitfield;
     public RemotePeerInfo(String pId, String pAddress, String pPort, String fileAvailable) {
-        peerId = pId;
+        peerID = pId;
         peerAddress = pAddress;
         peerPort = pPort;
         this.fileAvailable = fileAvailable;
-        bitfield = new byte[Constants.FileSize/Constants.PieceSize];
+        if(fileAvailable == "1"){
+            for(int i=0; i<Constants.fileChunks.length; i++){
+                bitfield.set(i);
+            }
+        }
     }
 
-    // sets bitfield of a peer
-    public void setBitfield(byte[] bitfield) {
-        this.bitfield = bitfield;
+    public void setBitfield(int bit) {
+        bitfield.set(bit);
     }
 
     // updates bitfield after downloading a piece
     public void updateBitField(int pieceIndex) {
-        this.bitfield[pieceIndex] = 1;
+        bitfield.set(pieceIndex);
     }
 }
