@@ -1,10 +1,10 @@
-import java.nio.ByteBuffer;
+import java.nio.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-
+import java.util.BitSet;
 
 public class Message {
 //    public static enum Type {
@@ -16,6 +16,7 @@ public class Message {
     private byte[] messagePayload;
     private FileLogger fl;
     private RemotePeerInfo peerObject;
+    private String remotePeerID;
 
     // getter methods
     public byte[] getMessageType() {
@@ -38,17 +39,18 @@ public class Message {
         System.out.println("Message payload is " + messagePayload);
     }
 
-    public Message(byte[] receivedMessage){
+    public Message(byte[] receivedMessage, String peerID){
         messageLength = Arrays.copyOfRange(receivedMessage, 0, 4);
         messageType = Arrays.copyOfRange(receivedMessage, 4, 5);
         messagePayload = Arrays.copyOfRange(receivedMessage, 5, receivedMessage.length);
+        remotePeerID = peerID;
     }
 
     // extracts the received message, determines the type of the message, 
     // and sends it for the next process as per its type
     public void extractMessage(){
         // String message = Arrays.toString(this.messageType);
-        int msgType = (int)utilities.fromByteArrayToInteger(this.messageType)
+        int msgType = (int)utilities.fromByteArrayToInteger(this.messageType);
         switch (msgType){
             case 0:
                 updatePeerChokeList(Integer.parseInt(peerObject.peerID),0);
@@ -65,7 +67,7 @@ public class Message {
                 break;
 
             case 5:
-                initBitField(messagePayload);
+                initBitField(this.messagePayload);
                 break;
 
             case 6:
@@ -79,11 +81,11 @@ public class Message {
     }
 
     public byte[] createMessage(){
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
-            outputStream.write(messageLength);
-            outputStream.write(messageType);
-            outputStream.write(messagePayload);
+            outputStream.write(this.messageLength);
+            outputStream.write(this.messageType);
+            outputStream.write(this.messagePayload);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -107,6 +109,8 @@ public class Message {
 
     // initializes the bitfield using the setter method
     private void initBitField(byte[] newBitField){
+        BitSet payload = BitSet.valueOf(newBitField);
+        Constants.peerIDToBitfield.put(remotePeerID, payload);
         
     }
 

@@ -76,17 +76,19 @@ public class PeerHandler extends Thread{
                     byte[] messageLength = in.readNBytes(4);
                     int msgLength = (int)utilities.fromByteArrayToInteger(messageLength);
                     System.out.println("Received message length: " + msgLength);
+                    
                     incomingMessage = in.readNBytes(msgLength);
-                    ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream( );
+                    ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
+                    System.out.println("hr");
                     try {
                         outputBuffer.write(messageLength);
                         outputBuffer.write(incomingMessage);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    Message messageObj = new Message(outputBuffer.toByteArray());
+                    Message messageObj = new Message(outputBuffer.toByteArray(), peer.peerID);
                     messageObj.extractMessage();
-
+                    System.out.println("Map is " + Constants.peerIDToBitfield);
                 } catch (Exception e) {
                     System.out.println( " exception in handler");
                     e.printStackTrace();

@@ -15,6 +15,7 @@ public class Constants {
     public static int selfPeerIndex = 0;
     public static Piece[] fileChunks;
     public static BitSet selfBitfield;
+    public static BitSet chunksLeft;
     //Mapping of message type to value
     public static Map<String, Integer> messageTypeToVal = new HashMap() {{
         put("choke", 0);
@@ -39,7 +40,7 @@ public class Constants {
         put(7, "piece");
     }};
 
-    public static Map<String, Integer> peerIDToBitField = new HashMap<>();
+    public static Map<String, BitSet> peerIDToBitfield = new HashMap<>();
 
     Constants(){
         //Setting configuration variables
@@ -54,7 +55,10 @@ public class Constants {
         listOfAllPeers = Connection.fileReader();
         System.out.println(listOfAllPeers.length);
         selfBitfield = listOfAllPeers[selfPeerIndex].bitfield;
-
+        //chunksLeft = listOfAllPeers[selfPeerIndex].bitfield.clone();
+        chunksLeft = listOfAllPeers[selfPeerIndex].bitfield;
+        //chunksLeft.flip(); 
+        chunksLeft.flip(0, chunksLeft.length());
     }
 
     // public void generateMapOfSocketToPeerID() {

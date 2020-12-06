@@ -30,6 +30,7 @@ public class RemotePeerInfo {
 
     public void setBitfield(int bit) {
         bitfield.set(bit);
+        
     }
 
     // updates bitfield after downloading a piece
