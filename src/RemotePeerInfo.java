@@ -1,6 +1,7 @@
 import java.util.BitSet;
 import java.util.HashSet;
 
+
 /*
  *                     CEN5501C Project2
  * This is the program starting remote processes.
@@ -23,10 +24,14 @@ public class RemotePeerInfo {
         peerAddress = pAddress;
         peerPort = pPort;
         this.fileAvailable = fileAvailable;
+
         bitfield.clear(0, Constants.fileChunks.length);
         if(fileAvailable.equals("1")){
             bitfield.set(0, Constants.fileChunks.length);
         }
+//        else{
+//            System.out.println("Bitfield in case of no file is " + bitfield);
+//        }
         System.out.println("Chunksize: " + Constants.fileChunks.length + bitfield.length() + " " + fileAvailable + " "+ bitfield);
     }
 

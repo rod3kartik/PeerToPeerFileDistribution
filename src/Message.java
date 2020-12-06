@@ -1,3 +1,5 @@
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.nio.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +19,7 @@ public class Message {
     private FileLogger fl;
     private RemotePeerInfo peer;
     private String remotePeerID;
+    private ObjectOutputStream outputStream;
 
     // getter methods
     public byte[] getMessageType() {
@@ -39,11 +42,12 @@ public class Message {
         System.out.println("Message payload is " + messagePayload);
     }
 
-    public Message(byte[] receivedMessage, String peerID){
+    public Message(byte[] receivedMessage, String peerID,ObjectOutputStream opstream){
         messageLength = Arrays.copyOfRange(receivedMessage, 0, 4);
         messageType = Arrays.copyOfRange(receivedMessage, 4, 8);
         messagePayload = Arrays.copyOfRange(receivedMessage, 8, receivedMessage.length);
         remotePeerID = peerID;
+        this.outputStream = opstream;
     }
 
     // extracts the received message, determines the type of the message, 
@@ -60,15 +64,26 @@ public class Message {
                 // updatePeerChokeList(Integer.parseInt(peerObject.peerID),1);
                 break;
             case 2:
-                interested();
+                System.out.println("In case for handling intreseted");
+                //handleInterested();
                 break;
-
+            case 3:
+                //handleNotInterested();
+                break;
             case 4:
-                notInterested();
+                //handleHaveMessage();
                 break;
 
             case 5:
-                initBitField(this.messagePayload);
+                initBitField(this.messagePayload, this.outputStream);
+                if(compareBitField(Constants.peerIDToBitfield.get(remotePeerID) )){
+                    sendInterested(this.outputStream);
+                }
+                else{
+                    sendNotInterested(this.outputStream);
+
+                }
+
                 break;
 
             case 6:
@@ -86,7 +101,9 @@ public class Message {
         try {
             outputStream.write(this.messageLength);
             outputStream.write(this.messageType);
-            outputStream.write(this.messagePayload);
+            if(this.messagePayload != null) {
+                outputStream.write(this.messagePayload);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,23 +118,36 @@ public class Message {
     // is received from a peer with a certain peerID
     private void interested(){
         fl.receivedInterestedMessageLog(1002);
+        //compareBitField(Constants.peerIDToBitfield.get(remotePeerID));
+        //Check if the one who sent interested signal is choked or unchoked
     }
 
     // method for when not interested message is sent
-    private void notInterested(){
-
-    }
 
     // initializes the bitfield using the setter method
-    private void initBitField(byte[] newBitField){
+    private void initBitField(byte[] newBitField, ObjectOutputStream outputStream){
         BitSet payload = BitSet.valueOf(newBitField);
         Constants.peerIDToBitfield.put(remotePeerID, payload);
-        
+        System.out.println("Remote peerID is" + remotePeerID);
+
     }
 
     // sends request message to the peer with the piece that is required
     private void sendRequestedMessage(byte[] messageIndex){
         //Send file to the peer with requested message index
+    }
+
+    private boolean compareBitField(BitSet remoteBitfield){
+        BitSet selfChunksLeft = Constants.chunksLeft;
+
+        selfChunksLeft.and(remoteBitfield);
+        if(selfChunksLeft.length() > 0){
+            //send intereseted
+            return true;
+        }
+        return false;
+        //System.out.println("After anding " + selfChunksLeft);
+
     }
 
     // downloads the piece from the message received
@@ -134,5 +164,32 @@ public class Message {
         // peerObject.updateBitField(pieceIndex);
     }
 
- 
+    private void sendInterested(ObjectOutputStream outputStream){
+        try {
+            System.out.println("In send Interested method");
+            Message msg = new Message( 4, 2, null);
+            byte[] interestedMessage = msg.createMessage();
+            outputStream.write(interestedMessage);
+            outputStream.flush();
+            //outputStream.write(this.messageType);
+            //outputStream.write(this.messagePayload);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendNotInterested(ObjectOutputStream outputStream){
+        try {
+            Message msg = new Message( 4, 3, null);
+            byte[] interestedMessage = msg.createMessage();
+            outputStream.write(interestedMessage);
+            outputStream.flush();
+            //outputStream.write(this.messageType);
+            //outputStream.write(this.messagePayload);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

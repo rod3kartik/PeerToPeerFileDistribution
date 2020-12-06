@@ -77,7 +77,15 @@ public class Constants {
     }
 
     public static void setChunksLeft() {
-        chunksLeft = (BitSet)selfBitfield.clone();
-        chunksLeft.flip(0, chunksLeft.length());
+        if (selfBitfield.length() ==0){
+            chunksLeft = new BitSet(Constants.fileChunks.length);
+            chunksLeft.set(0,Constants.fileChunks.length);
+            //this.chunksLeft = chunksLeft;
+
+        }
+        else {
+            chunksLeft = (BitSet) selfBitfield.clone();
+            chunksLeft.flip(0, chunksLeft.length());
+        }
     }
 }
