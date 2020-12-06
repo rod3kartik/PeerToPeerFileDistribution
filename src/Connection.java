@@ -13,6 +13,7 @@ public class Connection {
         List<RemotePeerInfo> allPeersBefore = new ArrayList<>();
         for(int i=0;i<line;i++){
            if (peer.equals(hosts[i].peerId)){
+               System.out.println("Line "+ line);
                allPeersBefore.add(hosts[i]);
                 break;
            }
@@ -20,14 +21,23 @@ public class Connection {
            }
         return allPeersBefore;
         }
+    
+    public static List<RemotePeerInfo> getAfterPeersInfo(String peer){
+        List<RemotePeerInfo> allPeersAfter = new ArrayList<>();
+        for(int i=line-1;i<-1;i++){
+            if (peer.equals(hosts[i].peerId)){
+                 break;
+            }
+            allPeersAfter.add(hosts[i]);
+            }
+        return allPeersAfter;
+        }
 
-    // reading files from PeerInfo.cfg and 
-    public static void fileReader() {
+    public static RemotePeerInfo[] fileReader() {
         try {
 
-            // absolute path used
-            File peerInfoConfigFile = new File("C:\\Users\\kartz\\IdeaProjects\\CN\\src\\peerInfo.cfg");
-            //int line = 0;
+            File peerInfoConfigFile = new File("peerInfo.cfg");
+            line = 0;
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;
 
@@ -43,6 +53,7 @@ public class Connection {
         catch(Exception e){
             System.out.println("exception");
         }
+        return hosts;
     }
 
 }

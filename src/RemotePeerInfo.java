@@ -18,7 +18,7 @@ public class RemotePeerInfo {
         peerAddress = pAddress;
         peerPort = pPort;
         this.fileAvailable = fileAvailable;
-        bitfield = new byte[Peer.FileSize/Peer.PieceSize];
+        bitfield = new byte[Constants.FileSize/Constants.PieceSize];
     }
 
     // sets bitfield of a peer
