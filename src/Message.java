@@ -20,6 +20,7 @@ public class Message {
     private RemotePeerInfo peer;
     private String remotePeerID;
     private ObjectOutputStream outputStream;
+    //private int chunkIndex;
 
     // getter methods
     public byte[] getMessageType() {
@@ -66,9 +67,11 @@ public class Message {
             case 2:
                 System.out.println("In case for handling intreseted");
                 //handleInterested();
+                //Write in logger
                 break;
             case 3:
                 //handleNotInterested();
+                //Write in logger
                 break;
             case 4:
                 //handleHaveMessage();
@@ -81,17 +84,14 @@ public class Message {
                 }
                 else{
                     sendNotInterested(this.outputStream);
-
                 }
-
                 break;
-
             case 6:
                 sendRequestedMessage(messagePayload);
                 break;
 
             case 7:
-                downloadPiece(messagePayload);
+                handleDownloadPiece(messagePayload);
         }
 
     }
@@ -135,6 +135,28 @@ public class Message {
     // sends request message to the peer with the piece that is required
     private void sendRequestedMessage(byte[] messageIndex){
         //Send file to the peer with requested message index
+        try {
+            byte[] temp = Arrays.copyOfRange(messageIndex, 0, 4);
+            int pieceIndex = utilities.fromFourByteArrayToInteger(temp);
+            //ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+            //Add file chunk to outputStream
+            for (RemotePeerInfo rp : Constants.listOfAllPeers) {
+                if (rp.peerID.equals(remotePeerID)) {
+                    if (rp.isUnchoked) {
+                        //send Piece
+                        //outputStream.write();
+                        break;
+                    } else {
+                        //Do not send as it is choked
+                    }
+                }
+            }
+            //use ChokeUnchoke Map which has
+        }
+        catch(Exception e){
+
+        }
     }
 
     private boolean compareBitField(BitSet remoteBitfield){
@@ -151,16 +173,20 @@ public class Message {
     }
 
     // downloads the piece from the message received
-    private void downloadPiece(byte[] piece) {
+    private void handleDownloadPiece(byte[] piece) {
         //download and merge incoming piece
-
         //Need to update according to received packet
-        int pieceIndex = 3;
+        byte[] temp= Arrays.copyOfRange(piece, 0, 4);
+        int pieceIndex = utilities.fromFourByteArrayToInteger(temp);
+        //int pieceIndex = 3;
         updateBitField(pieceIndex);
-    }
 
+        //Broadcast have message with argument piece Index as byte array
+    }
     // updates the bitfiled with the recent piece that has been downloaded
     private void updateBitField(int pieceIndex){
+        Constants.selfBitfield.set(pieceIndex);
+        Constants.chunksLeft.set(pieceIndex,false);
         // peerObject.updateBitField(pieceIndex);
     }
 
@@ -177,7 +203,6 @@ public class Message {
             e.printStackTrace();
         }
     }
-
     private void sendNotInterested(ObjectOutputStream outputStream){
         try {
             Message msg = new Message( 4, 3, null);

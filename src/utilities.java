@@ -85,6 +85,7 @@ public class utilities {
         return data;
     }
 
+    //broadcasting have message to all it's neighbors
     public static void broadcastHaveMessage(String peerID, byte[] pieceIndex){
         for (RemotePeerInfo peer : Constants.listOfAllPeers) {
             if(!peer.peerID.equals(peerID)){
