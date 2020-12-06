@@ -17,7 +17,9 @@ public class Constants {
     public static BitSet selfBitfield;
     public static BitSet chunksLeft;
     public static HashMap<String, Boolean> chokeUnchokeMap = new HashMap<>();
-    public static List<RemotePeerInfo> interestedNeighbors = new ArrayList<>();
+    public static HashSet<RemotePeerInfo> interestedNeighbors = new HashSet();
+    public static List<RemotePeerInfo> preferredNeighbors = new ArrayList<>();
+    // public static 
     //Mapping of message type to value
     public static Map<String, Integer> messageTypeToVal = new HashMap(){{
         put("choke", 0);
@@ -87,5 +89,10 @@ public class Constants {
             chunksLeft = (BitSet) selfBitfield.clone();
             chunksLeft.flip(0, chunksLeft.length());
         }
+    }
+
+    //Setting list of preffered neighbors
+    public static synchronized void setListOfPreferredNeighbours(List<RemotePeerInfo> peers){
+        preferredNeighbors = peers;
     }
 }

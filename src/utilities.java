@@ -47,13 +47,11 @@ public class utilities {
     public static List<RemotePeerInfo> getKPreferredNeighbors(){
         List<RemotePeerInfo> kPreferredNeighbors = new ArrayList();
         int k = Constants.NumberOfPreferredNeighbors;
-        RemotePeerInfo[] allPeers = Constants.listOfAllPeers;
-        // List<RemotePeerInfo> otherPeers = new ArrayList<>();
-        // for(int i=0; i<allPeers.length; i++){
-        //     if(i == Constants.selfPeerIndex) continue;
-        //     otherPeers.add(allPeers[i]);
-        // }
-        RemotePeerInfo[] peers = removeObjectByIndexFromArray(allPeers, Constants.selfPeerIndex);
+        RemotePeerInfo[] peers = new RemotePeerInfo[Constants.interestedNeighbors.size()];
+        int index = 0;
+        for (RemotePeerInfo remotePeerInfo : Constants.interestedNeighbors) {
+            peers[index] = remotePeerInfo;
+        }
         Arrays.sort(peers, Comparator.comparing(RemotePeerInfo::getDownloadRate));
         for (RemotePeerInfo remotePeerInfo : peers) {
             if(k == 0) break;
@@ -85,6 +83,20 @@ public class utilities {
             data[i] = string.getBytes(Charset.defaultCharset()); // you can chose charset
         }
         return data;
+    }
+
+    public static void broadcastHaveMessage(String peerID, byte[] pieceIndex){
+        for (RemotePeerInfo peer : Constants.listOfAllPeers) {
+            if(!peer.peerID.equals(peerID)){
+                try {
+                    Message msg = new Message(4, 4, pieceIndex);
+                    byte[] msgByteArray = msg.createMessage();
+                    peer.out.write(msgByteArray); 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
    public static Piece[] readFileIntoChunks() {

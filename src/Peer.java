@@ -47,16 +47,18 @@ public class Peer {
         }
         
         sPort = Integer.parseInt(selfInfo.peerPort);
-        
+        new Controller().start();
         for (int outgoingPeer = 0; outgoingPeer < Constants.selfPeerIndex; outgoingPeer++) {
             System.out.println("Outgoing peer " + allBeforePeerInfo.get(outgoingPeer));
             Socket neighborPeer = new Socket(allBeforePeerInfo.get(outgoingPeer).peerAddress, Integer.parseInt(allBeforePeerInfo.get(outgoingPeer).peerPort));
+            Constants.listOfAllPeers[outgoingPeer].out = new ObjectOutputStream(neighborPeer.getOutputStream());
             new PeerHandler(neighborPeer, outgoingPeer).start();
         }
         
         ServerSocket serverSocket = new ServerSocket(sPort);
         for(int incomingPeers = Constants.selfPeerIndex + 1; incomingPeers< Constants.listOfAllPeers.length; incomingPeers++){
             Socket peerSocket = serverSocket.accept();
+            Constants.listOfAllPeers[incomingPeers].out = new ObjectOutputStream(peerSocket.getOutputStream());
             new PeerHandler(peerSocket, incomingPeers).start();
         }
         

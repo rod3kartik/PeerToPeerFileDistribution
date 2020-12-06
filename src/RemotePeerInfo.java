@@ -1,3 +1,4 @@
+import java.io.ObjectOutputStream;
 import java.util.BitSet;
 import java.util.HashSet;
 
@@ -18,6 +19,7 @@ public class RemotePeerInfo {
     public String fileAvailable;
     public BitSet bitfield = new BitSet(Constants.fileChunks.length);
     public float downloadRate = 0;
+    public ObjectOutputStream out;
 
     public RemotePeerInfo(String pId, String pAddress, String pPort, String fileAvailable) {
         peerID = pId;
