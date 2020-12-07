@@ -42,6 +42,10 @@ public class Peer {
         Constants.setChunksLeft();
         Constants.setSelfPeerInfo();
         Constants.setFileChunks();
+        for (RemotePeerInfo rp : Constants.listOfAllPeers){
+            Constants.peerIDToPeerInfo.put(rp.peerID,rp);
+        }
+
         try {
             allBeforePeerInfo.remove(allBeforePeerInfo.size()-1);
         } catch (Exception e) {
