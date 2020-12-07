@@ -4,4 +4,12 @@ public class Piece {
     Piece(byte[] inputBytes) {
         piece = inputBytes;
     }
+
+    public int getPieceSize(){
+        return this.piece.length;
+    }
+
+    public byte[] getPieceContent(){
+        return this.piece;
+    }
 }

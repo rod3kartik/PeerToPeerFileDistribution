@@ -1,4 +1,5 @@
 import java.io.*;
+import java.rmi.Remote;
 import java.util.*;
 public class Constants {
 
@@ -13,6 +14,7 @@ public class Constants {
     public static String headerHandshake ="P2PFILESHARINGPROJ";
     public static HashMap<String, Boolean> handshakedPeers = new HashMap<>();
     public static int selfPeerIndex = 0;
+    public static RemotePeerInfo selfPeerInfo;
     public static Piece[] fileChunks;
     public static BitSet selfBitfield;
     public static BitSet chunksLeft;
@@ -55,10 +57,10 @@ public class Constants {
         FileName = CommonFileReader.getFileName();
         FileSize = CommonFileReader.getFileSize();
         PieceSize = CommonFileReader.getPieceSize();
-        fileChunks = utilities.readFileIntoChunks();
+
         listOfAllPeers = Connection.fileReader();
         System.out.println(listOfAllPeers.length);
-        printListOfAllPairs();
+        // printListOfAllPairs();
     }
 
     // public void generateMapOfSocketToPeerID() {
@@ -80,8 +82,8 @@ public class Constants {
 
     public static void setChunksLeft() {
         if (selfBitfield.length() ==0){
-            chunksLeft = new BitSet(Constants.fileChunks.length);
-            chunksLeft.set(0,Constants.fileChunks.length);
+            chunksLeft = new BitSet(Constants.FileSize/Constants.PieceSize);
+            chunksLeft.set(0,Constants.FileSize/Constants.PieceSize);
             //this.chunksLeft = chunksLeft;
 
         }
@@ -94,5 +96,18 @@ public class Constants {
     //Setting list of preffered neighbors
     public static synchronized void setListOfPreferredNeighbours(List<RemotePeerInfo> peers){
         preferredNeighbors = peers;
+    }
+
+    //set selfPeerInfo
+    public static void setSelfPeerInfo(){
+        selfPeerInfo = listOfAllPeers[selfPeerIndex];
+    }
+
+    public static void setFileChunks(){
+        if(selfPeerInfo.fileAvailable.equals("1")){
+            fileChunks = utilities.readFileIntoChunks();
+        } else {
+            fileChunks = new Piece[Constants.FileSize/Constants.PieceSize];
+    }
     }
 }

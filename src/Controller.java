@@ -3,7 +3,6 @@ import java.io.*;
 
 
 public class Controller extends Thread{
-    
 
     public void run(){
 

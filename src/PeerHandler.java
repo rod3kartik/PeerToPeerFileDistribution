@@ -14,14 +14,14 @@ public class PeerHandler extends Thread{
     private float downloadDataSize = 0;
     private long downloadStartTime = 0;
 
-    PeerHandler(Socket socket, int peerIndex) {
+    PeerHandler(Socket socket, int peerIndex, ObjectInputStream inputStream, ObjectOutputStream outputStream) {
         this.peerSocket = socket;
         System.out.println(peerIndex + " " + Constants.listOfAllPeers.length);
 
         try {
             
-            this.out = new ObjectOutputStream(socket.getOutputStream());
-            this.in = new ObjectInputStream(socket.getInputStream());
+            this.out = outputStream;
+            this.in = inputStream;
             System.out.println(socket.getRemoteSocketAddress().toString().substring(1));
             peer = Constants.listOfAllPeers[peerIndex];
             // peerId = Constants.socketToPeerID.get(socket.getre.toString().substring(1));
@@ -48,6 +48,7 @@ public class PeerHandler extends Thread{
         
                     try {
                         incomingMessage = new byte[32];
+
                         in.read(incomingMessage);
                         // System.out.println( " IN the while 2");
                         
@@ -80,7 +81,7 @@ public class PeerHandler extends Thread{
                     
                     try {
                         byte[] messageLength = in.readNBytes(4);
-                        int msgLength = (int)utilities.fromByteArrayToInteger(messageLength);
+                        int msgLength = (int)utilities.fromByteArrayToLong(messageLength);
                         System.out.println("Received message length: " + msgLength);
                         incomingMessage = new byte[msgLength];
                         incomingMessage = in.readNBytes(msgLength);
@@ -93,7 +94,7 @@ public class PeerHandler extends Thread{
                             e.printStackTrace();
                         }
                         System.out.println(this.peer + this.peer.peerID);
-                        Message messageObj = new Message(outputBuffer.toByteArray(), this.peer.peerID, out);
+                        Message messageObj = new Message(outputBuffer.toByteArray(), this.peer, out);
                         messageObj.extractMessage();
                         System.out.println("Map is " + Constants.peerIDToBitfield);
                     } catch (Exception e) {

@@ -2,6 +2,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.*;
 import java.io.*;
 import java.util.*;
@@ -15,15 +16,20 @@ import java.util.*;
 public class utilities {
     
     
-    public static long fromByteArrayToInteger(byte[] value) 
-    {
+    public static long fromByteArrayToLong(byte[] value) 
+    {   
+        
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-        final byte val = (byte) (value[0] < 0 ? 0xFF : 0);
+        try {
+            final byte val = (byte) (value[0] < 0 ? 0xFF : 0);
     
-        for(int i = value.length; i < Long.BYTES; i++)
-            buffer.put(val);
-    
-        buffer.put(value);
+            for(int i = value.length; i < Long.BYTES; i++)
+                buffer.put(val);
+        
+            buffer.put(value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return buffer.getLong(0);
     
     }

@@ -62,7 +62,7 @@ public class Handshake {
     // }
 
     public void handleHandShakeMessage(byte[] bytePeerID){
-        long peerID = utilities.fromByteArrayToInteger(bytePeerID);
+        long peerID = utilities.fromByteArrayToLong(bytePeerID);
         Constants.handshakedPeers.put(Long.toString(peerID), true);
         System.out.println("PeerID received in handshake " + peerID);
         System.out.println(Constants.handshakedPeers);

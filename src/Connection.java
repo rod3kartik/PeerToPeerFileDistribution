@@ -45,12 +45,14 @@ public class Connection {
             while ((st = br.readLine()) != null) {
                 String[] rows = st.split(" ");
                 hosts[line] = new RemotePeerInfo(rows[0],rows[1],rows[2],rows[3]);
+                System.out.println("reader " + rows);
                 line++;
             }
             br.close();
         }
         catch(Exception e){
             System.out.println("exception");
+            e.printStackTrace();
         }
         return hosts;
     }

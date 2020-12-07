@@ -43,19 +43,23 @@ public class Message {
         System.out.println("Message payload is " + messagePayload);
     }
 
-    public Message(byte[] receivedMessage, String peerID,ObjectOutputStream opstream){
-        messageLength = Arrays.copyOfRange(receivedMessage, 0, 4);
-        messageType = Arrays.copyOfRange(receivedMessage, 4, 8);
-        messagePayload = Arrays.copyOfRange(receivedMessage, 8, receivedMessage.length);
-        remotePeerID = peerID;
-        this.outputStream = opstream;
+    public Message(byte[] receivedMessage, RemotePeerInfo peer, ObjectOutputStream opstream){
+        try {
+            messageLength = Arrays.copyOfRange(receivedMessage, 0, 4);
+            messageType = Arrays.copyOfRange(receivedMessage, 4, 8);
+            messagePayload = Arrays.copyOfRange(receivedMessage, 8, receivedMessage.length);
+            this.peer = peer;
+            this.outputStream = opstream;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // extracts the received message, determines the type of the message, 
     // and sends it for the next process as per its type
     public void extractMessage(){
         // String message = Arrays.toString(this.messageType);
-        int msgType = (int)utilities.fromByteArrayToInteger(this.messageType);
+        int msgType = (int)utilities.fromByteArrayToLong(this.messageType);
         System.out.println("message type: "+ msgType);
         switch (msgType){
             case 0:
@@ -79,7 +83,7 @@ public class Message {
 
             case 5:
                 initBitField(this.messagePayload, this.outputStream);
-                if(compareBitField(Constants.peerIDToBitfield.get(remotePeerID) )){
+                if(compareBitField(Constants.peerIDToBitfield.get(peer.peerID) )){
                     sendInterested(this.outputStream);
                 }
                 else{
@@ -87,11 +91,12 @@ public class Message {
                 }
                 break;
             case 6:
-                sendRequestedMessage(messagePayload);
+                handleRequestMessage(this.messagePayload);
                 break;
 
             case 7:
-                handleDownloadPiece(messagePayload);
+                byte[] pieceIndex = handleDownloadPiece(messagePayload);
+                utilities.broadcastHaveMessage(Constants.listOfAllPeers[Constants.selfPeerIndex].peerID, pieceIndex);
         }
 
     }
@@ -127,35 +132,27 @@ public class Message {
     // initializes the bitfield using the setter method
     private void initBitField(byte[] newBitField, ObjectOutputStream outputStream){
         BitSet payload = BitSet.valueOf(newBitField);
-        Constants.peerIDToBitfield.put(remotePeerID, payload);
-        System.out.println("Remote peerID is" + remotePeerID);
+        Constants.peerIDToBitfield.put(peer.peerID, payload);
+        System.out.println("Remote peerID is" + peer.peerID);
 
     }
 
     // sends request message to the peer with the piece that is required
-    private void sendRequestedMessage(byte[] messageIndex){
+    private void handleRequestMessage(byte[] messageIndex){
         //Send file to the peer with requested message index
         try {
-            byte[] temp = Arrays.copyOfRange(messageIndex, 0, 4);
-            int pieceIndex = utilities.fromFourByteArrayToInteger(temp);
-            //ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-            //Add file chunk to outputStream
-            for (RemotePeerInfo rp : Constants.listOfAllPeers) {
-                if (rp.peerID.equals(remotePeerID)) {
-                    if (rp.isUnchoked) {
-                        //send Piece
-                        //outputStream.write();
-                        break;
-                    } else {
-                        //Do not send as it is choked
-                    }
-                }
+            // byte[] temp = Arrays.copyOfRange(messageIndex, 0, 4);
+            int pieceIndex = (int)utilities.fromByteArrayToLong(messageIndex);
+            
+            if(peer.isUnchoked && Constants.selfBitfield.get(pieceIndex)){
+                Message msg = new Message(Constants.fileChunks[pieceIndex].getPieceSize() + 4, 7, Constants.fileChunks[pieceIndex].getPieceContent());
+                byte[] msgByteArray = msg.createMessage();
+                this.outputStream.write(msgByteArray);
+                this.outputStream.flush();
             }
-            //use ChokeUnchoke Map which has
         }
         catch(Exception e){
-
+            e.printStackTrace();
         }
     }
 
@@ -173,14 +170,14 @@ public class Message {
     }
 
     // downloads the piece from the message received
-    private void handleDownloadPiece(byte[] piece) {
+    private byte[] handleDownloadPiece(byte[] piece) {
         //download and merge incoming piece
         //Need to update according to received packet
         byte[] temp= Arrays.copyOfRange(piece, 0, 4);
         int pieceIndex = utilities.fromFourByteArrayToInteger(temp);
         //int pieceIndex = 3;
         updateBitField(pieceIndex);
-
+        return temp;
         //Broadcast have message with argument piece Index as byte array
     }
     // updates the bitfiled with the recent piece that has been downloaded
