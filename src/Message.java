@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.BitSet;
+import java.util.List;
+import java.util.Random;
 
 public class Message {
 //    public static enum Type {
@@ -63,10 +65,26 @@ public class Message {
         System.out.println("message type: "+ msgType);
         switch (msgType){
             case 0:
-                //updatePeerChokeList(Integer.parseInt(peerObject.peerID),0);
+                handleChokeMessage(this.peer);
                 break;
             case 1:
-                // updatePeerChokeList(Integer.parseInt(peerObject.peerID),1);
+                //setting that peer's unchoked status 
+                handleUnchokeMessage(this.peer);
+                BitSet commonPiecesBitSet = (BitSet)Constants.chunksLeft.clone();
+                commonPiecesBitSet.intersects(this.peer.bitfield);
+                List<Integer> indexes = utilities.getIndexListFromBitset(commonPiecesBitSet);
+                Random rand = new Random();
+                int pieceIndex = indexes.get(0);
+                while(true){
+                    int randomInt = rand.nextInt(indexes.size());
+                    pieceIndex = indexes.get(randomInt);
+                    if(!Constants.requestedPieceIndexes.contains(pieceIndex)){
+                        break;
+                    }
+                    indexes.remove(Integer.valueOf(pieceIndex));
+                }
+                sendRequestMessage(pieceIndex, this.peer);
+                Constants.updateRequestedPieceIndexes(pieceIndex, true);
                 break;
             case 2:
                 System.out.println("In case for handling intreseted");
@@ -95,13 +113,38 @@ public class Message {
                 break;
 
             case 7:
-                byte[] pieceIndex = handleDownloadPiece(messagePayload);
-                utilities.broadcastHaveMessage(Constants.listOfAllPeers[Constants.selfPeerIndex].peerID, pieceIndex);
+                byte[] pieceIndexByteArray = handleDownloadPiece(messagePayload);
+                utilities.broadcastHaveMessage(Constants.listOfAllPeers[Constants.selfPeerIndex].peerID, pieceIndexByteArray);
         }
 
     }
 
-    public byte[] createMessage(){
+  
+
+
+
+    private void handleChokeMessage(RemotePeerInfo remotePeer) {
+        remotePeer.isUnchoked = false;
+    }
+
+    private void handleUnchokeMessage(RemotePeerInfo peer2) {
+        peer2.isUnchoked = true;
+    }
+
+    private void sendRequestMessage(int index, RemotePeerInfo peer2) {
+        try {
+            byte[] pload = ByteBuffer.allocate(4).putInt(index).array();
+            byte[] msg = new Message(8, 6, pload).createMessage();
+            peer2.out.write(msg);
+            peer2.out.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+      
+
+    }
+
+    public byte[] createMessage() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
             outputStream.write(this.messageLength);
@@ -169,6 +212,7 @@ public class Message {
 
     }
 
+     
     // downloads the piece from the message received
     private byte[] handleDownloadPiece(byte[] piece) {
         //download and merge incoming piece
@@ -177,6 +221,7 @@ public class Message {
         int pieceIndex = utilities.fromFourByteArrayToInteger(temp);
         //int pieceIndex = 3;
         updateBitField(pieceIndex);
+        Constants.updateRequestedPieceIndexes(pieceIndex, false);
         return temp;
         //Broadcast have message with argument piece Index as byte array
     }

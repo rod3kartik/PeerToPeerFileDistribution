@@ -93,7 +93,7 @@ public class PeerHandler extends Thread{
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        System.out.println(this.peer + this.peer.peerID);
+                        System.out.println("Peer: " + this.peer.peerID);
                         Message messageObj = new Message(outputBuffer.toByteArray(), this.peer, out);
                         messageObj.extractMessage();
                         System.out.println("Map is " + Constants.peerIDToBitfield);
