@@ -61,8 +61,8 @@ public class Constants {
         PieceSize = CommonFileReader.getPieceSize();
 
         listOfAllPeers = Connection.fileReader();
-        System.out.println(listOfAllPeers.length);
-        // printListOfAllPairs();
+        System.out.println("list of all peers "+ listOfAllPeers[listOfAllPeers.length-2].peerID);
+         printListOfAllPairs();
     }
 
     // public void generateMapOfSocketToPeerID() {

@@ -35,6 +35,7 @@ public class PeerHandler extends Thread{
 
     public void run(){
         System.out.println("From handler");
+        //new Controller().start();
         Handshake h = new Handshake();
         byte[] incomingMessage;
         try {

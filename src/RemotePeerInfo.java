@@ -32,10 +32,7 @@ public class RemotePeerInfo {
         if(fileAvailable.equals("1")){
             bitfield.set(0, Constants.FileSize/Constants.PieceSize);
         }
-//        else{
-//            System.out.println("Bitfield in case of no file is " + bitfield);
-//        }
-        System.out.println(bitfield.length() + " " + fileAvailable + " "+ bitfield);
+        System.out.println(bitfield.length() + " " + fileAvailable + " "+ bitfield + " " + peerID);
     }
 
     public void setBitfield(int bit) {
