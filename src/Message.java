@@ -238,7 +238,7 @@ public class Message {
         //download and merge incoming piece
         //Need to update according to received packet
         byte[] temp= Arrays.copyOfRange(piece, 0, 4);
-        int pieceIndex = utilities.fromFourByteArrayToInteger(temp);
+        int pieceIndex = (int)utilities.fromByteArrayToLong(temp);
         //int pieceIndex = 3;
         updateBitField(pieceIndex);
         Constants.updateRequestedPieceIndexes(pieceIndex, false);

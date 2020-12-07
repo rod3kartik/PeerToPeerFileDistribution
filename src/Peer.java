@@ -26,9 +26,8 @@ public class Peer {
 
         String peerFromCommandLine = args[0];
 
-        new Constants();
+        Constants c = new Constants();
 
-        System.out.println(Constants.fileChunks);
         FileLogger fl = new FileLogger(peerFromCommandLine);
 
         // connecting to other peers and starting Client and Server
