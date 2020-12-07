@@ -59,16 +59,19 @@ public class utilities {
         int index = 0;
         System.out.println("Interested neighhours are " + Constants.interestedNeighbors);
         for (RemotePeerInfo remotePeerInfo : Constants.interestedNeighbors) {
+            if(index >= peers.length) break;
             peers[index] = remotePeerInfo;
             index++;
         }
         System.out.println("Peers array length is " + peers.length);
 
         if(Constants.selfPeerInfo.fileAvailable.equals("1")){
-           int[] randomNumbers = new Random().ints(0, peers.length).distinct().limit(2).toArray();
+            System.out.println("in equals");
+           int[] randomNumbers = new Random().ints(0, peers.length).distinct().limit(Math.min(2, peers.length)).toArray();
            for (int i : randomNumbers) {
                kPreferredNeighbors.add(peers[i]);
            }
+           System.out.println("in equals 2");
         } else {
 
             Arrays.sort(peers, Comparator.comparing(RemotePeerInfo::getDownloadRate));

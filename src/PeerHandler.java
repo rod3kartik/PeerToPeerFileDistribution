@@ -81,7 +81,7 @@ public class PeerHandler extends Thread{
                     try {
                         byte[] messageLength = in.readNBytes(4);
                         int msgLength = (int)utilities.fromByteArrayToLong(messageLength);
-                        System.out.println("Received message length: " + msgLength);
+                        // System.out.println("Received message length: " + msgLength);
                         incomingMessage = new byte[msgLength];
                         incomingMessage = in.readNBytes(msgLength);
                         ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();

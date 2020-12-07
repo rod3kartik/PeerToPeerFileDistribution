@@ -72,23 +72,25 @@ public class Message {
             case 1:
                 //setting that peer's unchoked status 
                 handleUnchokeMessage(this.peer);
-                BitSet commonPiecesBitSet = (BitSet)Constants.chunksLeft.clone();
-                commonPiecesBitSet.intersects(this.peer.bitfield);
-                List<Integer> indexes = utilities.getIndexListFromBitset(commonPiecesBitSet);
-                Random rand = new Random();
-                if(indexes.size() == 0) break;
-                int pieceIndex = indexes.get(0);
-                while(true){
+                while(this.peer.isUnchoked){
+                    BitSet commonPiecesBitSet = (BitSet)Constants.chunksLeft.clone();
+                    commonPiecesBitSet.intersects(this.peer.bitfield);
+                    List<Integer> indexes = utilities.getIndexListFromBitset(commonPiecesBitSet);
+                    Random rand = new Random();
                     if(indexes.size() == 0) break;
-                    int randomInt = rand.nextInt(indexes.size());
-                    pieceIndex = indexes.get(randomInt);
-                    if(!Constants.requestedPieceIndexes.contains(pieceIndex)){
-                        break;
+                    int pieceIndex = indexes.get(0);
+                    while(true){
+                        if(indexes.size() == 0) break;
+                        int randomInt = rand.nextInt(indexes.size());
+                        pieceIndex = indexes.get(randomInt);
+                        if(!Constants.requestedPieceIndexes.contains(pieceIndex)){
+                            break;
+                        }
+                        indexes.remove(Integer.valueOf(pieceIndex));
                     }
-                    indexes.remove(Integer.valueOf(pieceIndex));
+                    sendRequestMessage(pieceIndex, this.peer);
+                    Constants.updateRequestedPieceIndexes(pieceIndex, true);
                 }
-                sendRequestMessage(pieceIndex, this.peer);
-                Constants.updateRequestedPieceIndexes(pieceIndex, true);
                 break;
             case 2:
                 System.out.println("In case for handling intreseted");

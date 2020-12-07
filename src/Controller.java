@@ -15,6 +15,7 @@ public class Controller extends Thread{
             //call the method
             System.out.println("Running controller again");
             List<RemotePeerInfo> preferredNeighbors = utilities.getKPreferredNeighbors();
+            System.out.println("cleared");
             Constants.setListOfPreferredNeighbours(preferredNeighbors);
             System.out.println("List of pref neighours " + preferredNeighbors.size());
             Constants.printListOfPeers(preferredNeighbors);
