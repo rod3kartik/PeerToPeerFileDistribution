@@ -97,13 +97,13 @@ public class Message {
                 //Write in logger
                 break;
             case 4:
-                //handleHaveMessage();
+                this.handleHaveMessage();
                 break;
 
             case 5:
                 initBitField(this.messagePayload, this.outputStream);
                 if(compareBitField(Constants.peerIDToBitfield.get(peer.peerID) )){
-                    sendInterested(this.outputStream);
+                    sendInterestedMessage(this.outputStream);
                 }
                 else{
                     sendNotInterested(this.outputStream);
@@ -123,6 +123,13 @@ public class Message {
   
 
 
+
+    private void handleHaveMessage() {
+        int pieceIndex = (int) utilities.fromByteArrayToLong(this.messagePayload);
+        if(Constants.chunksLeft.get(pieceIndex)){
+            sendInterestedMessage(this.outputStream);
+        }
+    }
 
     private void handleChokeMessage(RemotePeerInfo remotePeer) {
         remotePeer.isUnchoked = false;
@@ -245,7 +252,7 @@ public class Message {
         // peerObject.updateBitField(pieceIndex);
     }
 
-    private void sendInterested(ObjectOutputStream outputStream){
+    private void sendInterestedMessage(ObjectOutputStream outputStream){
         try {
             System.out.println("In send Interested method");
             Message msg = new Message( 4, 2, null);
