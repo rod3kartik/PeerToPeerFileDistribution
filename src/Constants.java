@@ -10,7 +10,7 @@ public class Constants {
     public static String FileName;
     public static int FileSize;
     public static int PieceSize;
-    public static RemotePeerInfo[] listOfAllPeers = new RemotePeerInfo[4];
+    public static RemotePeerInfo[] listOfAllPeers = new RemotePeerInfo[3];
     public static String headerHandshake ="P2PFILESHARINGPROJ";
     public static HashMap<String, Boolean> handshakedPeers = new HashMap<>();
     public static int selfPeerIndex = 0;
@@ -61,8 +61,8 @@ public class Constants {
         PieceSize = CommonFileReader.getPieceSize();
 
         listOfAllPeers = Connection.fileReader();
-        System.out.println("list of all peers "+ listOfAllPeers[listOfAllPeers.length-2].peerID);
-         printListOfAllPairs();
+        //System.out.println("list of all peers "+ listOfAllPeers[listOfAllPeers.length-2].peerID);
+         printArrayOfPeers(listOfAllPeers);
     }
 
     // public void generateMapOfSocketToPeerID() {
@@ -72,9 +72,16 @@ public class Constants {
     //     }
     // }
 
-    public void printListOfAllPairs() {
+    public static void printArrayOfPeers(RemotePeerInfo[] listOfAllPeers) {
         for (RemotePeerInfo peer : listOfAllPeers) {
             System.out.println(peer.peerID + peer.bitfield);
+        }
+    }
+
+    public static void printListOfPeers(List<RemotePeerInfo> listOfAllPeers) {
+        for (RemotePeerInfo peer : listOfAllPeers) {
+
+            System.out.println("From printListOfPeers " + peer.peerID + peer.bitfield);
         }
     }
 

@@ -16,7 +16,7 @@ public class PeerHandler extends Thread{
 
     PeerHandler(Socket socket, int peerIndex, ObjectInputStream inputStream, ObjectOutputStream outputStream) {
         this.peerSocket = socket;
-        System.out.println(peerIndex + " " + Constants.listOfAllPeers.length);
+        //System.out.println(peerIndex + " " + Constants.listOfAllPeers.length);
 
         try {
             
@@ -25,7 +25,7 @@ public class PeerHandler extends Thread{
             System.out.println(socket.getRemoteSocketAddress().toString().substring(1));
             peer = Constants.listOfAllPeers[peerIndex];
             // peerId = Constants.socketToPeerID.get(socket.getre.toString().substring(1));
-            System.out.println("PeerID " + peer.peerID);
+            //System.out.println("PeerID " + peer.peerID);
         } catch (Exception e) {
             System.out.println("Cought an exception in PeerHandler");
             e.printStackTrace();
@@ -34,7 +34,7 @@ public class PeerHandler extends Thread{
     }
 
     public void run(){
-        System.out.println("From handler");
+        //System.out.println("From handler");
         //new Controller().start();
         Handshake h = new Handshake();
         byte[] incomingMessage;
@@ -56,7 +56,7 @@ public class PeerHandler extends Thread{
                         System.out.println("incoming message received " + incomingMessage);
                         byte[] isHandShakeHeader = Arrays.copyOfRange(incomingMessage, 0, 18);
                         String tempHeader = new String(isHandShakeHeader, StandardCharsets.UTF_8);
-                        System.out.println("header received " + tempHeader);
+                        //System.out.println("header received " + tempHeader);
                         if(tempHeader.equals(Constants.headerHandshake)){
                             h.handleHandShakeMessage(Arrays.copyOfRange(incomingMessage, 28, 32));
                         }
@@ -87,14 +87,14 @@ public class PeerHandler extends Thread{
                         incomingMessage = new byte[msgLength];
                         incomingMessage = in.readNBytes(msgLength);
                         ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
-                        System.out.println("hr");
+                        //System.out.println("hr");
                         try {
                             outputBuffer.write(messageLength);
                             outputBuffer.write(incomingMessage);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        System.out.println("Peer: " + this.peer.peerID);
+                        //System.out.println("Peer: " + this.peer.peerID);
                         Message messageObj = new Message(outputBuffer.toByteArray(), this.peer, out);
                         messageObj.extractMessage();
                         System.out.println("Map is " + Constants.peerIDToBitfield);
