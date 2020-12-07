@@ -115,6 +115,9 @@ public class Constants {
     public static void setFileChunks(){
         if(selfPeerInfo.fileAvailable.equals("1")){
             fileChunks = utilities.readFileIntoChunks();
+            for (Piece piece : fileChunks) {
+                System.out.println("Individual Pieces: "+ piece.toString());
+            }
         } else {
             fileChunks = new Piece[Constants.FileSize/Constants.PieceSize];
     }

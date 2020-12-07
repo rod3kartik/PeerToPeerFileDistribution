@@ -2,6 +2,7 @@ import java.io.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class CommonFileReader {
     public static void confReader() {
         try {
                 
-            File peerInfoConfigFile = new File("./common.cfg");
+            File peerInfoConfigFile = Paths.get("./" + "common.cfg").toFile();
            
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;

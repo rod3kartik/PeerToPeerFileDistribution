@@ -232,12 +232,19 @@ public class Message {
     // sends request message to the peer with the piece that is required
     private void handleRequestMessage(byte[] messageIndex){
         //Send file to the peer with requested message index
+
         try {
             // byte[] temp = Arrays.copyOfRange(messageIndex, 0, 4);
             int pieceIndex = (int)utilities.fromByteArrayToLong(messageIndex);
-            System.out.println("***************************** " + pieceIndex);
+
             if(peer.isUnchoked && Constants.selfBitfield.get(pieceIndex)){
-                Message msg = new Message(Constants.fileChunks[pieceIndex].getPieceSize() + 4, 7, Constants.fileChunks[pieceIndex].getPieceContent());
+                System.out.println("***************************** " + pieceIndex);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                
+                outputStream.write(messageIndex);
+                outputStream.write(Constants.fileChunks[pieceIndex].getPieceContent());
+            
+                Message msg = new Message(outputStream.toByteArray().length + 4, 7, outputStream.toByteArray());
                 byte[] msgByteArray = msg.createMessage();
                 this.outputStream.write(msgByteArray);
                 this.outputStream.flush();

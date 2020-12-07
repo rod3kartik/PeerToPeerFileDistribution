@@ -127,9 +127,8 @@ public class utilities {
         int fileChunkIndex = 0;
         
         while(offset<buffer.length){
-            fileChunks[fileChunkIndex] = new Piece(Arrays.copyOfRange(buffer, offset, offset + Constants.PieceSize));
+            fileChunks[fileChunkIndex++] = new Piece(Arrays.copyOfRange(buffer, offset, offset + Constants.PieceSize));
             offset += Constants.PieceSize;
-            // System.out.println(offset);
         }
        } catch (Exception e) {
            System.out.println("Couldn't read the file");

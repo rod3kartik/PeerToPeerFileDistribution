@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class Connection {
     public static RemotePeerInfo[] fileReader() {
         try {
 
-            File peerInfoConfigFile = new File("peerInfo.cfg");
+            File peerInfoConfigFile =Paths.get("./" + "peerInfo.cfg").toFile();
             line = 0;
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;
