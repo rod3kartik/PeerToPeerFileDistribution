@@ -34,12 +34,12 @@ public class utilities {
     
     }
 
-    public static int fromFourByteArrayToInteger(byte[] bytes) {
-        return ((bytes[0] & 0xFF) << 24) | 
-               ((bytes[1] & 0xFF) << 16) | 
-               ((bytes[2] & 0xFF) << 8 ) | 
-               ((bytes[3] & 0xFF) << 0 );
-    }
+    // public static int fromFourByteArrayToInteger(byte[] bytes) {
+    //     return ((bytes[0] & 0xFF) << 24) | 
+    //            ((bytes[1] & 0xFF) << 16) | 
+    //            ((bytes[2] & 0xFF) << 8 ) | 
+    //            ((bytes[3] & 0xFF) << 0 );
+    // }
 
     public static String[] convertToStrings(byte[][] byteStrings) {
         String[] data = new String[byteStrings.length];
@@ -128,7 +128,6 @@ public class utilities {
             // System.out.println(offset);
         }
        } catch (Exception e) {
-           //TODO: handle exception
            System.out.println("Couldn't read the file");
            e.printStackTrace();
        }
