@@ -9,7 +9,10 @@ public class Constants {
     public static int OptimisticUnchokingInterval;
     public static String FileName;
     public static int FileSize;
+    
+    public static int numberOfChunks;
     public static int PieceSize;
+    
     public static RemotePeerInfo[] listOfAllPeers = new RemotePeerInfo[3];
     public static String headerHandshake ="P2PFILESHARINGPROJ";
     public static HashMap<String, Boolean> handshakedPeers = new HashMap<>();
@@ -59,7 +62,12 @@ public class Constants {
         FileName = CommonFileReader.getFileName();
         FileSize = CommonFileReader.getFileSize();
         PieceSize = CommonFileReader.getPieceSize();
-
+        System.out.println(FileSize + " " + PieceSize + " " + Math.ceil(FileSize/PieceSize) + " " + (int)Math.ceil(FileSize/PieceSize));
+        try {
+            numberOfChunks = (int)Math.ceil((FileSize * 1.0)/(PieceSize*1.0));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         listOfAllPeers = Connection.fileReader();
         //System.out.println("list of all peers "+ listOfAllPeers[listOfAllPeers.length-2].peerID);
          printArrayOfPeers(listOfAllPeers);
@@ -91,8 +99,8 @@ public class Constants {
 
     public static void setChunksLeft() {
         if (selfBitfield.length() ==0){
-            chunksLeft = new BitSet(Constants.FileSize/Constants.PieceSize);
-            chunksLeft.set(0,Constants.FileSize/Constants.PieceSize);
+            chunksLeft = new BitSet(Constants.numberOfChunks);
+            chunksLeft.set(0,Constants.numberOfChunks);
             //this.chunksLeft = chunksLeft;
 
         }
@@ -116,7 +124,7 @@ public class Constants {
         if(selfPeerInfo.fileAvailable.equals("1")){
             fileChunks = utilities.readFileIntoChunks();
         } else {
-            fileChunks = new Piece[Constants.FileSize/Constants.PieceSize];
+            fileChunks = new Piece[Constants.numberOfChunks];
     }
     }
 

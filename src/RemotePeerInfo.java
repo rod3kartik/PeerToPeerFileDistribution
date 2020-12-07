@@ -17,7 +17,7 @@ public class RemotePeerInfo {
     public String peerAddress;
     public String peerPort;
     public String fileAvailable;
-    public BitSet bitfield = new BitSet(Constants.FileSize/Constants.PieceSize);
+    public BitSet bitfield = new BitSet(Constants.numberOfChunks);
     public float downloadRate = 0;
     public ObjectOutputStream out;
     public boolean isUnchoked = false;
@@ -30,9 +30,9 @@ public class RemotePeerInfo {
         peerPort = pPort;
         this.fileAvailable = fileAvailable;
 
-        bitfield.clear(0, Constants.FileSize/Constants.PieceSize);
+        bitfield.clear(0, Constants.numberOfChunks);
         if(fileAvailable.equals("1")){
-            bitfield.set(0, Constants.FileSize/Constants.PieceSize);
+            bitfield.set(0, Constants.numberOfChunks);
         }
         System.out.println(bitfield.length() + " " + fileAvailable + " "+ bitfield + " " + peerID);
     }

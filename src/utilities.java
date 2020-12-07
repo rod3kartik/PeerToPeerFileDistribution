@@ -130,7 +130,7 @@ public class utilities {
     }
 
    public static Piece[] readFileIntoChunks() {
-        Piece[] fileChunks = new Piece[Constants.FileSize/Constants.PieceSize];
+        Piece[] fileChunks = new Piece[Constants.numberOfChunks];
        try {
         byte[] buffer = Files.readAllBytes(Paths.get("./" + Constants.FileName));
         System.out.println("Buffer length "+ buffer.length);

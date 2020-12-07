@@ -69,6 +69,7 @@ public class Peer {
             Constants.listOfAllPeers[incomingPeers].out = out;
             new PeerHandler(peerSocket, incomingPeers, in , out).start();
         }
+    
         new Controller().start();
 
         HashSet<Integer> connectedClients = new HashSet();
