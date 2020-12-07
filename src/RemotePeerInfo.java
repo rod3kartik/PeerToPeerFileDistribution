@@ -21,6 +21,8 @@ public class RemotePeerInfo {
     public float downloadRate = 0;
     public ObjectOutputStream out;
     public boolean isUnchoked = false;
+    public float downloadDataSize = 0;
+    public long downloadStartTime = 0;
 
     public RemotePeerInfo(String pId, String pAddress, String pPort, String fileAvailable) {
         peerID = pId;
@@ -52,4 +54,17 @@ public class RemotePeerInfo {
     // public int compareTo(RemotePeerInfo p1) {
     //     return this.getDownloadRate().compareTo(p1.getDownloadRate());
     // }
+
+    public void setDownloadSpeed(){
+		long timePeriod = System.currentTimeMillis() - downloadStartTime;
+		if(timePeriod != 0){
+			downloadRate = downloadDataSize /timePeriod;
+		}else{
+			downloadRate = 0;
+		} 
+    }
+    
+    public void setDownloadDataSize(int size){
+        downloadDataSize += size;
+    }
 }

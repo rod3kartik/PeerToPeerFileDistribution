@@ -22,8 +22,8 @@ public class CommonFileReader {
     //FileReader function
     public static void confReader() {
         try {
-
-            File peerInfoConfigFile = new File("common.cfg");
+                
+            File peerInfoConfigFile = new File("./common.cfg");
            
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;

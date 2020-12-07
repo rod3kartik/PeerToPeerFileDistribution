@@ -114,7 +114,9 @@ public class Message {
                 break;
 
             case 7:
-                byte[] pieceIndexByteArray = handleDownloadPiece(messagePayload);
+                byte[] pieceIndexByteArray = handleDownloadPiece(this.messagePayload);
+                this.peer.setDownloadDataSize(this.messagePayload.length);
+                this.peer.setDownloadSpeed();
                 utilities.broadcastHaveMessage(Constants.listOfAllPeers[Constants.selfPeerIndex].peerID, pieceIndexByteArray);
         }
 
@@ -179,6 +181,7 @@ public class Message {
         catch (Exception e){
             e.printStackTrace();
         }
+        
     }
     public void sendChokeMessage(ObjectOutputStream out){
         byte[] chokeMsg = this.createMessage();
@@ -232,7 +235,7 @@ public class Message {
         try {
             // byte[] temp = Arrays.copyOfRange(messageIndex, 0, 4);
             int pieceIndex = (int)utilities.fromByteArrayToLong(messageIndex);
-            System.out.println("*****************************8");
+            System.out.println("***************************** " + pieceIndex);
             if(peer.isUnchoked && Constants.selfBitfield.get(pieceIndex)){
                 Message msg = new Message(Constants.fileChunks[pieceIndex].getPieceSize() + 4, 7, Constants.fileChunks[pieceIndex].getPieceContent());
                 byte[] msgByteArray = msg.createMessage();

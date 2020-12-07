@@ -28,6 +28,7 @@ public class Controller extends Thread{
                         System.out.println("THis is null though");
                     }
                     chokeMsg.sendChokeMessage(rpI.out);
+                    rpI.isUnchoked = false;
                 }
                 else{
                     Message unchokeMsg = new Message(4, 1, null);
@@ -36,6 +37,7 @@ public class Controller extends Thread{
                         System.out.println("Unchoke null ");
                     }
                     unchokeMsg.sendUnchokeMessage(rpI.out);
+                    rpI.isUnchoked = true; 
                 }
             }
 //            for(RemotePeerInfo rpI : Constants.preferredNeighbors){

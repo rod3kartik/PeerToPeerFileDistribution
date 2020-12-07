@@ -11,8 +11,6 @@ public class PeerHandler extends Thread{
     private ObjectOutputStream out;    //stream write to the socket
     private RemotePeerInfo peer;
     private boolean firstTime = true;
-    private float downloadDataSize = 0;
-    private long downloadStartTime = 0;
 
     PeerHandler(Socket socket, int peerIndex, ObjectInputStream inputStream, ObjectOutputStream outputStream) {
         this.peerSocket = socket;
@@ -110,12 +108,4 @@ public class PeerHandler extends Thread{
         }
     }
 
-    public double getDownloadSpeed(){
-		long timePeriod = System.currentTimeMillis() - downloadStartTime;
-		if(timePeriod != 0){
-			return ((downloadDataSize) / (timePeriod * 1.0) );
-		}else{
-			return 0;
-		} 
-	}
 }
