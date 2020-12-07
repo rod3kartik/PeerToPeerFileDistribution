@@ -7,7 +7,6 @@ import java.util.List;
 public class Connection {
     static int line;
     static RemotePeerInfo[] hosts = new RemotePeerInfo[3];
-
     // Connecting new peers to existing peers already in the network 
     public static List<RemotePeerInfo> getPeerInfo(String peer){
         List<RemotePeerInfo> allPeersBefore = new ArrayList<>();

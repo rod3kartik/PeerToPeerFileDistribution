@@ -17,8 +17,11 @@ public class Controller extends Thread{
             List<RemotePeerInfo> preferredNeighbors = utilities.getKPreferredNeighbors();
             Constants.setListOfPreferredNeighbours(preferredNeighbors);
             System.out.println("List of pref neighours " + preferredNeighbors.size());
+            Constants.printListOfPeers(preferredNeighbors);
             for(RemotePeerInfo rpI: Constants.listOfAllPeers){
-                if(!Constants.preferredNeighbors.contains(rpI)){
+                if (Constants.selfPeerInfo.equals(rpI)) continue;
+
+                if(!Constants.preferredNeighbors.contains(rpI) ){
                     Message chokeMsg = new Message(4, 0, null);
                     System.out.println("Sending choke message");
                     if (rpI.out == null){
@@ -28,8 +31,11 @@ public class Controller extends Thread{
                 }
                 else{
                     Message unchokeMsg = new Message(4, 1, null);
-                    byte[] array = unchokeMsg.createMessage();
-                    unchokeMsg.sendUnchokeMessage(array,rpI.out);
+                    System.out.println("Sending unchoke message");
+                    if (rpI.out == null){
+                        System.out.println("Unchoke null ");
+                    }
+                    unchokeMsg.sendUnchokeMessage(rpI.out);
                 }
             }
 //            for(RemotePeerInfo rpI : Constants.preferredNeighbors){

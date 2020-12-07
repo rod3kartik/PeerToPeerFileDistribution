@@ -50,14 +50,18 @@ public class utilities {
         return data;
     }
     
-    public static List<RemotePeerInfo> getKPreferredNeighbors(){
+    public static synchronized List<RemotePeerInfo> getKPreferredNeighbors(){
         List<RemotePeerInfo> kPreferredNeighbors = new ArrayList();
         int k = Constants.NumberOfPreferredNeighbors;
+        System.out.println("value of K is " + k);
         RemotePeerInfo[] peers = new RemotePeerInfo[Constants.interestedNeighbors.size()];
         int index = 0;
+        System.out.println("Interested neighhours are " + Constants.interestedNeighbors);
         for (RemotePeerInfo remotePeerInfo : Constants.interestedNeighbors) {
             peers[index] = remotePeerInfo;
+            index++;
         }
+        System.out.println("Peers array length is " + peers.length);
         Arrays.sort(peers, Comparator.comparing(RemotePeerInfo::getDownloadRate));
         for (RemotePeerInfo remotePeerInfo : peers) {
             if(k == 0) break;

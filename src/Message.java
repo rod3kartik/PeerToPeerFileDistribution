@@ -170,7 +170,8 @@ public class Message {
         return outputStream.toByteArray();
     }
 
-    public void sendUnchokeMessage(byte[] unchokeMsg,ObjectOutputStream out){
+    public void sendUnchokeMessage(ObjectOutputStream out){
+        byte[] unchokeMsg = this.createMessage();
         try{
             out.write(unchokeMsg);
             out.flush();
@@ -199,9 +200,9 @@ public class Message {
     }
 
     private void handleNotInterested(){
-        if(Constants.interestedNeighbors.contains((Constants.peerIDToPeerInfo.get(this.peer.peerID)))) {
-            Constants.interestedNeighbors.remove(Constants.peerIDToPeerInfo.get(this.peer.peerID));
-        }
+//        if(Constants.interestedNeighbors.contains((Constants.peerIDToPeerInfo.get(this.peer.peerID)))) {
+//            Constants.interestedNeighbors.remove(Constants.peerIDToPeerInfo.get(this.peer.peerID));
+//        }
     }
     private void updatePeerChokeList(int peerId, int mType) {
         new Peer().setPeerChokeMap(peerId,mType);
@@ -221,7 +222,7 @@ public class Message {
     private void initBitField(byte[] newBitField, ObjectOutputStream outputStream){
         BitSet payload = BitSet.valueOf(newBitField);
         Constants.peerIDToBitfield.put(peer.peerID, payload);
-        System.out.println("Remote peerID is" + peer.peerID);
+        //System.out.println("Remote peerID is" + peer.peerID);
 
     }
 
@@ -231,7 +232,7 @@ public class Message {
         try {
             // byte[] temp = Arrays.copyOfRange(messageIndex, 0, 4);
             int pieceIndex = (int)utilities.fromByteArrayToLong(messageIndex);
-            
+            System.out.println("*****************************8");
             if(peer.isUnchoked && Constants.selfBitfield.get(pieceIndex)){
                 Message msg = new Message(Constants.fileChunks[pieceIndex].getPieceSize() + 4, 7, Constants.fileChunks[pieceIndex].getPieceContent());
                 byte[] msgByteArray = msg.createMessage();
@@ -262,7 +263,7 @@ public class Message {
     private byte[] handleDownloadPiece(byte[] piece) {
         //download and merge incoming piece
         //Need to update according to received packet
-        System.out.println("In handle download piece handle");
+        System.out.println("$$$$$$$$$$$$$$$$$In handle download piece handle");
         byte[] temp= Arrays.copyOfRange(piece, 0, 4);
         int pieceIndex = (int)utilities.fromByteArrayToLong(temp);
 
