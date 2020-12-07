@@ -21,6 +21,7 @@ public class Constants {
     public static HashMap<String, Boolean> chokeUnchokeMap = new HashMap<>();
     public static HashSet<RemotePeerInfo> interestedNeighbors = new HashSet();
     public static List<RemotePeerInfo> preferredNeighbors = new ArrayList<>();
+    public static List<Integer> requestedPieceIndexes = new ArrayList<>();
     // public static 
     //Mapping of message type to value
     public static Map<String,RemotePeerInfo> peerIDToPeerInfo = new HashMap<>();
@@ -110,5 +111,13 @@ public class Constants {
         } else {
             fileChunks = new Piece[Constants.FileSize/Constants.PieceSize];
     }
+    }
+
+    public static synchronized void updateRequestedPieceIndexes(int index, boolean add){
+        if(add){
+            requestedPieceIndexes.add(index);
+        } else {
+            requestedPieceIndexes.remove(Integer.valueOf(index));
+        }
     }
 }

@@ -106,6 +106,14 @@ public class utilities {
         }
     }
 
+    public static List<Integer> getIndexListFromBitset(BitSet bitSet) {
+        List<Integer> indexes = new ArrayList<>(); 
+        for (int i = bitSet.nextSetBit(0); i != -1; i = bitSet.nextSetBit(i + 1)) {
+            indexes.add(i);
+        }
+        return indexes;
+    }
+
    public static Piece[] readFileIntoChunks() {
         Piece[] fileChunks = new Piece[Constants.FileSize/Constants.PieceSize];
        try {
