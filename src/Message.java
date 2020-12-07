@@ -132,11 +132,15 @@ public class Message {
     }
 
     private void handleChokeMessage(RemotePeerInfo remotePeer) {
+        System.out.println("Handle choke message " + remotePeer.peerID);
+
         remotePeer.isUnchoked = false;
     }
 
     private void handleUnchokeMessage(RemotePeerInfo peer2) {
         peer2.isUnchoked = true;
+        System.out.println("Handle unchoke message " + peer2.peerID);
+
     }
 
     private void sendRequestMessage(int index, RemotePeerInfo peer2) {
@@ -166,10 +170,31 @@ public class Message {
         return outputStream.toByteArray();
     }
 
+    public void sendUnchokeMessage(byte[] unchokeMsg,ObjectOutputStream out){
+        try{
+            out.write(unchokeMsg);
+            out.flush();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void sendChokeMessage(ObjectOutputStream out){
+        byte[] chokeMsg = this.createMessage();
+        try{
+            out.write(chokeMsg);
+            out.flush();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void handleInterested(){
         //System.out.println("Remote peerID is + " + remotePeerID);
         System.out.println("Remote peerID is + " + this.peer.peerID);
         Constants.interestedNeighbors.add(Constants.peerIDToPeerInfo.get(this.peer.peerID));
+
         System.out.println("Intrested neighoours set " + Constants.interestedNeighbors);
     }
 
@@ -237,8 +262,13 @@ public class Message {
     private byte[] handleDownloadPiece(byte[] piece) {
         //download and merge incoming piece
         //Need to update according to received packet
+        System.out.println("In handle download piece handle");
         byte[] temp= Arrays.copyOfRange(piece, 0, 4);
         int pieceIndex = (int)utilities.fromByteArrayToLong(temp);
+
+        Piece newPiece = new Piece(temp);
+        Constants.fileChunks[pieceIndex] = newPiece;
+
         //int pieceIndex = 3;
         updateBitField(pieceIndex);
         Constants.updateRequestedPieceIndexes(pieceIndex, false);

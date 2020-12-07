@@ -52,7 +52,6 @@ public class Peer {
         }
         
         sPort = Integer.parseInt(selfInfo.peerPort);
-        new Controller().start();
         for (int outgoingPeer = 0; outgoingPeer < Constants.selfPeerIndex; outgoingPeer++) {
             System.out.println("Outgoing peer " + allBeforePeerInfo.get(outgoingPeer));
             Socket neighborPeer = new Socket(allBeforePeerInfo.get(outgoingPeer).peerAddress, Integer.parseInt(allBeforePeerInfo.get(outgoingPeer).peerPort));
@@ -70,7 +69,8 @@ public class Peer {
             Constants.listOfAllPeers[incomingPeers].out = out;
             new PeerHandler(peerSocket, incomingPeers, in , out).start();
         }
-        
+        new Controller().start();
+
         HashSet<Integer> connectedClients = new HashSet();
 
 
