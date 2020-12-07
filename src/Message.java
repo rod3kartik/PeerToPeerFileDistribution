@@ -230,6 +230,7 @@ public class Message {
     private byte[] handleDownloadPiece(byte[] piece) {
         //download and merge incoming piece
         //Need to update according to received packet
+        System.out.println("In handle download piece handle");
         byte[] temp= Arrays.copyOfRange(piece, 0, 4);
         int pieceIndex = (int)utilities.fromByteArrayToLong(temp);
 
