@@ -20,7 +20,7 @@ public class Message {
     private byte[] messagePayload;
     private FileLogger fl;
     private RemotePeerInfo peer;
-    private String remotePeerID;
+    //private String remotePeerID;
     private ObjectOutputStream outputStream;
     //private int chunkIndex;
 
@@ -51,6 +51,7 @@ public class Message {
             messageType = Arrays.copyOfRange(receivedMessage, 4, 8);
             messagePayload = Arrays.copyOfRange(receivedMessage, 8, receivedMessage.length);
             this.peer = peer;
+            //this.remotePeerID = this.peer.peerID;
             this.outputStream = opstream;
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,11 +89,11 @@ public class Message {
                 break;
             case 2:
                 System.out.println("In case for handling intreseted");
-                //handleInterested();
+                handleInterested();
                 //Write in logger
                 break;
             case 3:
-                //handleNotInterested();
+                handleNotInterested();
                 //Write in logger
                 break;
             case 4:
@@ -158,6 +159,18 @@ public class Message {
         return outputStream.toByteArray();
     }
 
+    private void handleInterested(){
+        //System.out.println("Remote peerID is + " + remotePeerID);
+        System.out.println("Remote peerID is + " + this.peer.peerID);
+        Constants.interestedNeighbors.add(Constants.peerIDToPeerInfo.get(this.peer.peerID));
+        System.out.println("Intrested neighoours set " + Constants.interestedNeighbors);
+    }
+
+    private void handleNotInterested(){
+        if(Constants.interestedNeighbors.contains((Constants.peerIDToPeerInfo.get(this.peer.peerID)))) {
+            Constants.interestedNeighbors.remove(Constants.peerIDToPeerInfo.get(this.peer.peerID));
+        }
+    }
     private void updatePeerChokeList(int peerId, int mType) {
         new Peer().setPeerChokeMap(peerId,mType);
     }

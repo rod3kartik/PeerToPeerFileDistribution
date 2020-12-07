@@ -24,6 +24,7 @@ public class Constants {
     public static List<Integer> requestedPieceIndexes = new ArrayList<>();
     // public static 
     //Mapping of message type to value
+    public static Map<String,RemotePeerInfo> peerIDToPeerInfo = new HashMap<>();
     public static Map<String, Integer> messageTypeToVal = new HashMap(){{
         put("choke", 0);
         put("unchoke", 1);
