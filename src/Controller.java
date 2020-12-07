@@ -21,29 +21,25 @@ public class Controller extends Thread{
             for(RemotePeerInfo rpI: Constants.listOfAllPeers){
                 if (Constants.selfPeerInfo.equals(rpI)) continue;
 
-                if(!Constants.preferredNeighbors.contains(rpI) ){
-                    Message chokeMsg = new Message(4, 0, null);
-                    System.out.println("Sending choke message");
-                    if (rpI.out == null){
-                        System.out.println("THis is null though");
-                    }
-                    chokeMsg.sendChokeMessage(rpI.out);
-                    rpI.isUnchoked = false;
-                }
-                else{
+                if(Constants.preferredNeighbors.contains(rpI) ){
                     Message unchokeMsg = new Message(4, 1, null);
-                    System.out.println("Sending unchoke message");
+                    System.out.println("Sending unchoke message: "+ rpI.peerID);
                     if (rpI.out == null){
                         System.out.println("Unchoke null ");
                     }
                     unchokeMsg.sendUnchokeMessage(rpI.out);
                     rpI.isUnchoked = true; 
                 }
+                else{
+                    Message chokeMsg = new Message(4, 0, null);
+                    System.out.println("Sending choke message: " + rpI.peerID);
+                    if (rpI.out == null){
+                        System.out.println("THis is null though");
+                    }
+                    chokeMsg.sendChokeMessage(rpI.out);
+                    rpI.isUnchoked = false;
+                }
             }
-//            for(RemotePeerInfo rpI : Constants.preferredNeighbors){
-//
-//            }
-
         }
         }, begin, timeInterval);
     }

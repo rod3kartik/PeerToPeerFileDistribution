@@ -66,6 +66,7 @@ public class Message {
         System.out.println("message type: "+ msgType);
         switch (msgType){
             case 0:
+                System.out.println("*** Choke Peer **");
                 handleChokeMessage(this.peer);
                 break;
             case 1:
@@ -75,8 +76,10 @@ public class Message {
                 commonPiecesBitSet.intersects(this.peer.bitfield);
                 List<Integer> indexes = utilities.getIndexListFromBitset(commonPiecesBitSet);
                 Random rand = new Random();
+                if(indexes.size() == 0) break;
                 int pieceIndex = indexes.get(0);
                 while(true){
+                    if(indexes.size() == 0) break;
                     int randomInt = rand.nextInt(indexes.size());
                     pieceIndex = indexes.get(randomInt);
                     if(!Constants.requestedPieceIndexes.contains(pieceIndex)){
@@ -118,6 +121,11 @@ public class Message {
                 this.peer.setDownloadDataSize(this.messagePayload.length);
                 this.peer.setDownloadSpeed();
                 utilities.broadcastHaveMessage(Constants.listOfAllPeers[Constants.selfPeerIndex].peerID, pieceIndexByteArray);
+                for (RemotePeerInfo rpi : Constants.listOfAllPeers) {
+                    if(rpi.peerID.equals(Constants.selfPeerInfo.peerID)) continue;
+                    if(compareBitField(rpi.bitfield)) sendNotInterested(rpi.out);
+                }
+
         }
 
     }
@@ -128,9 +136,23 @@ public class Message {
 
     private void handleHaveMessage() {
         int pieceIndex = (int) utilities.fromByteArrayToLong(this.messagePayload);
-        if(Constants.chunksLeft.get(pieceIndex)){
+        
+        if(Constants.peerIDToBitfield.containsKey(this.peer.peerID)){
+            BitSet tempBitSet = Constants.peerIDToBitfield.get(this.peer.peerID);
+            tempBitSet.set(pieceIndex);
+            Constants.peerIDToBitfield.put(this.peer.peerID, tempBitSet);
+            this.peer.bitfield = tempBitSet;
+        } else{
+            BitSet tempBitSet = new BitSet();
+            tempBitSet.set(pieceIndex);
+            Constants.peerIDToBitfield.put(this.peer.peerID, tempBitSet);
+            this.peer.bitfield = tempBitSet;
+        }
+
+        if(compareBitField(this.peer.bitfield)){
             sendInterestedMessage(this.outputStream);
         }
+
     }
 
     private void handleChokeMessage(RemotePeerInfo remotePeer) {
@@ -203,9 +225,9 @@ public class Message {
     }
 
     private void handleNotInterested(){
-//        if(Constants.interestedNeighbors.contains((Constants.peerIDToPeerInfo.get(this.peer.peerID)))) {
-//            Constants.interestedNeighbors.remove(Constants.peerIDToPeerInfo.get(this.peer.peerID));
-//        }
+       if(Constants.interestedNeighbors.contains((Constants.peerIDToPeerInfo.get(this.peer.peerID)))) {
+           Constants.interestedNeighbors.remove(Constants.peerIDToPeerInfo.get(this.peer.peerID));
+       }
     }
     private void updatePeerChokeList(int peerId, int mType) {
         new Peer().setPeerChokeMap(peerId,mType);

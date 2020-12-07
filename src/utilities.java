@@ -50,10 +50,11 @@ public class utilities {
         return data;
     }
     
-    public static synchronized List<RemotePeerInfo> getKPreferredNeighbors(){
+    public static List<RemotePeerInfo> getKPreferredNeighbors(){
         List<RemotePeerInfo> kPreferredNeighbors = new ArrayList();
         int k = Constants.NumberOfPreferredNeighbors;
         System.out.println("value of K is " + k);
+
         RemotePeerInfo[] peers = new RemotePeerInfo[Constants.interestedNeighbors.size()];
         int index = 0;
         System.out.println("Interested neighhours are " + Constants.interestedNeighbors);
@@ -62,12 +63,21 @@ public class utilities {
             index++;
         }
         System.out.println("Peers array length is " + peers.length);
-        Arrays.sort(peers, Comparator.comparing(RemotePeerInfo::getDownloadRate));
-        for (RemotePeerInfo remotePeerInfo : peers) {
-            if(k == 0) break;
-            if(Constants.interestedNeighbors.contains(remotePeerInfo)){
-                kPreferredNeighbors.add(remotePeerInfo);
-                k -= 1;
+
+        if(Constants.selfPeerInfo.fileAvailable.equals("1")){
+           int[] randomNumbers = new Random().ints(0, peers.length).distinct().limit(2).toArray();
+           for (int i : randomNumbers) {
+               kPreferredNeighbors.add(peers[i]);
+           }
+        } else {
+
+            Arrays.sort(peers, Comparator.comparing(RemotePeerInfo::getDownloadRate));
+            for (RemotePeerInfo remotePeerInfo : peers) {
+                if(k == 0) break;
+                if(Constants.interestedNeighbors.contains(remotePeerInfo)){
+                    kPreferredNeighbors.add(remotePeerInfo);
+                    k -= 1;
+                }
             }
         }
         return kPreferredNeighbors;
@@ -100,9 +110,10 @@ public class utilities {
         for (RemotePeerInfo peer : Constants.listOfAllPeers) {
             if(!peer.peerID.equals(peerID)){
                 try {
-                    Message msg = new Message(4, 4, pieceIndex);
+                    Message msg = new Message(4 + pieceIndex.length, 4, pieceIndex);
                     byte[] msgByteArray = msg.createMessage();
                     peer.out.write(msgByteArray); 
+                    peer.out.flush();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
