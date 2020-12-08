@@ -184,7 +184,7 @@ public class utilities {
     }
 
     public static void mergeFileChunks(){
-        String path = "../peer_" + Constants.selfPeerInfo.peerID + "/file";
+        String path = "../peer_" + Constants.selfPeerInfo.peerID + "/file.txt";
         
         File file = new File(path);
         if(!file.exists()){
@@ -202,16 +202,13 @@ public class utilities {
 
         }
         
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try{
             FileOutputStream stream = new FileOutputStream(file);
             for(Piece piece : Constants.fileChunks){
-                outputStream.write(piece.getPieceContent());
+                stream.write(piece.getPieceContent());
             }
-            byte completefile[] = outputStream.toByteArray();
-            stream.write(completefile);
-
+            stream.flush();
+            stream.close();
         }
         catch(Exception e ){
             e.printStackTrace();

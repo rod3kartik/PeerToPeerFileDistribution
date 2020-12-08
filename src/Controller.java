@@ -23,6 +23,7 @@ public class Controller extends Thread {
                     }
                 timer.cancel();
                 timer.purge();
+                System.out.println("timer cancel nhi hua");
                 return;
             }
             if(Constants.isShutDownMessageReceived){
@@ -67,5 +68,6 @@ public class Controller extends Thread {
             }
         }
         }, begin, timeInterval);
+        System.out.println("going out of controller");
     }
 }
