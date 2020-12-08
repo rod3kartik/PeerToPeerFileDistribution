@@ -1,3 +1,8 @@
+import java.io.ObjectOutputStream;
+import java.util.BitSet;
+import java.util.HashSet;
+
+
 /*
  *                     CEN5501C Project2
  * This is the program starting remote processes.
@@ -8,26 +13,58 @@
  */
 
 public class RemotePeerInfo {
-    public String peerId;
+    public String peerID;
     public String peerAddress;
     public String peerPort;
     public String fileAvailable;
-    public byte[] bitfield;
+    public BitSet bitfield = new BitSet(Constants.numberOfChunks);
+    public float downloadRate = 0;
+    public ObjectOutputStream out;
+    public boolean isUnchoked = false;
+    public float downloadDataSize = 0;
+    public long downloadStartTime = 0;
+
     public RemotePeerInfo(String pId, String pAddress, String pPort, String fileAvailable) {
-        peerId = pId;
+        peerID = pId;
         peerAddress = pAddress;
         peerPort = pPort;
         this.fileAvailable = fileAvailable;
-        bitfield = new byte[Peer.FileSize/Peer.PieceSize];
+
+        bitfield.clear(0, Constants.numberOfChunks);
+        if(fileAvailable.equals("1")){
+            bitfield.set(0, Constants.numberOfChunks);
+        }
+        System.out.println(bitfield.length() + " " + fileAvailable + " "+ bitfield + " " + peerID);
     }
 
-    // sets bitfield of a peer
-    public void setBitfield(byte[] bitfield) {
-        this.bitfield = bitfield;
+    public void setBitfield(int bit) {
+        bitfield.set(bit);
+        
     }
 
+    public float getDownloadRate(){
+        return downloadRate;
+    }
     // updates bitfield after downloading a piece
     public void updateBitField(int pieceIndex) {
-        this.bitfield[pieceIndex] = 1;
+        bitfield.set(pieceIndex);
+    }
+
+    // @Override
+    // public int compareTo(RemotePeerInfo p1) {
+    //     return this.getDownloadRate().compareTo(p1.getDownloadRate());
+    // }
+
+    public void setDownloadSpeed(){
+		long timePeriod = System.currentTimeMillis() - downloadStartTime;
+		if(timePeriod != 0){
+			downloadRate = downloadDataSize /timePeriod;
+		}else{
+			downloadRate = 0;
+		} 
+    }
+    
+    public void setDownloadDataSize(int size){
+        downloadDataSize += size;
     }
 }

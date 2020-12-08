@@ -1,1 +1,7 @@
 *.class
+log*
+/bin/
+.project
+.classpath
+.vscode
+src/playground.java

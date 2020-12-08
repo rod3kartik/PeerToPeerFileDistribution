@@ -2,6 +2,7 @@ import java.io.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,14 +23,15 @@ public class CommonFileReader {
     //FileReader function
     public static void confReader() {
         try {
-
-            File peerInfoConfigFile = new File("common.cfg");
+                
+            File peerInfoConfigFile = Paths.get("./" + "common.cfg").toFile();
            
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;
             while ((st = br.readLine()) != null) {
                 String[] row = st.split(" ");
                 configurationVariables.put(row[0], row[1]);
+                // System.out.println("here2");
             }
             br.close();
             //System.out.println(configurationVariables.keySet());
@@ -66,7 +68,7 @@ public class CommonFileReader {
     }
 
 
-    public static void main(String[] args) {
-        confReader();
-    }
+    // public static void main(String[] args) {
+    //     confReader();
+    // }
 }
