@@ -42,7 +42,7 @@ public class Message {
         this.messageLength = ByteBuffer.allocate(4).putInt(msgLength).array();
         this.messageType = ByteBuffer.allocate(4).putInt(type).array();
         this.messagePayload = payload;
-        System.out.println("Message payload is " + messagePayload);
+        //System.out.println("Message payload is " + messagePayload);
     }
 
     public Message(byte[] receivedMessage, RemotePeerInfo peer, ObjectOutputStream opstream){
@@ -109,9 +109,10 @@ public class Message {
                     if(rpi.peerID.equals(Constants.selfPeerInfo.peerID)) continue;
                     if(!compareBitField(rpi.bitfield)) sendNotInterested(rpi.out);
                 }
-
+                break;
             case 8:
                 Constants.isShutDownMessageReceived = true;
+                break;
 
         }
 

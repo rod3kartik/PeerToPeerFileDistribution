@@ -20,6 +20,7 @@ public class Controller extends Thread{
                 return;
             }
             if(Constants.isShutDownMessageReceived){
+                utilities.mergeFileChunks();
                 timer.cancel();
                 timer.purge();
                 return; 

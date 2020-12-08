@@ -72,9 +72,6 @@ public class Peer {
     
         new Controller().start();
 
-        HashSet<Integer> connectedClients = new HashSet();
-
-
     }
 }
 
