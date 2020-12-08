@@ -184,8 +184,25 @@ public class utilities {
     }
 
     public static void mergeFileChunks(){
-        String path = "../peer_" + Constants.selfPeerInfo.peerID + "/";
+        String path = "../peer_" + Constants.selfPeerInfo.peerID + "/file";
+        
         File file = new File(path);
+        if(!file.exists()){
+            
+                System.out.println("folder has been created");
+                file.getParentFile().mkdirs(); 
+                try{
+                file.createNewFile();
+                System.out.println("FIle has been created");
+                }
+                catch(Exception e){
+                    System.out.println("Error in creating file");
+                }
+                System.out.println("folder has been created");
+
+        }
+        
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try{
             FileOutputStream stream = new FileOutputStream(file);
@@ -194,7 +211,7 @@ public class utilities {
             }
             byte completefile[] = outputStream.toByteArray();
             stream.write(completefile);
- 
+
         }
         catch(Exception e ){
             e.printStackTrace();

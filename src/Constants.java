@@ -1,4 +1,5 @@
 import java.io.*;
+import java.net.ServerSocket;
 import java.rmi.Remote;
 import java.util.*;
 public class Constants {
@@ -13,8 +14,9 @@ public class Constants {
     public static int numberOfChunks;
     public static int PieceSize;
     
-    public static RemotePeerInfo[] listOfAllPeers = new RemotePeerInfo[3];
+    public static RemotePeerInfo[] listOfAllPeers;
     public static String headerHandshake ="P2PFILESHARINGPROJ";
+    public static int totalNumberOfPeers;
     public static HashMap<String, Boolean> handshakedPeers = new HashMap<>();
     public static int selfPeerIndex = 0;
     public static RemotePeerInfo selfPeerInfo;
@@ -26,6 +28,7 @@ public class Constants {
     public static List<RemotePeerInfo> preferredNeighbors = new ArrayList<>();
     public static List<Integer> requestedPieceIndexes = new ArrayList<>();
     public static boolean isShutDownMessageReceived = false;
+    public static ServerSocket selfServerSocket;
     // public static 
     //Mapping of message type to value
     public static Map<String,RemotePeerInfo> peerIDToPeerInfo = new HashMap<>();
@@ -69,6 +72,7 @@ public class Constants {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         listOfAllPeers = Connection.fileReader();
         //System.out.println("list of all peers "+ listOfAllPeers[listOfAllPeers.length-2].peerID);
          printArrayOfPeers(listOfAllPeers);

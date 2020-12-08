@@ -1,28 +1,40 @@
 import java.util.*;
 import java.io.*;
 
+public class Controller extends Thread {
 
-public class Controller extends Thread{
-
-    public void run(){
+    public void run() {
 
         Timer timer = new Timer();
         int begin = 0;
-        int timeInterval = Constants.UnchokingInterval*1000;
+        int timeInterval = Constants.UnchokingInterval * 1000;
         timer.schedule(new TimerTask() {
-        @Override
-        public void run() {
-            //call the method
-            if(Constants.selfPeerInfo.fileAvailable.equals("1") && utilities.isDownloadComplete()){
-                utilities.broadcastShutdownMessage();
+            @Override
+            public void run() {
+                // call the method
+
+                if (Constants.selfPeerInfo.fileAvailable.equals("1") && utilities.isDownloadComplete()) {
+                    System.out.println("Shutting down controller");
+                    utilities.broadcastShutdownMessage();
+                    try {
+                        Constants.selfServerSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 timer.cancel();
                 timer.purge();
                 return;
             }
             if(Constants.isShutDownMessageReceived){
                 utilities.mergeFileChunks();
+                try {
+                    Constants.selfServerSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 timer.cancel();
                 timer.purge();
+
                 return; 
             }
             System.out.println("Running controller again");

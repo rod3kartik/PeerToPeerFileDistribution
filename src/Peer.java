@@ -62,6 +62,7 @@ public class Peer {
         }
         
         ServerSocket serverSocket = new ServerSocket(sPort);
+        Constants.selfServerSocket = serverSocket;
         for(int incomingPeers = Constants.selfPeerIndex + 1; incomingPeers< Constants.listOfAllPeers.length; incomingPeers++){
             Socket peerSocket = serverSocket.accept();
             ObjectOutputStream out = new ObjectOutputStream(peerSocket.getOutputStream());
@@ -71,7 +72,8 @@ public class Peer {
         }
     
         new Controller().start();
-
+        
+        System.out.println("Compeleted Everything");
     }
 }
 
