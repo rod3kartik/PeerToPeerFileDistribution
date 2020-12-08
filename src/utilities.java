@@ -140,6 +140,19 @@ public class utilities {
         return indexes;
     }
 
+    public static boolean isDownloadComplete(){
+        if((Constants.peerIDToBitfield.size() == Constants.listOfAllPeers.length - 1)){
+            for(HashMap.Entry<String, BitSet> setEntry : Constants.peerIDToBitfield.entrySet()){
+                if(setEntry.getValue().cardinality() != Constants.selfBitfield.cardinality()){
+                    return false;
+                }
+            }
+            Constants.isShutDownMessageReceived = true;
+            return true;
+        }
+        return false;
+    }
+
    public static Piece[] readFileIntoChunks() {
         Piece[] fileChunks = new Piece[Constants.numberOfChunks];
        try {
@@ -159,5 +172,14 @@ public class utilities {
         
        return fileChunks;
    }
+
+public static void broadcastShutdownMessage() {
+    for (RemotePeerInfo peer : Constants.listOfAllPeers) {
+        if(!(peer.peerID.equals(Constants.selfPeerInfo.peerID))){
+            byte[] msg = new Message(4, 8, null).createMessage();
+            utilities.writeToOutputStream(peer.out, msg);
+        }
+    }
+}
    
 }

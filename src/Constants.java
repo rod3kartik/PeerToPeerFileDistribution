@@ -25,6 +25,7 @@ public class Constants {
     public static HashSet<RemotePeerInfo> interestedNeighbors = new HashSet();
     public static List<RemotePeerInfo> preferredNeighbors = new ArrayList<>();
     public static List<Integer> requestedPieceIndexes = new ArrayList<>();
+    public static boolean isShutDownMessageReceived = false;
     // public static 
     //Mapping of message type to value
     public static Map<String,RemotePeerInfo> peerIDToPeerInfo = new HashMap<>();

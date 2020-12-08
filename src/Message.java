@@ -110,6 +110,9 @@ public class Message {
                     if(!compareBitField(rpi.bitfield)) sendNotInterested(rpi.out);
                 }
 
+            case 8:
+                Constants.isShutDownMessageReceived = true;
+
         }
 
     }

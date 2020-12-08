@@ -13,6 +13,17 @@ public class Controller extends Thread{
         @Override
         public void run() {
             //call the method
+            if(Constants.selfPeerInfo.fileAvailable.equals("1") && utilities.isDownloadComplete()){
+                utilities.broadcastShutdownMessage();
+                timer.cancel();
+                timer.purge();
+                return;
+            }
+            if(Constants.isShutDownMessageReceived){
+                timer.cancel();
+                timer.purge();
+                return; 
+            }
             System.out.println("Running controller again");
             List<RemotePeerInfo> preferredNeighbors = utilities.getKPreferredNeighbors();
             System.out.println("cleared");

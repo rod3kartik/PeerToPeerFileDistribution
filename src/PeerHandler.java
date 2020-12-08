@@ -5,6 +5,8 @@ import java.nio.channels.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import javax.swing.text.html.HTMLDocument.BlockElement;
+
 public class PeerHandler extends Thread{
     private Socket peerSocket;
     private ObjectInputStream in;	//stream read from the socket
@@ -38,6 +40,9 @@ public class PeerHandler extends Thread{
         byte[] incomingMessage;
         try {
             while(true){
+                if(Constants.isShutDownMessageReceived){
+                    return;
+                }
                 if(firstTime){
                     if(!Constants.handshakedPeers.containsKey(peer.peerID)){
                         Constants.handshakedPeers.put(peer.peerID, false);
