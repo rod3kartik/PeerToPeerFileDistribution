@@ -49,6 +49,16 @@ public class utilities {
         }
         return data;
     }
+
+    public static synchronized void writeToOutputStream(ObjectOutputStream out, byte[] message){
+        try {
+            out.write(message);
+            out.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+ 
+    }
     
     public static List<RemotePeerInfo> getKPreferredNeighbors(){
         List<RemotePeerInfo> kPreferredNeighbors = new ArrayList();
@@ -66,12 +76,11 @@ public class utilities {
         System.out.println("Peers array length is " + peers.length);
 
         if(Constants.selfPeerInfo.fileAvailable.equals("1")){
-            System.out.println("in equals");
-           int[] randomNumbers = new Random().ints(0, peers.length).distinct().limit(Math.min(2, peers.length)).toArray();
+           int[] randomNumbers = new Random().ints(0, peers.length).distinct().limit(Math.min(k, peers.length)).toArray();
            for (int i : randomNumbers) {
                kPreferredNeighbors.add(peers[i]);
            }
-           System.out.println("in equals 2");
+        //    System.out.println("in equals 2");
         } else {
 
             Arrays.sort(peers, Comparator.comparing(RemotePeerInfo::getDownloadRate));
@@ -115,8 +124,7 @@ public class utilities {
                 try {
                     Message msg = new Message(4 + pieceIndex.length, 4, pieceIndex);
                     byte[] msgByteArray = msg.createMessage();
-                    peer.out.write(msgByteArray); 
-                    peer.out.flush();
+                    utilities.writeToOutputStream(peer.out, msgByteArray);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

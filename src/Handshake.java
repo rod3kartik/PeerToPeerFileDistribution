@@ -29,12 +29,12 @@ public class Handshake {
         return outputStream.toByteArray();
     }
 
-    public void sendHandshake(OutputStream out){
+    public void sendHandshake(ObjectOutputStream out){
         try {       
             byte[] finalMsg = generateByteArrayMessage(this.handshakeHeader, this.zeroBytes, this.peerID);
             System.out.println("sent message: "+ finalMsg.toString());
-            out.write(finalMsg);
-            out.flush();
+            utilities.writeToOutputStream(out, finalMsg);
+           
         }
         catch(Exception ex){
             System.out.println(ex.getMessage());

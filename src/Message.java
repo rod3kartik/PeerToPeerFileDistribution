@@ -155,8 +155,7 @@ public class Message {
         try {
             byte[] pload = ByteBuffer.allocate(4).putInt(index).array();
             byte[] msg = new Message(8, 6, pload).createMessage();
-            peer2.out.write(msg);
-            peer2.out.flush();
+            utilities.writeToOutputStream(peer2.out, msg);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -181,8 +180,7 @@ public class Message {
     public void sendUnchokeMessage(ObjectOutputStream out){
         byte[] unchokeMsg = this.createMessage();
         try{
-            out.write(unchokeMsg);
-            out.flush();
+            utilities.writeToOutputStream(out, unchokeMsg);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -192,8 +190,7 @@ public class Message {
     public void sendChokeMessage(ObjectOutputStream out){
         byte[] chokeMsg = this.createMessage();
         try{
-            out.write(chokeMsg);
-            out.flush();
+            utilities.writeToOutputStream(out, chokeMsg);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -253,8 +250,7 @@ public class Message {
             
                 Message msg = new Message(outputStream.toByteArray().length + 4, 7, outputStream.toByteArray());
                 byte[] msgByteArray = msg.createMessage();
-                this.outputStream.write(msgByteArray);
-                this.outputStream.flush();
+                utilities.writeToOutputStream(this.outputStream,msgByteArray);
             }
         }
         catch(Exception e){
@@ -305,10 +301,8 @@ public class Message {
             System.out.println("In send Interested method");
             Message msg = new Message( 4, 2, null);
             byte[] interestedMessage = msg.createMessage();
-            outputStream.write(interestedMessage);
-            outputStream.flush();
-            //outputStream.write(this.messageType);
-            //outputStream.write(this.messagePayload);
+            utilities.writeToOutputStream(outputStream, interestedMessage);
+           
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -317,10 +311,7 @@ public class Message {
         try {
             Message msg = new Message( 4, 3, null);
             byte[] interestedMessage = msg.createMessage();
-            outputStream.write(interestedMessage);
-            outputStream.flush();
-            //outputStream.write(this.messageType);
-            //outputStream.write(this.messagePayload);
+            utilities.writeToOutputStream(outputStream, interestedMessage);
         } catch (Exception e) {
             e.printStackTrace();
         }

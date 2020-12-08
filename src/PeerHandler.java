@@ -66,8 +66,7 @@ public class PeerHandler extends Thread{
                             Message msg = new Message(bitFieldToByteArray.length + 4, 5, bitFieldToByteArray);
 
                             byte[] bitFieldMessage = msg.createMessage();
-                            out.write(bitFieldMessage);
-                            out.flush();
+                            utilities.writeToOutputStream(out, bitFieldMessage);
                         }     
         
                     } catch (Exception e) {
