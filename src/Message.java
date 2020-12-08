@@ -107,7 +107,7 @@ public class Message {
                 utilities.broadcastHaveMessage(Constants.listOfAllPeers[Constants.selfPeerIndex].peerID, pieceIndexByteArray);
                 for (RemotePeerInfo rpi : Constants.listOfAllPeers) {
                     if(rpi.peerID.equals(Constants.selfPeerInfo.peerID)) continue;
-                    if(compareBitField(rpi.bitfield)) sendNotInterested(rpi.out);
+                    if(!compareBitField(rpi.bitfield)) sendNotInterested(rpi.out);
                 }
 
         }
@@ -209,6 +209,7 @@ public class Message {
     }
 
     private void handleNotInterested(){
+        System.out.println("@@@@@@@@@@@@@@@@Received not interested: " + this.peer.peerID);
        if(Constants.interestedNeighbors.contains((Constants.peerIDToPeerInfo.get(this.peer.peerID)))) {
            Constants.interestedNeighbors.remove(Constants.peerIDToPeerInfo.get(this.peer.peerID));
        }
@@ -264,7 +265,7 @@ public class Message {
     private boolean compareBitField(BitSet remoteBitfield){
         BitSet selfChunksLeft = Constants.chunksLeft;
 
-        selfChunksLeft.and(remoteBitfield);
+        selfChunksLeft.intersects(remoteBitfield);
         if(selfChunksLeft.length() > 0){
             //send intereseted
             return true;

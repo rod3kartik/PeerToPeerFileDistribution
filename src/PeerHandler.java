@@ -61,9 +61,9 @@ public class PeerHandler extends Thread{
                         
                         System.out.println(Constants.selfBitfield + " length: " + Constants.selfBitfield.length());
                         if(Constants.selfBitfield.length() != 0){
-                            byte[] bitFieldTooByteArray = Constants.selfBitfield.toByteArray();
-                            System.out.println("byte array: "+ bitFieldTooByteArray);
-                            Message msg = new Message(bitFieldTooByteArray.length + 4, 5, bitFieldTooByteArray);
+                            byte[] bitFieldToByteArray = Constants.selfBitfield.toByteArray();
+                            System.out.println("byte array: "+ bitFieldToByteArray);
+                            Message msg = new Message(bitFieldToByteArray.length + 4, 5, bitFieldToByteArray);
 
                             byte[] bitFieldMessage = msg.createMessage();
                             out.write(bitFieldMessage);
