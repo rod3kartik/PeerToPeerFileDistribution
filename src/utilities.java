@@ -140,6 +140,20 @@ public class utilities {
         return indexes;
     }
 
+    public static boolean isDownloadComplete(){
+        if((Constants.peerIDToBitfield.size() == Constants.listOfAllPeers.length - 1)){
+            System.out.println("in isDownload");
+            for(Map.Entry<String, BitSet> setEntry : Constants.peerIDToBitfield.entrySet()){
+                if(setEntry.getValue().cardinality() != Constants.selfBitfield.cardinality()){
+                    return false;
+                }
+            }
+            Constants.isShutDownMessageReceived = true;
+            return true;
+        }
+        return false;
+    }
+
    public static Piece[] readFileIntoChunks() {
         Piece[] fileChunks = new Piece[Constants.numberOfChunks];
        try {
@@ -159,5 +173,32 @@ public class utilities {
         
        return fileChunks;
    }
+
+    public static void broadcastShutdownMessage() {
+        for (RemotePeerInfo peer : Constants.listOfAllPeers) {
+            if(!(peer.peerID.equals(Constants.selfPeerInfo.peerID))){
+                byte[] msg = new Message(4, 8, null).createMessage();
+                utilities.writeToOutputStream(peer.out, msg);
+            }
+        }
+    }
+
+    public static void mergeFileChunks(){
+        String path = "../peer_" + Constants.selfPeerInfo.peerID + "/";
+        File file = new File(path);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try{
+            FileOutputStream stream = new FileOutputStream(file);
+            for(Piece piece : Constants.fileChunks){
+                outputStream.write(piece.getPieceContent());
+            }
+            byte completefile[] = outputStream.toByteArray();
+            stream.write(completefile);
+ 
+        }
+        catch(Exception e ){
+            e.printStackTrace();
+        }
+    }
    
 }
