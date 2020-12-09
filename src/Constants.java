@@ -25,6 +25,7 @@ public class Constants {
     public static HashSet<RemotePeerInfo> interestedNeighbors = new HashSet();
     public static List<RemotePeerInfo> preferredNeighbors = new ArrayList<>();
     public static List<Integer> requestedPieceIndexes = new ArrayList<>();
+    public static FileLogger fl;
     public static boolean isShutDownMessageReceived = false;
     // public static 
     //Mapping of message type to value
@@ -62,6 +63,7 @@ public class Constants {
         OptimisticUnchokingInterval = CommonFileReader.getOptimisticUnchokingInterval();
         FileName = CommonFileReader.getFileName();
         FileSize = CommonFileReader.getFileSize();
+        fl = new FileLogger(selfPeerInfo.peerID);
         PieceSize = CommonFileReader.getPieceSize();
         System.out.println(FileSize + " " + PieceSize + " " + Math.ceil(FileSize/PieceSize) + " " + (int)Math.ceil(FileSize/PieceSize));
         try {

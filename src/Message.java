@@ -222,7 +222,7 @@ public class Message {
     // logging when interested message in the corresponding peerID log file 
     // is received from a peer with a certain peerID
     private void interested(){
-        fl.receivedInterestedMessageLog(1002);
+        //fl.receivedInterestedMessageLog(1002);
         //compareBitField(Constants.peerIDToBitfield.get(remotePeerID));
         //Check if the one who sent interested signal is choked or unchoked
     }
