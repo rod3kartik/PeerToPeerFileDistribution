@@ -40,7 +40,6 @@ public class Controller extends Thread {
             }
             System.out.println("Running controller again");
             List<RemotePeerInfo> preferredNeighbors = utilities.getKPreferredNeighbors();
-            System.out.println("cleared");
             Constants.setListOfPreferredNeighbours(preferredNeighbors);
             System.out.println("List of pref neighours " + preferredNeighbors.size());
             Constants.printListOfPeers(preferredNeighbors);
@@ -49,19 +48,19 @@ public class Controller extends Thread {
 
                 if(Constants.preferredNeighbors.contains(rpI) ){
                     Message unchokeMsg = new Message(4, 1, null);
-                    System.out.println("Sending unchoke message: "+ rpI.peerID);
-                    if (rpI.out == null){
-                        System.out.println("Unchoke null ");
-                    }
+                    // System.out.println("Sending unchoke message: "+ rpI.peerID);
+                    // if (rpI.out == null){
+                    //     System.out.println("Unchoke null ");
+                    // }
                     unchokeMsg.sendUnchokeMessage(rpI.out);
                     rpI.isUnchoked = true; 
                 }
                 else{
                     Message chokeMsg = new Message(4, 0, null);
-                    System.out.println("Sending choke message: " + rpI.peerID);
-                    if (rpI.out == null){
-                        System.out.println("THis is null though");
-                    }
+                    //System.out.println("Sending choke message: " + rpI.peerID);
+                    // if (rpI.out == null){
+                    //     System.out.println("THis is null though");
+                    // }
                     chokeMsg.sendChokeMessage(rpI.out);
                     rpI.isUnchoked = false;
                 }

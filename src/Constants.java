@@ -128,12 +128,21 @@ public class Constants {
     public static void setFileChunks(){
         if(selfPeerInfo.fileAvailable.equals("1")){
             fileChunks = utilities.readFileIntoChunks();
+            printFileChunks(fileChunks);
         } else {
             fileChunks = new Piece[Constants.numberOfChunks];
     }
     }
 
-    public static synchronized void updateRequestedPieceIndexes(int index, boolean add){
+    private static void printFileChunks(Piece[] fileChunks2) {
+
+        for(Piece piece : Constants.fileChunks){
+            System.out.println("2 . Final chunks stored are: " + new String(piece.getPieceContent()));
+        }
+    }
+
+
+    public static synchronized void updateRequestedPieceIndexes(int index, boolean add) {
         if(add){
             requestedPieceIndexes.add(index);
         } else {

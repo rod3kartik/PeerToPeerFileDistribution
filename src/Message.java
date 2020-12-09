@@ -75,7 +75,7 @@ public class Message {
                 new ChunkRequestor(this.peer).start();
                 break;
             case 2:
-                System.out.println("In case for handling intreseted");
+                System.out.println("**** In case for handling intreseted ****");
                 handleInterested();
                 //Write in logger
                 break;
@@ -144,14 +144,14 @@ public class Message {
     }
 
     private void handleChokeMessage(RemotePeerInfo remotePeer) {
-        System.out.println("Handle choke message " + remotePeer.peerID);
+        //System.out.println("Handle choke message " + remotePeer.peerID);
 
         remotePeer.isUnchoked = false;
     }
 
     private void handleUnchokeMessage(RemotePeerInfo peer2) {
         peer2.isUnchoked = true;
-        System.out.println("Handle unchoke message " + peer2.peerID);
+        //System.out.println("Handle unchoke message " + peer2.peerID);
 
     }
 
@@ -203,14 +203,14 @@ public class Message {
 
     private void handleInterested(){
         //System.out.println("Remote peerID is + " + remotePeerID);
-        System.out.println("Remote peerID is + " + this.peer.peerID);
+        //System.out.println("Remote peerID is + " + this.peer.peerID);
         Constants.interestedNeighbors.add(Constants.peerIDToPeerInfo.get(this.peer.peerID));
 
-        System.out.println("Intrested neighoours set " + Constants.interestedNeighbors);
+        //System.out.println("Intrested neighoours set " + Constants.interestedNeighbors);
     }
 
     private void handleNotInterested(){
-        System.out.println("@@@@@@@@@@@@@@@@Received not interested: " + this.peer.peerID);
+       //System.out.println("@@@@@@@@@@@@@@@@Received not interested: " + this.peer.peerID);
        if(Constants.interestedNeighbors.contains((Constants.peerIDToPeerInfo.get(this.peer.peerID)))) {
            Constants.interestedNeighbors.remove(Constants.peerIDToPeerInfo.get(this.peer.peerID));
        }
@@ -247,13 +247,14 @@ public class Message {
 
             if(peer.isUnchoked && Constants.selfBitfield.get(pieceIndex)){
                 System.out.println("***************************** " + pieceIndex);
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ByteArrayOutputStream oStream = new ByteArrayOutputStream();
                 
-                outputStream.write(messageIndex);
-                outputStream.write(Constants.fileChunks[pieceIndex].getPieceContent());
-            
-                Message msg = new Message(outputStream.toByteArray().length + 4, 7, outputStream.toByteArray());
+                oStream.write(messageIndex);
+                oStream.write(Constants.fileChunks[pieceIndex].getPieceContent());
+                byte[] payloadContent = oStream.toByteArray();
+                Message msg = new Message(payloadContent.length + 4, 7, payloadContent);
                 byte[] msgByteArray = msg.createMessage();
+                System.out.println("First Message sent: "+ new String(msgByteArray));
                 utilities.writeToOutputStream(this.outputStream,msgByteArray);
             }
         }
@@ -284,10 +285,11 @@ public class Message {
         byte[] temp= Arrays.copyOfRange(piece, 0, 4);
         int pieceIndex = (int)utilities.fromByteArrayToLong(temp);
 
-        Piece newPiece = new Piece(temp);
+        byte[] pieceData = Arrays.copyOfRange(piece, 4, piece.length);
+        Piece newPiece = new Piece(pieceData);
         Constants.fileChunks[pieceIndex] = newPiece;
 
-        //int pieceIndex = 3;
+        //setting self_bitfield for downloaded piece index
         updateBitField(pieceIndex);
         Constants.updateRequestedPieceIndexes(pieceIndex, false);
         return temp;

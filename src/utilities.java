@@ -163,7 +163,7 @@ public class utilities {
         int fileChunkIndex = 0;
         
         while(offset<buffer.length){
-            fileChunks[fileChunkIndex++] = new Piece(Arrays.copyOfRange(buffer, offset, offset + Constants.PieceSize));
+            fileChunks[fileChunkIndex++] = new Piece(Arrays.copyOfRange(buffer, offset, Math.min(offset + Constants.PieceSize, buffer.length)));
             offset += Constants.PieceSize;
         }
        } catch (Exception e) {
@@ -205,6 +205,7 @@ public class utilities {
         try{
             FileOutputStream stream = new FileOutputStream(file);
             for(Piece piece : Constants.fileChunks){
+                System.out.println("Final chunks stored are: " + new String(piece.getPieceContent()));
                 stream.write(piece.getPieceContent());
             }
             stream.flush();

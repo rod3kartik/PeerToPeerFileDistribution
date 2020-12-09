@@ -13,7 +13,6 @@ public class Connection {
         List<RemotePeerInfo> allPeersBefore = new ArrayList<>();
         for(int i=0;i<line;i++){
            if (peer.equals(hosts.get(i).peerID)){
-               System.out.println("Line "+ line);
                allPeersBefore.add(hosts.get(i));
                 break;
            }
@@ -43,14 +42,11 @@ public class Connection {
 
             // reading each line and sending the arguments to RemotePeerInfo
             while ((st = br.readLine()) != null) {
-                System.out.println("in connection: "+ st);
                 String[] rows = st.split(" ");
                 hosts.add(new RemotePeerInfo(rows[0],rows[1],rows[2],rows[3]));
                 line++;
-                System.out.println(" loop Line number: "+ line);
             }
             br.close();
-            System.out.println("Line number: "+ line);
             Constants.totalNumberOfPeers = line;
         }
         catch(Exception e){
