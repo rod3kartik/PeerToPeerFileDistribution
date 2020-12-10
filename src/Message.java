@@ -63,10 +63,10 @@ public class Message {
     public void extractMessage(){
         // String message = Arrays.toString(this.messageType);
         int msgType = (int)utilities.fromByteArrayToLong(this.messageType);
-        System.out.println("message type: "+ msgType);
+        // System.out.println("message type: "+ msgType);
         switch (msgType){
             case 0:
-                System.out.println("*** Choke Peer **");
+                //System.out.println("*** Choke Peer **");
                 handleChokeMessage(this.peer);
                 break;
             case 1:
@@ -75,7 +75,7 @@ public class Message {
                 new ChunkRequestor(this.peer).start();
                 break;
             case 2:
-                System.out.println("**** In case for handling intreseted ****");
+                //System.out.println("**** In case for handling intreseted ****");
                 handleInterested();
                 //Write in logger
                 break;

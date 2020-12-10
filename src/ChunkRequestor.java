@@ -17,7 +17,7 @@ public class ChunkRequestor extends Thread{
     }
     public void run(){
         while(this.peer.isUnchoked & !Constants.isShutDownMessageReceived){
-            System.out.println("in chunk requestor");
+            //System.out.println("in chunk requestor");
             BitSet commonPiecesBitSet = (BitSet)Constants.chunksLeft.clone();
             commonPiecesBitSet.intersects(this.peer.bitfield);
             List<Integer> indexes = utilities.getIndexListFromBitset(commonPiecesBitSet);

@@ -66,7 +66,7 @@ public class Constants {
         FileName = CommonFileReader.getFileName();
         FileSize = CommonFileReader.getFileSize();
         PieceSize = CommonFileReader.getPieceSize();
-        System.out.println(FileSize + " " + PieceSize + " " + Math.ceil(FileSize/PieceSize) + " " + (int)Math.ceil(FileSize/PieceSize));
+        System.out.println(FileSize + " " + PieceSize + " " + Math.ceil(FileSize/PieceSize) + " " + (int)Math.ceil(FileSize*1.0/PieceSize*1.0));
         try {
             numberOfChunks = (int)Math.ceil((FileSize * 1.0)/(PieceSize*1.0));
         } catch (Exception e) {
@@ -128,7 +128,7 @@ public class Constants {
     public static void setFileChunks(){
         if(selfPeerInfo.fileAvailable.equals("1")){
             fileChunks = utilities.readFileIntoChunks();
-            printFileChunks(fileChunks);
+            // printFileChunks(fileChunks);
         } else {
             fileChunks = new Piece[Constants.numberOfChunks];
     }

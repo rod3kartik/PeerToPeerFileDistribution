@@ -100,9 +100,8 @@ public class PeerHandler extends Thread{
                         //System.out.println("Peer: " + this.peer.peerID);
                         Message messageObj = new Message(outputBuffer.toByteArray(), this.peer, out);
                         messageObj.extractMessage();
-                        System.out.println("Map is " + Constants.peerIDToBitfield);
+                        //System.out.println("Map is " + Constants.peerIDToBitfield);
                     } catch (Exception e) {
-                        System.out.println( " exception in handler");
                         e.printStackTrace();
                     }
                 }

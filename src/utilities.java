@@ -158,7 +158,7 @@ public class utilities {
         Piece[] fileChunks = new Piece[Constants.numberOfChunks];
        try {
         byte[] buffer = Files.readAllBytes(Paths.get("./" + Constants.FileName));
-        System.out.println("Buffer length "+ buffer.length);
+        // System.out.println("Buffer length "+ buffer.length);
         int offset = 0;
         int fileChunkIndex = 0;
         
@@ -205,7 +205,6 @@ public class utilities {
         try{
             FileOutputStream stream = new FileOutputStream(file);
             for(Piece piece : Constants.fileChunks){
-                System.out.println("Final chunks stored are: " + new String(piece.getPieceContent()));
                 stream.write(piece.getPieceContent());
             }
             stream.flush();
