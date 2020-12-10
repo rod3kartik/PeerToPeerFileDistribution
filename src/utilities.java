@@ -62,7 +62,17 @@ public class utilities {
         }
  
     }
-    
+
+//    public static synchronized void writeToLoggerobj(FileLogger fl, byte[] message){
+//        try {
+//            out.write(message);
+//            out.flush();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+
     public static List<RemotePeerInfo> getKPreferredNeighbors(){
         List<RemotePeerInfo> kPreferredNeighbors = new ArrayList();
         int k = Constants.NumberOfPreferredNeighbors;
@@ -152,6 +162,7 @@ public class utilities {
                     return false;
                 }
             }
+            //Constants.fl.downloadCompleteLog();
             Constants.isShutDownMessageReceived = true;
             return true;
         }
@@ -205,7 +216,8 @@ public class utilities {
                 System.out.println("folder has been created");
 
         }
-        
+        Constants.fl.downloadCompleteLog();
+
         try{
             FileOutputStream stream = new FileOutputStream(file);
             for(Piece piece : Constants.fileChunks){

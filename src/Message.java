@@ -3,12 +3,9 @@ import java.io.OutputStream;
 import java.nio.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.BitSet;
-import java.util.List;
-import java.util.Random;
 
 public class Message {
 //    public static enum Type {
@@ -121,13 +118,10 @@ public class Message {
 
     }
 
-  
-
-
-
     private void handleHaveMessage() {
         int pieceIndex = (int) utilities.fromByteArrayToLong(this.messagePayload);
-        
+        Constants.fl.receivedHaveMessageLog(this.peer.peerID,pieceIndex,Calendar.getInstance());
+
         if(Constants.peerIDToBitfield.containsKey(this.peer.peerID)){
             BitSet tempBitSet = Constants.peerIDToBitfield.get(this.peer.peerID);
             tempBitSet.set(pieceIndex);
@@ -150,11 +144,14 @@ public class Message {
         //System.out.println("Handle choke message " + remotePeer.peerID);
 
         remotePeer.isUnchoked = false;
+        Constants.fl.chockedLog(remotePeer.peerID,Calendar.getInstance());
+
     }
 
     private void handleUnchokeMessage(RemotePeerInfo peer2) {
         peer2.isUnchoked = true;
         //System.out.println("Handle unchoke message " + peer2.peerID);
+        Constants.fl.unchokedLog(peer2.peerID,Calendar.getInstance());
 
     }
 
@@ -208,15 +205,19 @@ public class Message {
         //System.out.println("Remote peerID is + " + remotePeerID);
         //System.out.println("Remote peerID is + " + this.peer.peerID);
         Constants.interestedNeighbors.add(Constants.peerIDToPeerInfo.get(this.peer.peerID));
+        Constants.fl.receivedInterestedMessageLog(this.peer.peerID,Calendar.getInstance());
 
         //System.out.println("Intrested neighoours set " + Constants.interestedNeighbors);
     }
 
     private void handleNotInterested(){
        //System.out.println("@@@@@@@@@@@@@@@@Received not interested: " + this.peer.peerID);
-       if(Constants.interestedNeighbors.contains((Constants.peerIDToPeerInfo.get(this.peer.peerID)))) {
+
+        if(Constants.interestedNeighbors.contains((Constants.peerIDToPeerInfo.get(this.peer.peerID)))) {
            Constants.interestedNeighbors.remove(Constants.peerIDToPeerInfo.get(this.peer.peerID));
        }
+        Constants.fl.receivedNotInterestedMessageLog(this.peer.peerID,Calendar.getInstance());
+
     }
     private void updatePeerChokeList(int peerId, int mType) {
         new Peer().setPeerChokeMap(peerId,mType);
@@ -225,7 +226,7 @@ public class Message {
     // logging when interested message in the corresponding peerID log file 
     // is received from a peer with a certain peerID
     private void interested(){
-        fl.receivedInterestedMessageLog(1002);
+        //fl.receivedInterestedMessageLog(1002);
         //compareBitField(Constants.peerIDToBitfield.get(remotePeerID));
         //Check if the one who sent interested signal is choked or unchoked
     }
@@ -237,6 +238,8 @@ public class Message {
         BitSet payload = BitSet.valueOf(newBitField);
         Constants.peerIDToBitfield.put(peer.peerID, payload);
         //System.out.println("Remote peerID is" + peer.peerID);
+
+        Constants.fl.setTCPConnectionfromLog(peer.peerID, Calendar.getInstance());
 
     }
 
@@ -294,7 +297,7 @@ public class Message {
         byte[] pieceData = Arrays.copyOfRange(piece, 4, piece.length);
         Piece newPiece = new Piece(pieceData);
         Constants.fileChunks[pieceIndex] = newPiece;
-
+        Constants.fl.downloadingPieceLog(this.peer.peerID,pieceIndex , Calendar.getInstance());
         //setting self_bitfield for downloaded piece index
         updateBitField(pieceIndex);
         Constants.updateRequestedPieceIndexes(pieceIndex, false);

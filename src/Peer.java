@@ -41,6 +41,8 @@ public class Peer {
         Constants.setChunksLeft();
         Constants.setSelfPeerInfo();
         Constants.setFileChunks();
+        Constants.fl = new FileLogger(Constants.selfPeerInfo.peerID);
+
         for (RemotePeerInfo rp : Constants.listOfAllPeers){
             Constants.peerIDToPeerInfo.put(rp.peerID,rp);
         }
@@ -83,7 +85,7 @@ public class Peer {
        
         
         while(true){
-            System.out.println("hey");
+            // System.out.println("hey");
             if(Constants.isShutDownMessageReceived){
                 Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
                     for (Thread thread : threadSet) {
