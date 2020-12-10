@@ -62,6 +62,7 @@ public class Peer {
         for (int outgoingPeer = 0; outgoingPeer < Constants.selfPeerIndex; outgoingPeer++) {
             System.out.println("Outgoing peer " + allBeforePeerInfo.get(outgoingPeer));
             Socket neighborPeer = new Socket(allBeforePeerInfo.get(outgoingPeer).peerAddress, Integer.parseInt(allBeforePeerInfo.get(outgoingPeer).peerPort));
+            Constants.listOfAllSockets.add(neighborPeer);
             ObjectOutputStream out = new ObjectOutputStream(neighborPeer.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(neighborPeer.getInputStream());
             Constants.listOfAllPeers[outgoingPeer].out = out;
@@ -75,6 +76,7 @@ public class Peer {
         Constants.selfServerSocket = serverSocket;
         for(int incomingPeers = Constants.selfPeerIndex + 1; incomingPeers< Constants.listOfAllPeers.length; incomingPeers++){
             Socket peerSocket = serverSocket.accept();
+            Constants.listOfAllSockets.add(peerSocket);
             ObjectOutputStream out = new ObjectOutputStream(peerSocket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(peerSocket.getInputStream());
             Constants.listOfAllPeers[incomingPeers].out = out;
@@ -88,10 +90,14 @@ public class Peer {
             // System.out.println("hey");
             if(Constants.isShutDownMessageReceived){
                 Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-                    for (Thread thread : threadSet) {
-                        System.out.println("Alive thread: " + thread);
-                        thread.interrupt();
-                    }
+                for (Thread thread : threadSet) {
+                    System.out.println("Alive thread: " + thread);
+                    thread.interrupt();
+                }
+                serverSocket.close();
+                for (Socket socket : Constants.listOfAllSockets) {
+                    socket.close();
+                }
                 break;
             }
         }

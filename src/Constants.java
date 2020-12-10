@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.rmi.Remote;
 import java.util.*;
 public class Constants {
@@ -29,6 +30,7 @@ public class Constants {
     public static boolean isShutDownMessageReceived = false;
     public static ServerSocket selfServerSocket;
     public static List<Thread> listOfThreads = new ArrayList<>();
+    public static List<Socket> listOfAllSockets = new ArrayList<>();
     // public static 
     //Mapping of message type to value
     public static Map<String,RemotePeerInfo> peerIDToPeerInfo = new HashMap<>();
