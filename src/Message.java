@@ -143,7 +143,7 @@ public class Message {
     private void handleChokeMessage(RemotePeerInfo remotePeer) {
         //System.out.println("Handle choke message " + remotePeer.peerID);
 
-        remotePeer.isUnchoked = false;
+        remotePeer.setIsUnchoked(false);
         Constants.fl.chockedLog(remotePeer.peerID,Calendar.getInstance());
 
     }

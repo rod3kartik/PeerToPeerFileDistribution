@@ -27,6 +27,7 @@ public class FileLogger {
             handler.setFormatter(format);
             loggerObj = Logger.getLogger("peerLogger_" + peerID);
             loggerObj.addHandler(handler);
+            loggerObj.setUseParentHandlers(false);
         }
         catch (Exception e){
             e.printStackTrace();

@@ -89,15 +89,20 @@ public class Peer {
         while(true){
             // System.out.println("hey");
             if(Constants.isShutDownMessageReceived){
-                Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-                for (Thread thread : threadSet) {
-                    System.out.println("Alive thread: " + thread);
-                    thread.interrupt();
+                // Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+                // for (Thread thread : threadSet) {
+                //     System.out.println("Alive thread: " + thread);
+                //     thread.interrupt();
+                // }
+                // serverSocket.close();
+                // for (Socket socket : Constants.listOfAllSockets) {
+                //     socket.close();
+                // }
+                System.out.println("********************** in the final shutdown");
+                for (Socket socket : Constants.listOfAllSockets){
+                    socket.close(); 
                 }
-                serverSocket.close();
-                for (Socket socket : Constants.listOfAllSockets) {
-                    socket.close();
-                }
+                System.exit(0);
                 break;
             }
         }
@@ -118,9 +123,8 @@ public class Peer {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    utilities.shutdownAllThreads();
+                    //utilities.shutdownAllThreads();
                     optimisticUnchokingUnchokedTimer.cancel();
-                    optimisticUnchokingUnchokedTimer.purge();
                     return;
                 }
                 List<RemotePeerInfo> interestedChokedNeighbors = new ArrayList<>();
@@ -133,7 +137,7 @@ public class Peer {
                     RemotePeerInfo peer = interestedChokedNeighbors.get(new Random().nextInt(interestedChokedNeighbors.size()));
                     Message unchokeMsg = new Message(1, 1, null);
                     unchokeMsg.sendUnchokeMessage(peer.out);
-                    peer.isUnchoked = true; 
+                    peer.setIsUnchoked(true);
                 }
                
             }
@@ -154,12 +158,13 @@ public class Peer {
                 
                 if (Constants.selfPeerInfo.fileAvailable.equals("1") && utilities.isDownloadComplete()) {
                     System.out.println("Shutting down controller");
-                    Constants.isShutDownMessageReceived = true;
+                    
                     for(Map.Entry<String, BitSet> setEntry : Constants.peerIDToBitfield.entrySet()){
                         System.out.println("Final bitfields are: " + setEntry.getKey() + setEntry.getValue());
                     }
                     utilities.broadcastShutdownMessage();
-                    utilities.shutdownAllThreads();
+                    Constants.isShutDownMessageReceived = true;
+                    //utilities.shutdownAllThreads();
                     try {
                         Constants.selfServerSocket.close();
                     } catch (IOException e) {
@@ -193,12 +198,12 @@ public class Peer {
                         if(Constants.preferredNeighbors.contains(rpI) ){
                             Message unchokeMsg = new Message(1, 1, null);
                             unchokeMsg.sendUnchokeMessage(rpI.out);
-                            rpI.isUnchoked = true; 
+                            rpI.setIsUnchoked(true);
                         }
                         else{
                             Message chokeMsg = new Message(1, 0, null);
                             chokeMsg.sendChokeMessage(rpI.out);
-                            rpI.isUnchoked = false;
+                            rpI.setIsUnchoked(false);
                         }
                     }
                 }

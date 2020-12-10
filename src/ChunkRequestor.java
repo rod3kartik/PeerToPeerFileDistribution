@@ -12,11 +12,16 @@ import java.util.Random;
 
 public class ChunkRequestor extends Thread{
     RemotePeerInfo peer;
+    int requestedPieceIndex;
     ChunkRequestor(RemotePeerInfo p){
         peer = p;
     }
     public void run(){
-        while(this.peer.isUnchoked & !Constants.isShutDownMessageReceived & ! Thread.currentThread().interrupted()){
+        Thread.currentThread();
+        while (this.peer.isUnchoked & !Constants.isShutDownMessageReceived & !Thread.interrupted()) {
+            if(Constants.requestedPieceIndexes.contains(requestedPieceIndex)){
+                continue;
+            }
             //System.out.println("in chunk requestor");
             BitSet commonPiecesBitSet = (BitSet)Constants.chunksLeft.clone();
             commonPiecesBitSet.intersects(this.peer.bitfield);
@@ -35,6 +40,11 @@ public class ChunkRequestor extends Thread{
             }
             Message.sendRequestMessage(pieceIndex, this.peer);
             Constants.updateRequestedPieceIndexes(pieceIndex, true);
+            requestedPieceIndex = pieceIndex;
+        }
+
+        if(Constants.requestedPieceIndexes.contains(requestedPieceIndex)){
+            Constants.updateRequestedPieceIndexes(requestedPieceIndex, false);
         }
 
     }

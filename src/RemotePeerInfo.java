@@ -55,6 +55,10 @@ public class RemotePeerInfo {
     //     return this.getDownloadRate().compareTo(p1.getDownloadRate());
     // }
 
+    public synchronized void setIsUnchoked(boolean flag){
+        this.isUnchoked = flag;
+    }
+
     public void setDownloadSpeed(){
 		long timePeriod = System.currentTimeMillis() - downloadStartTime;
 		if(timePeriod != 0){

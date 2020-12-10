@@ -40,7 +40,7 @@ public class PeerHandler extends Thread {
             while (!Thread.currentThread().isInterrupted() & !Constants.isShutDownMessageReceived) {
                 if (Constants.isShutDownMessageReceived) {
                     System.out.println("In shut down condition of PeerHandler " + peer.peerID);
-                    utilities.shutdownAllThreads();
+                    //utilities.shutdownAllThreads();
                     return;
                 }
                 if (firstTime) {

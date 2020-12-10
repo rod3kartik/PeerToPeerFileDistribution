@@ -230,13 +230,13 @@ public class utilities {
             e.printStackTrace();
         }
     }
-   
-    public static void shutdownAllThreads(){
-        for (Thread thread: Constants.listOfThreads) {
-            if(thread.isAlive()){
-                thread.interrupt();
-            }
-        }
-    }
+
+    // public static void shutdownAllThreads(){
+    //     for (Thread thread: Constants.listOfThreads) {
+    //         if(thread.isAlive()){
+    //             thread.interrupt();
+    //         }
+    //     }
+    // }
 
 }
