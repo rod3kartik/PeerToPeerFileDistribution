@@ -90,7 +90,7 @@ public class Peer {
                         System.out.println("Alive thread: " + thread);
                         thread.interrupt();
                     }
-                // break;
+                break;
             }
         }
         //System.out.println("Compeleted Everything");
