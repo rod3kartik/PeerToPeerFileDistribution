@@ -59,7 +59,17 @@ public class utilities {
         }
  
     }
-    
+
+//    public static synchronized void writeToLoggerobj(FileLogger fl, byte[] message){
+//        try {
+//            out.write(message);
+//            out.flush();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+
     public static List<RemotePeerInfo> getKPreferredNeighbors(){
         List<RemotePeerInfo> kPreferredNeighbors = new ArrayList();
         int k = Constants.NumberOfPreferredNeighbors;
@@ -148,6 +158,7 @@ public class utilities {
                     return false;
                 }
             }
+            //Constants.fl.downloadCompleteLog();
             Constants.isShutDownMessageReceived = true;
             return true;
         }
@@ -163,7 +174,7 @@ public class utilities {
         int fileChunkIndex = 0;
         
         while(offset<buffer.length){
-            fileChunks[fileChunkIndex++] = new Piece(Arrays.copyOfRange(buffer, offset, offset + Constants.PieceSize));
+            fileChunks[fileChunkIndex++] = new Piece(Arrays.copyOfRange(buffer, offset, Math.min(offset + Constants.PieceSize, buffer.length)));
             offset += Constants.PieceSize;
         }
        } catch (Exception e) {
@@ -184,17 +195,33 @@ public class utilities {
     }
 
     public static void mergeFileChunks(){
-        String path = "../peer_" + Constants.selfPeerInfo.peerID + ".txt";
+        String path = "../peer_" + Constants.selfPeerInfo.peerID + "/file.txt";
+        
         File file = new File(path);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        if(!file.exists()){
+            
+                System.out.println("folder has been created");
+                file.getParentFile().mkdirs(); 
+                try{
+                file.createNewFile();
+                System.out.println("FIle has been created");
+                }
+                catch(Exception e){
+                    System.out.println("Error in creating file");
+                }
+                System.out.println("folder has been created");
+
+        }
+        Constants.fl.downloadCompleteLog();
+
         try{
             FileOutputStream stream = new FileOutputStream(file);
             for(Piece piece : Constants.fileChunks){
-                outputStream.write(piece.getPieceContent());
+                //System.out.println("Final chunks stored are: " + new String(piece.getPieceContent()));
+                stream.write(piece.getPieceContent());
             }
-            byte completefile[] = outputStream.toByteArray();
-            stream.write(completefile);
             stream.flush();
+            stream.close();
         }
         catch(Exception e ){
             e.printStackTrace();

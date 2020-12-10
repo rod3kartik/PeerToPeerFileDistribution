@@ -38,7 +38,7 @@ public class CommonFileReader {
             
         }
         catch(Exception e){
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

@@ -3,12 +3,9 @@ import java.io.OutputStream;
 import java.nio.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.BitSet;
-import java.util.List;
-import java.util.Random;
 
 public class Message {
 //    public static enum Type {
@@ -75,7 +72,7 @@ public class Message {
                 new ChunkRequestor(this.peer).start();
                 break;
             case 2:
-                System.out.println("In case for handling intreseted");
+                System.out.println("**** In case for handling intreseted ****");
                 handleInterested();
                 //Write in logger
                 break;
@@ -118,13 +115,10 @@ public class Message {
 
     }
 
-  
-
-
-
     private void handleHaveMessage() {
         int pieceIndex = (int) utilities.fromByteArrayToLong(this.messagePayload);
-        
+        Constants.fl.receivedHaveMessageLog(this.peer.peerID,pieceIndex,Calendar.getInstance());
+
         if(Constants.peerIDToBitfield.containsKey(this.peer.peerID)){
             BitSet tempBitSet = Constants.peerIDToBitfield.get(this.peer.peerID);
             tempBitSet.set(pieceIndex);
@@ -144,14 +138,17 @@ public class Message {
     }
 
     private void handleChokeMessage(RemotePeerInfo remotePeer) {
-        System.out.println("Handle choke message " + remotePeer.peerID);
+        //System.out.println("Handle choke message " + remotePeer.peerID);
 
         remotePeer.isUnchoked = false;
+        Constants.fl.chockedLog(remotePeer.peerID,Calendar.getInstance());
+
     }
 
     private void handleUnchokeMessage(RemotePeerInfo peer2) {
         peer2.isUnchoked = true;
-        System.out.println("Handle unchoke message " + peer2.peerID);
+        //System.out.println("Handle unchoke message " + peer2.peerID);
+        Constants.fl.unchokedLog(peer2.peerID,Calendar.getInstance());
 
     }
 
@@ -203,17 +200,21 @@ public class Message {
 
     private void handleInterested(){
         //System.out.println("Remote peerID is + " + remotePeerID);
-        System.out.println("Remote peerID is + " + this.peer.peerID);
+        //System.out.println("Remote peerID is + " + this.peer.peerID);
         Constants.interestedNeighbors.add(Constants.peerIDToPeerInfo.get(this.peer.peerID));
+        Constants.fl.receivedInterestedMessageLog(this.peer.peerID,Calendar.getInstance());
 
-        System.out.println("Intrested neighoours set " + Constants.interestedNeighbors);
+        //System.out.println("Intrested neighoours set " + Constants.interestedNeighbors);
     }
 
     private void handleNotInterested(){
-        System.out.println("@@@@@@@@@@@@@@@@Received not interested: " + this.peer.peerID);
-       if(Constants.interestedNeighbors.contains((Constants.peerIDToPeerInfo.get(this.peer.peerID)))) {
+       //System.out.println("@@@@@@@@@@@@@@@@Received not interested: " + this.peer.peerID);
+
+        if(Constants.interestedNeighbors.contains((Constants.peerIDToPeerInfo.get(this.peer.peerID)))) {
            Constants.interestedNeighbors.remove(Constants.peerIDToPeerInfo.get(this.peer.peerID));
        }
+        Constants.fl.receivedNotInterestedMessageLog(this.peer.peerID,Calendar.getInstance());
+
     }
     private void updatePeerChokeList(int peerId, int mType) {
         new Peer().setPeerChokeMap(peerId,mType);
@@ -235,6 +236,8 @@ public class Message {
         Constants.peerIDToBitfield.put(peer.peerID, payload);
         //System.out.println("Remote peerID is" + peer.peerID);
 
+        Constants.fl.setTCPConnectionfromLog(peer.peerID, Calendar.getInstance());
+
     }
 
     // sends request message to the peer with the piece that is required
@@ -247,13 +250,14 @@ public class Message {
 
             if(peer.isUnchoked && Constants.selfBitfield.get(pieceIndex)){
                 System.out.println("***************************** " + pieceIndex);
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ByteArrayOutputStream oStream = new ByteArrayOutputStream();
                 
-                outputStream.write(messageIndex);
-                outputStream.write(Constants.fileChunks[pieceIndex].getPieceContent());
-            
-                Message msg = new Message(outputStream.toByteArray().length + 4, 7, outputStream.toByteArray());
+                oStream.write(messageIndex);
+                oStream.write(Constants.fileChunks[pieceIndex].getPieceContent());
+                byte[] payloadContent = oStream.toByteArray();
+                Message msg = new Message(payloadContent.length + 4, 7, payloadContent);
                 byte[] msgByteArray = msg.createMessage();
+                //System.out.println("First Message sent: "+ new String(msgByteArray));
                 utilities.writeToOutputStream(this.outputStream,msgByteArray);
             }
         }
@@ -284,10 +288,11 @@ public class Message {
         byte[] temp= Arrays.copyOfRange(piece, 0, 4);
         int pieceIndex = (int)utilities.fromByteArrayToLong(temp);
 
-        Piece newPiece = new Piece(temp);
+        byte[] pieceData = Arrays.copyOfRange(piece, 4, piece.length);
+        Piece newPiece = new Piece(pieceData);
         Constants.fileChunks[pieceIndex] = newPiece;
-
-        //int pieceIndex = 3;
+        Constants.fl.downloadingPieceLog(this.peer.peerID,pieceIndex , Calendar.getInstance());
+        //setting self_bitfield for downloaded piece index
         updateBitField(pieceIndex);
         Constants.updateRequestedPieceIndexes(pieceIndex, false);
         return temp;
