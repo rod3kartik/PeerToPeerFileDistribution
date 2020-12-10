@@ -51,6 +51,9 @@ public class utilities {
     }
 
     public static synchronized void writeToOutputStream(ObjectOutputStream out, byte[] message){
+        if(out == null){
+            return;
+        }
         try {
             out.write(message);
             out.flush();
@@ -63,7 +66,7 @@ public class utilities {
     public static List<RemotePeerInfo> getKPreferredNeighbors(){
         List<RemotePeerInfo> kPreferredNeighbors = new ArrayList();
         int k = Constants.NumberOfPreferredNeighbors;
-        System.out.println("value of K is " + k);
+        // System.out.println("value of K is " + k);
 
         RemotePeerInfo[] peers = new RemotePeerInfo[Constants.interestedNeighbors.size()];
         int index = 0;
@@ -144,7 +147,6 @@ public class utilities {
 
     public static boolean isDownloadComplete(){
         if((Constants.peerIDToBitfield.size() == Constants.listOfAllPeers.length - 1)){
-            System.out.println("in isDownload");
             for(Map.Entry<String, BitSet> setEntry : Constants.peerIDToBitfield.entrySet()){
                 if(setEntry.getValue().cardinality() != Constants.selfBitfield.cardinality()){
                     return false;
@@ -224,4 +226,5 @@ public class utilities {
             }
         }
     }
+
 }

@@ -52,7 +52,11 @@ public class Peer {
         }
         
         sPort = Integer.parseInt(selfInfo.peerPort);
-        
+        // Controller controller = new Controller();
+        // Constants.listOfThreads.add(controller);
+        // controller.start();
+        startTimerForUnchoking();
+        startTimerForOptimisticallyUnchoking();
         for (int outgoingPeer = 0; outgoingPeer < Constants.selfPeerIndex; outgoingPeer++) {
             System.out.println("Outgoing peer " + allBeforePeerInfo.get(outgoingPeer));
             Socket neighborPeer = new Socket(allBeforePeerInfo.get(outgoingPeer).peerAddress, Integer.parseInt(allBeforePeerInfo.get(outgoingPeer).peerPort));
@@ -76,11 +80,123 @@ public class Peer {
             Constants.listOfThreads.add(newP);
             newP.start();
         }
-        Controller controller = new Controller();
-        Constants.listOfThreads.add(controller);
-        controller.start();
+       
         
-        System.out.println("Compeleted Everything");
+        while(true){
+            System.out.println("hey");
+            if(Constants.isShutDownMessageReceived){
+                Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+                    for (Thread thread : threadSet) {
+                        System.out.println("Alive thread: " + thread);
+                        thread.interrupt();
+                    }
+                // break;
+            }
+        }
+        //System.out.println("Compeleted Everything");
+    }
+
+    private static void startTimerForOptimisticallyUnchoking() {
+        Timer optimisticUnchokingUnchokedTimer = new Timer();
+        int unchokeTimeInterval = Constants.OptimisticUnchokingInterval * 1000;
+        optimisticUnchokingUnchokedTimer.schedule(new TimerTask() {
+            @Override
+            public void run(){
+                System.out.println("******************");
+                Thread.currentThread();
+                if (Constants.isShutDownMessageReceived | Thread.interrupted()) {
+                    try {
+                        Constants.selfServerSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    utilities.shutdownAllThreads();
+                    optimisticUnchokingUnchokedTimer.cancel();
+                    optimisticUnchokingUnchokedTimer.purge();
+                    return;
+                }
+                List<RemotePeerInfo> interestedChokedNeighbors = new ArrayList<>();
+                for(RemotePeerInfo rpI: Constants.interestedNeighbors){
+                    if(!rpI.isUnchoked){
+                        interestedChokedNeighbors.add(rpI);
+                    }
+                }
+                if(interestedChokedNeighbors.size() > 0){
+                    RemotePeerInfo peer = interestedChokedNeighbors.get(new Random().nextInt(interestedChokedNeighbors.size()));
+                    Message unchokeMsg = new Message(1, 1, null);
+                    unchokeMsg.sendUnchokeMessage(peer.out);
+                    peer.isUnchoked = true; 
+                }
+               
+            }
+            
+        }, unchokeTimeInterval);
+
+    }
+
+    private static void startTimerForUnchoking() {
+        Timer timer = new Timer();
+        int begin = 0;
+        int timeInterval = Constants.UnchokingInterval * 1000;
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // call the method
+                System.out.println("Running controller again");
+                
+                if (Constants.selfPeerInfo.fileAvailable.equals("1") && utilities.isDownloadComplete()) {
+                    System.out.println("Shutting down controller");
+                    Constants.isShutDownMessageReceived = true;
+                    for(Map.Entry<String, BitSet> setEntry : Constants.peerIDToBitfield.entrySet()){
+                        System.out.println("Final bitfields are: " + setEntry.getKey() + setEntry.getValue());
+                    }
+                    utilities.broadcastShutdownMessage();
+                    utilities.shutdownAllThreads();
+                    try {
+                        Constants.selfServerSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    timer.cancel();
+                    timer.purge();
+                    System.out.println("timer cancel nhi hua");
+                    return;
+                }
+                if(Constants.isShutDownMessageReceived | Thread.currentThread().isInterrupted()){
+                    utilities.mergeFileChunks();
+                    try {
+                        Constants.selfServerSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    timer.cancel();
+                    timer.purge();
+                    return;
+                }
+                
+                List<RemotePeerInfo> preferredNeighbors = utilities.getKPreferredNeighbors();
+                if(preferredNeighbors.size() > 0){
+                    Constants.setListOfPreferredNeighbours(preferredNeighbors);
+                    System.out.println("List of pref neighours " + preferredNeighbors.size());
+                    // Constants.printListOfPeers(preferredNeighbors);
+                    for(RemotePeerInfo rpI: Constants.listOfAllPeers){
+                        if (Constants.selfPeerInfo.equals(rpI)) continue;
+
+                        if(Constants.preferredNeighbors.contains(rpI) ){
+                            Message unchokeMsg = new Message(1, 1, null);
+                            unchokeMsg.sendUnchokeMessage(rpI.out);
+                            rpI.isUnchoked = true; 
+                        }
+                        else{
+                            Message chokeMsg = new Message(1, 0, null);
+                            chokeMsg.sendChokeMessage(rpI.out);
+                            rpI.isUnchoked = false;
+                        }
+                    }
+                }
+            }
+            }, begin, timeInterval);
+            
     }
 }
 

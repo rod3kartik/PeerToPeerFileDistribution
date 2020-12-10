@@ -267,6 +267,9 @@ public class Message {
     }
 
     private boolean compareBitField(BitSet remoteBitfield){
+        if(remoteBitfield == null){
+            return false;
+        }
         BitSet selfChunksLeft = Constants.chunksLeft;
 
         selfChunksLeft.intersects(remoteBitfield);
@@ -284,7 +287,7 @@ public class Message {
     private byte[] handleDownloadPiece(byte[] piece) {
         //download and merge incoming piece
         //Need to update according to received packet
-        System.out.println("$$$$$$$$$$$$$$$$$In handle download piece handle");
+        // System.out.println("$$$$$$$$$$$$$$$$$In handle download piece handle");
         byte[] temp= Arrays.copyOfRange(piece, 0, 4);
         int pieceIndex = (int)utilities.fromByteArrayToLong(temp);
 
@@ -307,7 +310,7 @@ public class Message {
 
     private void sendInterestedMessage(ObjectOutputStream outputStream){
         try {
-            System.out.println("In send Interested method");
+            //System.out.println("In send Interested method");
             Message msg = new Message( 1, 2, null);
             byte[] interestedMessage = msg.createMessage();
             utilities.writeToOutputStream(outputStream, interestedMessage);

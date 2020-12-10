@@ -36,7 +36,7 @@ public class PeerHandler extends Thread{
         Handshake h = new Handshake();
         byte[] incomingMessage;
         try {
-            while(!Thread.currentThread().isInterrupted()){
+            while(!Thread.currentThread().isInterrupted() & !Constants.isShutDownMessageReceived){
                 if(Constants.isShutDownMessageReceived){
                     System.out.println("In shut down condition of PeerHandler " + peer.peerID);
                     utilities.shutdownAllThreads();
@@ -98,7 +98,7 @@ public class PeerHandler extends Thread{
                         //System.out.println("Peer: " + this.peer.peerID);
                         Message messageObj = new Message(outputBuffer.toByteArray(), this.peer, out);
                         messageObj.extractMessage();
-                        System.out.println("Map is " + Constants.peerIDToBitfield);
+                        // System.out.println("Map is " + Constants.peerIDToBitfield);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
