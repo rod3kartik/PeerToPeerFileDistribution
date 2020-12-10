@@ -52,13 +52,17 @@ public class Peer {
         }
         
         sPort = Integer.parseInt(selfInfo.peerPort);
+        
         for (int outgoingPeer = 0; outgoingPeer < Constants.selfPeerIndex; outgoingPeer++) {
             System.out.println("Outgoing peer " + allBeforePeerInfo.get(outgoingPeer));
             Socket neighborPeer = new Socket(allBeforePeerInfo.get(outgoingPeer).peerAddress, Integer.parseInt(allBeforePeerInfo.get(outgoingPeer).peerPort));
             ObjectOutputStream out = new ObjectOutputStream(neighborPeer.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(neighborPeer.getInputStream());
             Constants.listOfAllPeers[outgoingPeer].out = out;
-            new PeerHandler(neighborPeer, outgoingPeer, in, out).start();
+
+            PeerHandler newP = new PeerHandler(neighborPeer, outgoingPeer, in, out);
+            Constants.listOfThreads.add(newP);
+            newP.start();
         }
         
         ServerSocket serverSocket = new ServerSocket(sPort);
@@ -68,10 +72,13 @@ public class Peer {
             ObjectOutputStream out = new ObjectOutputStream(peerSocket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(peerSocket.getInputStream());
             Constants.listOfAllPeers[incomingPeers].out = out;
-            new PeerHandler(peerSocket, incomingPeers, in , out).start();
+            PeerHandler newP = new PeerHandler(peerSocket, incomingPeers, in , out);
+            Constants.listOfThreads.add(newP);
+            newP.start();
         }
-    
-        new Controller().start();
+        Controller controller = new Controller();
+        Constants.listOfThreads.add(controller);
+        controller.start();
         
         System.out.println("Compeleted Everything");
     }

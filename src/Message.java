@@ -40,16 +40,17 @@ public class Message {
 
     public Message(int msgLength, int type, byte[] payload){
         this.messageLength = ByteBuffer.allocate(4).putInt(msgLength).array();
-        this.messageType = ByteBuffer.allocate(4).putInt(type).array();
+        this.messageType = new byte[]{(byte)type};
+
         this.messagePayload = payload;
-        //System.out.println("Message payload is " + messagePayload);
+        //System.out.println("Message type length is " + this.messageType.length);
     }
 
     public Message(byte[] receivedMessage, RemotePeerInfo peer, ObjectOutputStream opstream){
         try {
             messageLength = Arrays.copyOfRange(receivedMessage, 0, 4);
-            messageType = Arrays.copyOfRange(receivedMessage, 4, 8);
-            messagePayload = Arrays.copyOfRange(receivedMessage, 8, receivedMessage.length);
+            messageType = Arrays.copyOfRange(receivedMessage, 4, 5);
+            messagePayload = Arrays.copyOfRange(receivedMessage, 5, receivedMessage.length);
             this.peer = peer;
             //this.remotePeerID = this.peer.peerID;
             this.outputStream = opstream;
@@ -72,7 +73,9 @@ public class Message {
             case 1:
                 //setting that peer's unchoked status 
                 handleUnchokeMessage(this.peer);
-                new ChunkRequestor(this.peer).start();
+                ChunkRequestor newChunkRequestor = new ChunkRequestor(this.peer);
+                Constants.listOfThreads.add(newChunkRequestor);
+                newChunkRequestor.start();
                 break;
             case 2:
                 //System.out.println("**** In case for handling intreseted ****");
@@ -158,7 +161,7 @@ public class Message {
     public static void sendRequestMessage(int index, RemotePeerInfo peer2) {
         try {
             byte[] pload = ByteBuffer.allocate(4).putInt(index).array();
-            byte[] msg = new Message(8, 6, pload).createMessage();
+            byte[] msg = new Message(5, 6, pload).createMessage();
             utilities.writeToOutputStream(peer2.out, msg);
         } catch (Exception e) {
             e.printStackTrace();
@@ -246,15 +249,15 @@ public class Message {
             int pieceIndex = (int)utilities.fromByteArrayToLong(messageIndex);
 
             if(peer.isUnchoked && Constants.selfBitfield.get(pieceIndex)){
-                System.out.println("***************************** " + pieceIndex);
+                // System.out.println("***************************** " + pieceIndex);
                 ByteArrayOutputStream oStream = new ByteArrayOutputStream();
                 
                 oStream.write(messageIndex);
                 oStream.write(Constants.fileChunks[pieceIndex].getPieceContent());
                 byte[] payloadContent = oStream.toByteArray();
-                Message msg = new Message(payloadContent.length + 4, 7, payloadContent);
+                Message msg = new Message(payloadContent.length + 1, 7, payloadContent);
                 byte[] msgByteArray = msg.createMessage();
-                System.out.println("First Message sent: "+ new String(msgByteArray));
+                
                 utilities.writeToOutputStream(this.outputStream,msgByteArray);
             }
         }
@@ -305,7 +308,7 @@ public class Message {
     private void sendInterestedMessage(ObjectOutputStream outputStream){
         try {
             System.out.println("In send Interested method");
-            Message msg = new Message( 4, 2, null);
+            Message msg = new Message( 1, 2, null);
             byte[] interestedMessage = msg.createMessage();
             utilities.writeToOutputStream(outputStream, interestedMessage);
            
@@ -315,7 +318,7 @@ public class Message {
     }
     private void sendNotInterested(ObjectOutputStream outputStream){
         try {
-            Message msg = new Message( 4, 3, null);
+            Message msg = new Message( 1, 3, null);
             byte[] interestedMessage = msg.createMessage();
             utilities.writeToOutputStream(outputStream, interestedMessage);
         } catch (Exception e) {

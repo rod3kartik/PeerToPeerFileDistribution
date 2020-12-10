@@ -13,10 +13,12 @@ public class Controller extends Thread {
             public void run() {
                 // call the method
                 System.out.println("Running controller again");
+                
                 if (Constants.selfPeerInfo.fileAvailable.equals("1") && utilities.isDownloadComplete()) {
                     System.out.println("Shutting down controller");
                     Constants.isShutDownMessageReceived = true;
                     utilities.broadcastShutdownMessage();
+                    utilities.shutdownAllThreads();
                     try {
                         Constants.selfServerSocket.close();
                     } catch (IOException e) {
@@ -25,9 +27,8 @@ public class Controller extends Thread {
                     timer.cancel();
                     timer.purge();
                     System.out.println("timer cancel nhi hua");
-                    return;
                 }
-                if(Constants.isShutDownMessageReceived){
+                if(Constants.isShutDownMessageReceived | Thread.currentThread().isInterrupted()){
                     utilities.mergeFileChunks();
                     try {
                         Constants.selfServerSocket.close();
@@ -36,34 +37,26 @@ public class Controller extends Thread {
                     }
                     timer.cancel();
                     timer.purge();
-
-                    return; 
                 }
                 
                 List<RemotePeerInfo> preferredNeighbors = utilities.getKPreferredNeighbors();
-                Constants.setListOfPreferredNeighbours(preferredNeighbors);
-                System.out.println("List of pref neighours " + preferredNeighbors.size());
-                Constants.printListOfPeers(preferredNeighbors);
-                for(RemotePeerInfo rpI: Constants.listOfAllPeers){
-                    if (Constants.selfPeerInfo.equals(rpI)) continue;
+                if(preferredNeighbors.size() > 0){
+                    Constants.setListOfPreferredNeighbours(preferredNeighbors);
+                    System.out.println("List of pref neighours " + preferredNeighbors.size());
+                    Constants.printListOfPeers(preferredNeighbors);
+                    for(RemotePeerInfo rpI: Constants.listOfAllPeers){
+                        if (Constants.selfPeerInfo.equals(rpI)) continue;
 
-                    if(Constants.preferredNeighbors.contains(rpI) ){
-                        Message unchokeMsg = new Message(4, 1, null);
-                        // System.out.println("Sending unchoke message: "+ rpI.peerID);
-                        // if (rpI.out == null){
-                        //     System.out.println("Unchoke null ");
-                        // }
-                        unchokeMsg.sendUnchokeMessage(rpI.out);
-                        rpI.isUnchoked = true; 
-                    }
-                    else{
-                        Message chokeMsg = new Message(4, 0, null);
-                        //System.out.println("Sending choke message: " + rpI.peerID);
-                        // if (rpI.out == null){
-                        //     System.out.println("THis is null though");
-                        // }
-                        chokeMsg.sendChokeMessage(rpI.out);
-                        rpI.isUnchoked = false;
+                        if(Constants.preferredNeighbors.contains(rpI) ){
+                            Message unchokeMsg = new Message(1, 1, null);
+                            unchokeMsg.sendUnchokeMessage(rpI.out);
+                            rpI.isUnchoked = true; 
+                        }
+                        else{
+                            Message chokeMsg = new Message(1, 0, null);
+                            chokeMsg.sendChokeMessage(rpI.out);
+                            rpI.isUnchoked = false;
+                        }
                     }
                 }
             }
@@ -77,15 +70,15 @@ public class Controller extends Thread {
                 @Override
                 public void run(){
                     System.out.println("******************");
-                    if(Constants.isShutDownMessageReceived){
+                    if(Constants.isShutDownMessageReceived | Thread.currentThread().interrupted()){
                         try {
                             Constants.selfServerSocket.close();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        utilities.shutdownAllThreads();
                         optimisticUnchokingUnchokedTimer.cancel();
                         optimisticUnchokingUnchokedTimer.purge();
-                        return; 
                     }
                     List<RemotePeerInfo> interestedChokedNeighbors = new ArrayList<>();
                     for(RemotePeerInfo rpI: Constants.interestedNeighbors){
@@ -93,12 +86,16 @@ public class Controller extends Thread {
                             interestedChokedNeighbors.add(rpI);
                         }
                     }
-                    RemotePeerInfo peer = interestedChokedNeighbors.get(new Random().nextInt(interestedChokedNeighbors.size()));
-                    Message unchokeMsg = new Message(4, 1, null);
-                    unchokeMsg.sendUnchokeMessage(peer.out);
-                    peer.isUnchoked = true; 
+                    if(interestedChokedNeighbors.size() > 0){
+                        RemotePeerInfo peer = interestedChokedNeighbors.get(new Random().nextInt(interestedChokedNeighbors.size()));
+                        Message unchokeMsg = new Message(1, 1, null);
+                        unchokeMsg.sendUnchokeMessage(peer.out);
+                        peer.isUnchoked = true; 
+                    }
+                   
                 }
                 
             }, unchokeTimeInterval);
+
     }
 }

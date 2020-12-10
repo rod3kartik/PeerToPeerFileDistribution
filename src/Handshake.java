@@ -15,7 +15,7 @@ public class Handshake {
         this.handshakeHeader = Constants.headerHandshake.getBytes(StandardCharsets.UTF_8);
         this.zeroBytes = new byte[10];
         this.peerID = ByteBuffer.allocate(4).putInt(Integer.parseInt(Constants.selfPeerInfo.peerID)).array();
-        System.out.println("converted id : " + new String(this.peerID, StandardCharsets.UTF_8));
+        
     }
 
     public byte[] generateByteArrayMessage(byte[] handshakeHeader, byte[] zeroBytes, byte[] peerId){

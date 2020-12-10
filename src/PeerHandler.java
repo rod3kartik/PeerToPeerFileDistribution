@@ -5,17 +5,14 @@ import java.nio.channels.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import javax.swing.text.html.HTMLDocument.BlockElement;
-
 public class PeerHandler extends Thread{
-    private Socket peerSocket;
+ 
     private ObjectInputStream in;	//stream read from the socket
     private ObjectOutputStream out;    //stream write to the socket
     private RemotePeerInfo peer;
     private boolean firstTime = true;
 
     PeerHandler(Socket socket, int peerIndex, ObjectInputStream inputStream, ObjectOutputStream outputStream) {
-        this.peerSocket = socket;
         //System.out.println(peerIndex + " " + Constants.listOfAllPeers.length);
 
         try {
@@ -39,9 +36,10 @@ public class PeerHandler extends Thread{
         Handshake h = new Handshake();
         byte[] incomingMessage;
         try {
-            while(true){
+            while(!Thread.currentThread().isInterrupted()){
                 if(Constants.isShutDownMessageReceived){
                     System.out.println("In shut down condition of PeerHandler " + peer.peerID);
+                    utilities.shutdownAllThreads();
                     return;
                 }
                 if(firstTime){
@@ -69,7 +67,7 @@ public class PeerHandler extends Thread{
                         if(Constants.selfBitfield.length() != 0){
                             byte[] bitFieldToByteArray = Constants.selfBitfield.toByteArray();
                             System.out.println("byte array: "+ bitFieldToByteArray);
-                            Message msg = new Message(bitFieldToByteArray.length + 4, 5, bitFieldToByteArray);
+                            Message msg = new Message(bitFieldToByteArray.length + 1, 5, bitFieldToByteArray);
 
                             byte[] bitFieldMessage = msg.createMessage();
                             utilities.writeToOutputStream(out, bitFieldMessage);
@@ -100,7 +98,7 @@ public class PeerHandler extends Thread{
                         //System.out.println("Peer: " + this.peer.peerID);
                         Message messageObj = new Message(outputBuffer.toByteArray(), this.peer, out);
                         messageObj.extractMessage();
-                        //System.out.println("Map is " + Constants.peerIDToBitfield);
+                        System.out.println("Map is " + Constants.peerIDToBitfield);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

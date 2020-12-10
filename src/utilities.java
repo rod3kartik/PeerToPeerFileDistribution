@@ -74,7 +74,9 @@ public class utilities {
             index++;
         }
         System.out.println("Peers array length is " + peers.length);
-
+        if(peers.length < 1){
+            return kPreferredNeighbors;
+        }
         if(Constants.selfPeerInfo.fileAvailable.equals("1")){
            int[] randomNumbers = new Random().ints(0, peers.length).distinct().limit(Math.min(k, peers.length)).toArray();
            for (int i : randomNumbers) {
@@ -122,7 +124,7 @@ public class utilities {
         for (RemotePeerInfo peer : Constants.listOfAllPeers) {
             if(!peer.peerID.equals(peerID)){
                 try {
-                    Message msg = new Message(4 + pieceIndex.length, 4, pieceIndex);
+                    Message msg = new Message(1 + pieceIndex.length, 4, pieceIndex);
                     byte[] msgByteArray = msg.createMessage();
                     utilities.writeToOutputStream(peer.out, msgByteArray);
                 } catch (Exception e) {
@@ -177,7 +179,7 @@ public class utilities {
     public static void broadcastShutdownMessage() {
         for (RemotePeerInfo peer : Constants.listOfAllPeers) {
             if(!(peer.peerID.equals(Constants.selfPeerInfo.peerID))){
-                byte[] msg = new Message(4, 8, null).createMessage();
+                byte[] msg = new Message(1, 8, null).createMessage();
                 utilities.writeToOutputStream(peer.out, msg);
             }
         }
@@ -215,4 +217,11 @@ public class utilities {
         }
     }
    
+    public static void shutdownAllThreads(){
+        for (Thread thread: Constants.listOfThreads) {
+            if(thread.isAlive()){
+                thread.interrupt();
+            }
+        }
+    }
 }
