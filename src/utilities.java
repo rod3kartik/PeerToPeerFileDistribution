@@ -216,7 +216,7 @@ public class utilities {
                 System.out.println("folder has been created");
 
         }
-        Constants.fl.downloadCompleteLog();
+        Constants.fl.downloadCompleteLog(Calendar.getInstance());
 
         try{
             FileOutputStream stream = new FileOutputStream(file);
