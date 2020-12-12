@@ -22,7 +22,7 @@ public class Controller extends Thread {
                         socket.close();
                     }
                     Constants.selfServerSocket.close();
-                    System.exit(0);
+                    // System.exit(0);
                 break; 
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -101,7 +101,7 @@ public class Peer {
         optimisticUnchokingUnchokedTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println("******************" + Constants.isShutDownMessageReceived );
+                System.out.println("****************** " + Constants.isShutDownMessageReceived );
                 Thread.currentThread();
                 if (Constants.isShutDownMessageReceived | Thread.interrupted()) {
                     // try {
@@ -171,7 +171,7 @@ public class Peer {
                         System.out.println("Final bitfields are: " + setEntry.getKey() + setEntry.getValue());
                     }
                     utilities.broadcastShutdownMessage();
-                    //Constants.isShutDownMessageReceived = true;
+                    Constants.isShutDownMessageReceived = true;
                     //utilities.shutdownAllThreads();
                     // try {
                     //     Constants.selfServerSocket.close();
