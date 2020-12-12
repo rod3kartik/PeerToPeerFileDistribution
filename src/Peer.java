@@ -91,7 +91,7 @@ public class Peer {
                 // serverSocket.close();
             }
         }
-
+        controller.join();
         System.out.println("Compeleted Everything");
     }
 
@@ -101,7 +101,7 @@ public class Peer {
         optimisticUnchokingUnchokedTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println("****************** " + Constants.isShutDownMessageReceived );
+                System.out.println("optimistic timer running " + Constants.isShutDownMessageReceived );
                 Thread.currentThread();
                 if (Constants.isShutDownMessageReceived | Thread.interrupted()) {
                     // try {
@@ -142,7 +142,7 @@ public class Peer {
             @Override
             public void run() {
                 // call the method
-                System.out.println("Running controller again");
+                System.out.println("unchoking timer running again");
 
                 if (Constants.isShutDownMessageReceived | Thread.currentThread().isInterrupted()) {
                     utilities.mergeFileChunks();
@@ -152,7 +152,7 @@ public class Peer {
                     // e.printStackTrace();
                     // }
                     timer.cancel();
-                    timer.purge();
+                    //timer.purge();
                     // Runtime.getRuntime().exit(0);
                     for (Socket socket : Constants.listOfAllSockets) {
                         try {
@@ -162,6 +162,8 @@ public class Peer {
                         }
                     }
                     System.out.println("returning from timer");
+                    System.exit(0);
+
                     return;
                 }
                 if (Constants.selfPeerInfo.fileAvailable.equals("1") && utilities.isDownloadComplete()) {
@@ -180,6 +182,7 @@ public class Peer {
                     // }
                     timer.cancel();
                     System.out.println("timer cancel nhi hua" + Constants.isShutDownMessageReceived);
+                    System.exit(0);
                     return;
                 }
                 
