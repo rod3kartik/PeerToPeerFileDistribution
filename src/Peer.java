@@ -91,7 +91,7 @@ public class Peer {
                 // serverSocket.close();
             }
         }
-
+        controller.join();
         System.out.println("Compeleted Everything");
     }
 
