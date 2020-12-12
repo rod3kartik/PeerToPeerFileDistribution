@@ -172,7 +172,7 @@ public class utilities {
    public static Piece[] readFileIntoChunks() {
         Piece[] fileChunks = new Piece[Constants.numberOfChunks];
        try {
-        byte[] buffer = Files.readAllBytes(Paths.get("C:\\Users\\kirti\\Desktop\\work\\PeerToPeerFileDistribution\\src\\theFile"));
+        byte[] buffer = Files.readAllBytes(Paths.get("./theFile"));
         // System.out.println("Buffer length "+ buffer.length);
         int offset = 0;
         int fileChunkIndex = 0;
