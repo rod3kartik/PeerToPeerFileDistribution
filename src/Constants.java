@@ -31,6 +31,7 @@ public class Constants {
     public static ServerSocket selfServerSocket;
     public static List<Thread> listOfThreads = new ArrayList<>();
     public static List<Socket> listOfAllSockets = new ArrayList<>();
+    public static boolean isFileMerged = false;
     // public static 
     //Mapping of message type to value
     public static Map<String,RemotePeerInfo> peerIDToPeerInfo = new HashMap<>();

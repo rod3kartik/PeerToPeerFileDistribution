@@ -198,7 +198,7 @@ public class utilities {
         }
     }
 
-    public static void mergeFileChunks(){
+    public static synchronized void mergeFileChunks(){
         String path = "../peer_" + Constants.selfPeerInfo.peerID + "/file.txt";
         
         File file = new File(path);
