@@ -103,7 +103,11 @@ public class PeerHandler extends Thread {
                         }
                         // System.out.println("Map is " + Constants.peerIDToBitfield);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        // e.printStackTrace();
+                        System.out.println("Peer Socket has been closed gracefully");
+                        peerSocket.close();
+                        Runtime.getRuntime().exit(0);
+                        return;
                     }
                 }
 

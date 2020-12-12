@@ -24,8 +24,9 @@ public class CommonFileReader {
     public static void confReader() {
         try {
                 
-            File peerInfoConfigFile = Paths.get("./" + "common.cfg").toFile();
-           
+            //File peerInfoConfigFile = Paths.get("./" + "common.cfg").toFile();
+            
+            File peerInfoConfigFile = Paths.get("C:\\Users\\kirti\\Desktop\\work\\PeerToPeerFileDistribution\\src\\common.cfg").toFile();
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;
             while ((st = br.readLine()) != null) {
