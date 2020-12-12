@@ -138,6 +138,8 @@ public class Message {
 
         if(compareBitField(this.peer.bitfield)){
             sendInterestedMessage(this.outputStream);
+        } else {
+            sendNotInterested(this.outputStream);
         }
 
     }
