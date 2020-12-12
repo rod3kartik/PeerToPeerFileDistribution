@@ -24,6 +24,14 @@ public class RemotePeerInfo {
     public float downloadDataSize = 0;
     public long downloadStartTime = 0;
 
+
+    public RemotePeerInfo(String pId, String pAddress, String pPort) {
+        peerID = pId;
+        peerAddress = pAddress;
+        peerPort = pPort;
+        //System.out.println(bitfield.length() + " " + fileAvailable + " "+ bitfield + " " + peerID);
+    }
+
     public RemotePeerInfo(String pId, String pAddress, String pPort, String fileAvailable) {
         peerID = pId;
         peerAddress = pAddress;

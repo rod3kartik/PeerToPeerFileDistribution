@@ -63,8 +63,8 @@ public class Constants {
         //Setting configuration variables
         CommonFileReader.confReader();
         NumberOfPreferredNeighbors = CommonFileReader.getNumberOfPreferredNeighbours();
-        UnchokingInterval = CommonFileReader.getUnchokingInterval();
-        OptimisticUnchokingInterval = CommonFileReader.getOptimisticUnchokingInterval();
+        UnchokingInterval = CommonFileReader.getUnchokingInterval()*1000;
+        OptimisticUnchokingInterval = CommonFileReader.getOptimisticUnchokingInterval()*1000;
         FileName = CommonFileReader.getFileName();
         FileSize = CommonFileReader.getFileSize();
 
