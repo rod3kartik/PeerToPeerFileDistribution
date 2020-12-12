@@ -110,8 +110,10 @@ public class Message {
                     if(!compareBitField(rpi.bitfield)) sendNotInterested(rpi.out);
                 }
                 break;
-            case 8:
+            case -1:
+                System.out.println("$$$$ Shutdown Message Received");
                 Constants.isShutDownMessageReceived = true;
+                // Runtime.getRuntime().exit(0);
                 break;
 
         }

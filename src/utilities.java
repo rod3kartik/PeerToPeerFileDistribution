@@ -172,7 +172,7 @@ public class utilities {
    public static Piece[] readFileIntoChunks() {
         Piece[] fileChunks = new Piece[Constants.numberOfChunks];
        try {
-        byte[] buffer = Files.readAllBytes(Paths.get("./" + Constants.FileName));
+        byte[] buffer = Files.readAllBytes(Paths.get("C:\\Users\\kirti\\Desktop\\work\\PeerToPeerFileDistribution\\src\\theFile"));
         // System.out.println("Buffer length "+ buffer.length);
         int offset = 0;
         int fileChunkIndex = 0;
@@ -192,7 +192,7 @@ public class utilities {
     public static void broadcastShutdownMessage() {
         for (RemotePeerInfo peer : Constants.listOfAllPeers) {
             if(!(peer.peerID.equals(Constants.selfPeerInfo.peerID))){
-                byte[] msg = new Message(1, 8, null).createMessage();
+                byte[] msg = new Message(1, -1, null).createMessage();
                 utilities.writeToOutputStream(peer.out, msg);
             }
         }
