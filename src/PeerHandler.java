@@ -106,7 +106,7 @@ public class PeerHandler extends Thread {
                         // e.printStackTrace();
                         System.out.println("Peer Socket has been closed gracefully");
                         peerSocket.close();
-                        Runtime.getRuntime().exit(0);
+                        // Runtime.getRuntime().exit(0);
                         return;
                     }
                 }

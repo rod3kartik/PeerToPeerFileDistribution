@@ -35,7 +35,7 @@ public class Connection {
     public static RemotePeerInfo[] fileReader() {
         try {
 
-            File peerInfoConfigFile =Paths.get("./peerInfo.cfg").toFile();
+            File peerInfoConfigFile =Paths.get("./PeerInfo.cfg").toFile();
             line = 0;
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;
