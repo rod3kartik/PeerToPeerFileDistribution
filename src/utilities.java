@@ -51,6 +51,9 @@ public class utilities {
     }
 
     public static synchronized void writeToOutputStream(ObjectOutputStream out, byte[] message){
+        if(out == null){
+            return;
+        }
         try {
             out.write(message);
             out.flush();
@@ -59,11 +62,21 @@ public class utilities {
         }
  
     }
-    
+
+//    public static synchronized void writeToLoggerobj(FileLogger fl, byte[] message){
+//        try {
+//            out.write(message);
+//            out.flush();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+
     public static List<RemotePeerInfo> getKPreferredNeighbors(){
         List<RemotePeerInfo> kPreferredNeighbors = new ArrayList();
         int k = Constants.NumberOfPreferredNeighbors;
-        System.out.println("value of K is " + k);
+        // System.out.println("value of K is " + k);
 
         RemotePeerInfo[] peers = new RemotePeerInfo[Constants.interestedNeighbors.size()];
         int index = 0;
@@ -74,7 +87,9 @@ public class utilities {
             index++;
         }
         System.out.println("Peers array length is " + peers.length);
-
+        if(peers.length < 1){
+            return kPreferredNeighbors;
+        }
         if(Constants.selfPeerInfo.fileAvailable.equals("1")){
            int[] randomNumbers = new Random().ints(0, peers.length).distinct().limit(Math.min(k, peers.length)).toArray();
            for (int i : randomNumbers) {
@@ -122,7 +137,7 @@ public class utilities {
         for (RemotePeerInfo peer : Constants.listOfAllPeers) {
             if(!peer.peerID.equals(peerID)){
                 try {
-                    Message msg = new Message(4 + pieceIndex.length, 4, pieceIndex);
+                    Message msg = new Message(1 + pieceIndex.length, 4, pieceIndex);
                     byte[] msgByteArray = msg.createMessage();
                     utilities.writeToOutputStream(peer.out, msgByteArray);
                 } catch (Exception e) {
@@ -140,16 +155,30 @@ public class utilities {
         return indexes;
     }
 
+    public static boolean isDownloadComplete(){
+        if((Constants.peerIDToBitfield.size() == Constants.listOfAllPeers.length - 1)){
+            for(Map.Entry<String, BitSet> setEntry : Constants.peerIDToBitfield.entrySet()){
+                if(setEntry.getValue().cardinality() != Constants.selfBitfield.cardinality()){
+                    return false;
+                }
+            }
+            //Constants.fl.downloadCompleteLog();
+            Constants.isShutDownMessageReceived = true;
+            return true;
+        }
+        return false;
+    }
+
    public static Piece[] readFileIntoChunks() {
         Piece[] fileChunks = new Piece[Constants.numberOfChunks];
        try {
-        byte[] buffer = Files.readAllBytes(Paths.get("./" + Constants.FileName));
-        System.out.println("Buffer length "+ buffer.length);
+        byte[] buffer = Files.readAllBytes(Paths.get("./theFile"));
+        // System.out.println("Buffer length "+ buffer.length);
         int offset = 0;
         int fileChunkIndex = 0;
         
         while(offset<buffer.length){
-            fileChunks[fileChunkIndex++] = new Piece(Arrays.copyOfRange(buffer, offset, offset + Constants.PieceSize));
+            fileChunks[fileChunkIndex++] = new Piece(Arrays.copyOfRange(buffer, offset, Math.min(offset + Constants.PieceSize, buffer.length)));
             offset += Constants.PieceSize;
         }
        } catch (Exception e) {
@@ -159,5 +188,55 @@ public class utilities {
         
        return fileChunks;
    }
-   
+
+    public static void broadcastShutdownMessage() {
+        for (RemotePeerInfo peer : Constants.listOfAllPeers) {
+            if(!(peer.peerID.equals(Constants.selfPeerInfo.peerID))){
+                byte[] msg = new Message(1, -1, null).createMessage();
+                utilities.writeToOutputStream(peer.out, msg);
+            }
+        }
+    }
+
+    public static synchronized void mergeFileChunks(){
+        String path = "../peer_" + Constants.selfPeerInfo.peerID + "/file.txt";
+        
+        File file = new File(path);
+        if(!file.exists()){
+            
+                System.out.println("folder has been created");
+                file.getParentFile().mkdirs(); 
+                try{
+                file.createNewFile();
+                System.out.println("FIle has been created");
+                }
+                catch(Exception e){
+                    System.out.println("Error in creating file");
+                }
+                System.out.println("folder has been created");
+
+        }
+        Constants.fl.downloadCompleteLog(Calendar.getInstance());
+
+        try{
+            FileOutputStream stream = new FileOutputStream(file);
+            for(Piece piece : Constants.fileChunks){
+                stream.write(piece.getPieceContent());
+            }
+            stream.flush();
+            stream.close();
+        }
+        catch(Exception e ){
+            e.printStackTrace();
+        }
+    }
+
+    // public static void shutdownAllThreads(){
+    //     for (Thread thread: Constants.listOfThreads) {
+    //         if(thread.isAlive()){
+    //             thread.interrupt();
+    //         }
+    //     }
+    // }
+
 }

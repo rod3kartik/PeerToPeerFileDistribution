@@ -1,4 +1,6 @@
 import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.rmi.Remote;
 import java.util.*;
 public class Constants {
@@ -9,12 +11,11 @@ public class Constants {
     public static int OptimisticUnchokingInterval;
     public static String FileName;
     public static int FileSize;
-    
     public static int numberOfChunks;
     public static int PieceSize;
-    
-    public static RemotePeerInfo[] listOfAllPeers = new RemotePeerInfo[3];
+    public static RemotePeerInfo[] listOfAllPeers;
     public static String headerHandshake ="P2PFILESHARINGPROJ";
+    public static int totalNumberOfPeers;
     public static HashMap<String, Boolean> handshakedPeers = new HashMap<>();
     public static int selfPeerIndex = 0;
     public static RemotePeerInfo selfPeerInfo;
@@ -25,6 +26,12 @@ public class Constants {
     public static HashSet<RemotePeerInfo> interestedNeighbors = new HashSet();
     public static List<RemotePeerInfo> preferredNeighbors = new ArrayList<>();
     public static List<Integer> requestedPieceIndexes = new ArrayList<>();
+    public static FileLogger fl;
+    public static boolean isShutDownMessageReceived = false;
+    public static ServerSocket selfServerSocket;
+    public static List<Thread> listOfThreads = new ArrayList<>();
+    public static List<Socket> listOfAllSockets = new ArrayList<>();
+    public static boolean isFileMerged = false;
     // public static 
     //Mapping of message type to value
     public static Map<String,RemotePeerInfo> peerIDToPeerInfo = new HashMap<>();
@@ -61,13 +68,15 @@ public class Constants {
         OptimisticUnchokingInterval = CommonFileReader.getOptimisticUnchokingInterval();
         FileName = CommonFileReader.getFileName();
         FileSize = CommonFileReader.getFileSize();
+
         PieceSize = CommonFileReader.getPieceSize();
-        System.out.println(FileSize + " " + PieceSize + " " + Math.ceil(FileSize/PieceSize) + " " + (int)Math.ceil(FileSize/PieceSize));
+        System.out.println(FileSize + " " + PieceSize + " " + Math.ceil(FileSize/PieceSize) + " " + (int)Math.ceil(FileSize*1.0/PieceSize*1.0));
         try {
             numberOfChunks = (int)Math.ceil((FileSize * 1.0)/(PieceSize*1.0));
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         listOfAllPeers = Connection.fileReader();
         //System.out.println("list of all peers "+ listOfAllPeers[listOfAllPeers.length-2].peerID);
          printArrayOfPeers(listOfAllPeers);
@@ -113,6 +122,12 @@ public class Constants {
     //Setting list of preffered neighbors
     public static synchronized void setListOfPreferredNeighbours(List<RemotePeerInfo> peers){
         preferredNeighbors = peers;
+        String[] prefNeighours = new String[peers.size()];
+        int index = 0;
+        for(RemotePeerInfo peer : peers){
+            prefNeighours[index++] = peer.peerID;
+        }
+        fl.updateNeighboursLog(prefNeighours,Calendar.getInstance());
     }
 
     //set selfPeerInfo
@@ -123,12 +138,21 @@ public class Constants {
     public static void setFileChunks(){
         if(selfPeerInfo.fileAvailable.equals("1")){
             fileChunks = utilities.readFileIntoChunks();
+            // printFileChunks(fileChunks);
         } else {
             fileChunks = new Piece[Constants.numberOfChunks];
     }
     }
 
-    public static synchronized void updateRequestedPieceIndexes(int index, boolean add){
+    private static void printFileChunks(Piece[] fileChunks2) {
+
+        for(Piece piece : Constants.fileChunks){
+            //System.out.println("2 . Final chunks stored are: " + new String(piece.getPieceContent()));
+        }
+    }
+
+
+    public static synchronized void updateRequestedPieceIndexes(int index, boolean add) {
         if(add){
             requestedPieceIndexes.add(index);
         } else {

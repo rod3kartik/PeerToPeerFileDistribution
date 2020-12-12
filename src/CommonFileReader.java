@@ -24,8 +24,9 @@ public class CommonFileReader {
     public static void confReader() {
         try {
                 
-            File peerInfoConfigFile = Paths.get("./" + "common.cfg").toFile();
-           
+            //File peerInfoConfigFile = Paths.get("./" + "common.cfg").toFile();
+            
+            File peerInfoConfigFile = Paths.get("./common.cfg").toFile();
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;
             while ((st = br.readLine()) != null) {
@@ -38,7 +39,7 @@ public class CommonFileReader {
             
         }
         catch(Exception e){
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

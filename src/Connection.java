@@ -7,17 +7,16 @@ import java.util.List;
 
 public class Connection {
     static int line;
-    static RemotePeerInfo[] hosts = new RemotePeerInfo[3];
+    static List<RemotePeerInfo> hosts = new ArrayList<>();
     // Connecting new peers to existing peers already in the network 
     public static List<RemotePeerInfo> getPeerInfo(String peer){
         List<RemotePeerInfo> allPeersBefore = new ArrayList<>();
         for(int i=0;i<line;i++){
-           if (peer.equals(hosts[i].peerID)){
-               System.out.println("Line "+ line);
-               allPeersBefore.add(hosts[i]);
+           if (peer.equals(hosts.get(i).peerID)){
+               allPeersBefore.add(hosts.get(i));
                 break;
            }
-           allPeersBefore.add(hosts[i]);
+           allPeersBefore.add(hosts.get(i));
            }
         return allPeersBefore;
         }
@@ -25,10 +24,10 @@ public class Connection {
     public static List<RemotePeerInfo> getAfterPeersInfo(String peer){
         List<RemotePeerInfo> allPeersAfter = new ArrayList<>();
         for(int i=line-1;i<-1;i++){
-            if (peer.equals(hosts[i].peerID)){
+            if (peer.equals(hosts.get(i).peerID)){
                  break;
             }
-            allPeersAfter.add(hosts[i]);
+            allPeersAfter.add(hosts.get(i));
             }
         return allPeersAfter;
         }
@@ -36,24 +35,28 @@ public class Connection {
     public static RemotePeerInfo[] fileReader() {
         try {
 
-            File peerInfoConfigFile =Paths.get("./" + "peerInfo.cfg").toFile();
+            File peerInfoConfigFile =Paths.get("./PeerInfo.cfg").toFile();
             line = 0;
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;
 
             // reading each line and sending the arguments to RemotePeerInfo
             while ((st = br.readLine()) != null) {
-                System.out.println("in connection: "+ st);
                 String[] rows = st.split(" ");
-                hosts[line] = new RemotePeerInfo(rows[0],rows[1],rows[2],rows[3]);
+                hosts.add(new RemotePeerInfo(rows[0],rows[1],rows[2],rows[3]));
                 line++;
             }
             br.close();
+            Constants.totalNumberOfPeers = line;
         }
         catch(Exception e){
-            System.out.println("exception");
+            e.printStackTrace();
         }
-        return hosts;
+        RemotePeerInfo[] peerList = new RemotePeerInfo[line];
+        for(int i = 0; i<line; i++){
+            peerList[i] = hosts.get(i);
+        }
+        return peerList;
     }
 
 }

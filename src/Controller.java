@@ -1,47 +1,37 @@
 import java.util.*;
 import java.io.*;
+import java.net.Socket;
 
+public class Controller extends Thread {
 
-public class Controller extends Thread{
+    public void run() {
 
-    public void run(){
-
-        Timer timer = new Timer();
-        int begin = 0;
-        int timeInterval = Constants.UnchokingInterval*1000;
-        timer.schedule(new TimerTask() {
-        @Override
-        public void run() {
-            //call the method
-            System.out.println("Running controller again");
-            List<RemotePeerInfo> preferredNeighbors = utilities.getKPreferredNeighbors();
-            System.out.println("cleared");
-            Constants.setListOfPreferredNeighbours(preferredNeighbors);
-            System.out.println("List of pref neighours " + preferredNeighbors.size());
-            Constants.printListOfPeers(preferredNeighbors);
-            for(RemotePeerInfo rpI: Constants.listOfAllPeers){
-                if (Constants.selfPeerInfo.equals(rpI)) continue;
-
-                if(Constants.preferredNeighbors.contains(rpI) ){
-                    Message unchokeMsg = new Message(4, 1, null);
-                    System.out.println("Sending unchoke message: "+ rpI.peerID);
-                    if (rpI.out == null){
-                        System.out.println("Unchoke null ");
+        while (true) {
+            //System.out.println(Constants.isShutDownMessageReceived);
+            if (Constants.isShutDownMessageReceived) {
+                try {
+                    Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+                    for (Thread thread : threadSet) {
+                    System.out.println("Alive thread: " + thread);
+                    //thread.interrupt();
                     }
-                    unchokeMsg.sendUnchokeMessage(rpI.out);
-                    rpI.isUnchoked = true; 
-                }
-                else{
-                    Message chokeMsg = new Message(4, 0, null);
-                    System.out.println("Sending choke message: " + rpI.peerID);
-                    if (rpI.out == null){
-                        System.out.println("THis is null though");
+                    System.out.println("********************** In the final shutdown **********************");
+                    Thread.currentThread();
+                    Thread.sleep(5 * 1000);
+                    for (Socket socket : Constants.listOfAllSockets) {
+                        socket.close();
                     }
-                    chokeMsg.sendChokeMessage(rpI.out);
-                    rpI.isUnchoked = false;
+                    Constants.selfServerSocket.close();
+                    // System.exit(0);
+                break; 
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+               
             }
         }
-        }, begin, timeInterval);
+       System.out.println("going out of controller");
+
+       
     }
 }

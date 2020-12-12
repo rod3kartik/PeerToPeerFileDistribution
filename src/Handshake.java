@@ -14,15 +14,16 @@ public class Handshake {
     public Handshake(){
         this.handshakeHeader = Constants.headerHandshake.getBytes(StandardCharsets.UTF_8);
         this.zeroBytes = new byte[10];
-        this.peerID = ByteBuffer.allocate(4).putInt(Integer.parseInt(Constants.listOfAllPeers[Constants.selfPeerIndex].peerID)).array();
+        this.peerID = ByteBuffer.allocate(4).putInt(Integer.parseInt(Constants.selfPeerInfo.peerID)).array();
+        
     }
 
     public byte[] generateByteArrayMessage(byte[] handshakeHeader, byte[] zeroBytes, byte[] peerId){
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         try {
-            outputStream.write(this.handshakeHeader);
-            outputStream.writeBytes(this.zeroBytes);
-            outputStream.writeBytes(this.peerID);    
+            outputStream.write(handshakeHeader);
+            outputStream.writeBytes(zeroBytes);
+            outputStream.writeBytes(peerID);    
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -32,12 +33,12 @@ public class Handshake {
     public void sendHandshake(ObjectOutputStream out){
         try {       
             byte[] finalMsg = generateByteArrayMessage(this.handshakeHeader, this.zeroBytes, this.peerID);
-            System.out.println("sent message: "+ finalMsg.toString());
+            System.out.println("sent message: "+ new String(finalMsg));
             utilities.writeToOutputStream(out, finalMsg);
            
         }
         catch(Exception ex){
-            System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
@@ -65,6 +66,6 @@ public class Handshake {
         long peerID = utilities.fromByteArrayToLong(bytePeerID);
         Constants.handshakedPeers.put(Long.toString(peerID), true);
         System.out.println("PeerID received in handshake " + peerID);
-        System.out.println(Constants.handshakedPeers);
+        // System.out.println(Constants.handshakedPeers);
     }
 }

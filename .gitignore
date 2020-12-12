@@ -5,3 +5,6 @@ log*
 .classpath
 .vscode
 src/playground.java
+peer_*
+src/PeerInfo.cfg
+src/peerInfo.cfg
