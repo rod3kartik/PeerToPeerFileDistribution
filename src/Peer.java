@@ -101,16 +101,14 @@ public class Peer {
         optimisticUnchokingUnchokedTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println("optimistic timer running " + Constants.isShutDownMessageReceived );
-                Thread.currentThread();
-                if (Constants.isShutDownMessageReceived | Thread.interrupted()) {
-                    // try {
-                    // Constants.selfServerSocket.close();
-                    // } catch (IOException e) {
-                    // e.printStackTrace();
-                    // }
-                    // utilities.shutdownAllThreads();
+                System.out.println("optimistic timer running again: " + Constants.isShutDownMessageReceived );
+                if (Constants.isShutDownMessageReceived) {
                     optimisticUnchokingUnchokedTimer.cancel();
+                    if(!Constants.isFileMerged){
+                        utilities.mergeFileChunks();
+                        Constants.isFileMerged = true;
+                    }
+                    System.exit(0);
                     return;
                 }
                 System.out.println("After the condition check");
@@ -126,6 +124,7 @@ public class Peer {
                     Message unchokeMsg = new Message(1, 1, null);
                     unchokeMsg.sendUnchokeMessage(peer.out);
                     peer.setIsUnchoked(true);
+                    Constants.fl.changeOptUnchokedNeighbourLog(peer.peerID, Calendar.getInstance());
                 }
 
             }
@@ -142,17 +141,14 @@ public class Peer {
             @Override
             public void run() {
                 // call the method
-                System.out.println("unchoking timer running again");
-
+                System.out.println(" unchoking timer running again: " + Constants.isShutDownMessageReceived);
                 if (Constants.isShutDownMessageReceived | Thread.currentThread().isInterrupted()) {
-                    utilities.mergeFileChunks();
-                    // try {
-                    // Constants.selfServerSocket.close();
-                    // } catch (IOException e) {
-                    // e.printStackTrace();
-                    // }
+                    if(!Constants.isFileMerged){
+                        utilities.mergeFileChunks();
+                        Constants.isFileMerged = true;
+                    }
+                    
                     timer.cancel();
-                    //timer.purge();
                     // Runtime.getRuntime().exit(0);
                     for (Socket socket : Constants.listOfAllSockets) {
                         try {
@@ -163,7 +159,6 @@ public class Peer {
                     }
                     System.out.println("returning from timer");
                     System.exit(0);
-
                     return;
                 }
                 if (Constants.selfPeerInfo.fileAvailable.equals("1") && utilities.isDownloadComplete()) {
@@ -174,16 +169,9 @@ public class Peer {
                     }
                     utilities.broadcastShutdownMessage();
                     Constants.isShutDownMessageReceived = true;
-                    //utilities.shutdownAllThreads();
-                    // try {
-                    //     Constants.selfServerSocket.close();
-                    // } catch (IOException e) {
-                    //     e.printStackTrace();
-                    // }
                     timer.cancel();
-                    System.out.println("timer cancel nhi hua" + Constants.isShutDownMessageReceived);
+                    System.out.println("timer cancel nhi hua " + Constants.isShutDownMessageReceived);
                     System.exit(0);
-                    return;
                 }
                 
                 List<RemotePeerInfo> preferredNeighbors = utilities.getKPreferredNeighbors();

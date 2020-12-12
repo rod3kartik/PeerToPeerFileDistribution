@@ -241,7 +241,7 @@ public class Message {
         Constants.peerIDToBitfield.put(peer.peerID, payload);
         //System.out.println("Remote peerID is" + peer.peerID);
 
-        Constants.fl.setTCPConnectionfromLog(peer.peerID, Calendar.getInstance());
+        Constants.fl.setTCPConnectiontoLog(peer.peerID, Calendar.getInstance());
 
     }
 

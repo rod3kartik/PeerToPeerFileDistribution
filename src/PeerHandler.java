@@ -72,7 +72,7 @@ public class PeerHandler extends Thread {
 
                             byte[] bitFieldMessage = msg.createMessage();
                             utilities.writeToOutputStream(out, bitFieldMessage);
-                            Constants.fl.setTCPConnectiontoLog(peer.peerID, Calendar.getInstance());
+                            Constants.fl.setTCPConnectionfromLog(peer.peerID, Calendar.getInstance());
                         }
 
                     } catch (Exception e) {
