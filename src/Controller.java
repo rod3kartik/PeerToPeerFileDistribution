@@ -2,11 +2,11 @@ import java.util.*;
 import java.io.*;
 import java.net.Socket;
 
+//A controller class to check and close all the sockets whenever shudown message is received
 public class Controller extends Thread {
 
     public void run() {
         while (true) {
-            //System.out.println(Constants.isShutDownMessageReceived);
             if (Constants.isShutDownMessageReceived) {
                 try {
                     for (Socket socket : Constants.listOfAllSockets) {

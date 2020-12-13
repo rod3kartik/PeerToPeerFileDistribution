@@ -10,12 +10,7 @@ import java.util.*;
 
 //Class to read common.cfg and set relevant variables
 public class CommonFileReader {
-    // static int NumberOfPreferredNeighbors;
-    // static int UnchokingInterval;
-    // static int OptimisticUnchokingInterval;
-    // static String FileName;
-    // static int FileSize;
-    // static int PieceSize;
+
 
     //A map to keep all the configuration variables
     public static Map<String, String> configurationVariables = new HashMap<>();
@@ -24,18 +19,14 @@ public class CommonFileReader {
     public static void confReader() {
         try {
                 
-            //File peerInfoConfigFile = Paths.get("./" + "common.cfg").toFile();
-            
             File peerInfoConfigFile = Paths.get("./common.cfg").toFile();
             BufferedReader br = new BufferedReader(new FileReader(peerInfoConfigFile));
             String st;
             while ((st = br.readLine()) != null) {
                 String[] row = st.split(" ");
                 configurationVariables.put(row[0], row[1]);
-                // System.out.println("here2");
             }
             br.close();
-            //System.out.println(configurationVariables.keySet());
             
         }
         catch(Exception e){
@@ -68,8 +59,4 @@ public class CommonFileReader {
         return Integer.parseInt(configurationVariables.get("PieceSize"));
     }
 
-
-    // public static void main(String[] args) {
-    //     confReader();
-    // }
 }

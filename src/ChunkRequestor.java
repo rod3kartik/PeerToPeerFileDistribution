@@ -10,6 +10,8 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
 
+
+//A thread class dedicated to request chunks whenver unchoked
 public class ChunkRequestor extends Thread{
     RemotePeerInfo peer;
     int requestedPieceIndex;
@@ -17,18 +19,22 @@ public class ChunkRequestor extends Thread{
         peer = p;
     }
     public void run(){
-        Thread.currentThread();
-        while (this.peer.isUnchoked & !Constants.isShutDownMessageReceived & !Thread.interrupted()) {
+   
+        while (this.peer.isUnchoked & !Constants.isShutDownMessageReceived) {
             if(Constants.requestedPieceIndexes.contains(requestedPieceIndex)){
                 continue;
             }
-            //System.out.println("in chunk requestor");
+            
             BitSet commonPiecesBitSet = (BitSet)Constants.chunksLeft.clone();
+
+            //Getting common pieces that peer has still left to download
             commonPiecesBitSet.intersects(this.peer.bitfield);
             List<Integer> indexes = utilities.getIndexListFromBitset(commonPiecesBitSet);
             Random rand = new Random();
             if(indexes.size() == 0) break;
             int pieceIndex = indexes.get(0);
+
+            //randomly choosing one piece to request
             while(true){
                 if(indexes.size() == 0) break;
                 int randomInt = rand.nextInt(indexes.size());
@@ -38,6 +44,8 @@ public class ChunkRequestor extends Thread{
                 }
                 indexes.remove(Integer.valueOf(pieceIndex));
             }
+
+            //sending request message with random selected index
             Message.sendRequestMessage(pieceIndex, this.peer);
             Constants.updateRequestedPieceIndexes(pieceIndex, true);
             requestedPieceIndex = pieceIndex;

@@ -5,6 +5,8 @@ import java.nio.channels.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+
+//Handler class for each peer socket
 public class PeerHandler extends Thread {
 
     private ObjectInputStream in; // stream read from the socket
@@ -36,6 +38,8 @@ public class PeerHandler extends Thread {
                 if (Constants.isShutDownMessageReceived) {
                     break;
                 }
+
+                //For the first time, we will follow the process of handshake
                 if (firstTime) {
                     if (!Constants.handshakedPeers.containsKey(peer.peerID)) {
                         Constants.handshakedPeers.put(peer.peerID, false);
@@ -71,6 +75,7 @@ public class PeerHandler extends Thread {
                     firstTime = false;
                 } else {
 
+                    //Actual message transfer begins by reading and writing through input and output streams of socket
                     try {
                         byte[] messageLength = in.readNBytes(4);
                         if(messageLength.length > 0){
@@ -88,7 +93,6 @@ public class PeerHandler extends Thread {
                             messageObj.extractMessage();
                         }
                     } catch (Exception e) {
-                        // e.printStackTrace();
                         System.out.println("Peer Socket has been closed gracefully");
                         peerSocket.close();
                         return;

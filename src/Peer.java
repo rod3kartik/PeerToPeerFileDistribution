@@ -35,7 +35,8 @@ public class Peer {
         
         RemotePeerInfo selfInfo = allBeforePeerInfo.get(allBeforePeerInfo.size() - 1);
 
-        // Global self peer index
+
+        //Constructor to set all the global variables
         Constants.selfPeerIndex = allBeforePeerInfo.size() - 1;
         Constants.setSelfBit();
         Constants.setChunksLeft();
@@ -53,19 +54,32 @@ public class Peer {
             e.printStackTrace();
         }
 
+        //self server port
         sPort = Integer.parseInt(selfInfo.peerPort);
+
+        //controller which would handle final shutdown
         Controller controller = new Controller();
         Constants.listOfThreads.add(controller);
         controller.start();
+
+        //schedular to handle regular unchoking
         startTimerForUnchoking();
+
+        //schedular to handle optimistically unchoking
         startTimerForOptimisticallyUnchoking();
+
+        //server socket
         ServerSocket serverSocket = new ServerSocket(sPort);
         Constants.selfServerSocket = serverSocket;
+
+        //Sending connection request to all the earlier peers
         for (int outgoingPeer = 0; outgoingPeer < Constants.selfPeerIndex; outgoingPeer++) {
 
             Socket neighborPeer = new Socket(allBeforePeerInfo.get(outgoingPeer).peerAddress,
                     Integer.parseInt(allBeforePeerInfo.get(outgoingPeer).peerPort));
+
             Constants.listOfAllSockets.add(neighborPeer);
+
             ObjectOutputStream out = new ObjectOutputStream(neighborPeer.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(neighborPeer.getInputStream());
             Constants.listOfAllPeers[outgoingPeer].out = out;
@@ -74,7 +88,8 @@ public class Peer {
             Constants.listOfThreads.add(newP);
             newP.start();
         }
-      
+        
+        //Waiting for all other peers to send connection request
         for (int incomingPeers = Constants.selfPeerIndex
                 + 1; incomingPeers < Constants.listOfAllPeers.length; incomingPeers++) {
             try {
@@ -90,8 +105,10 @@ public class Peer {
                 e.printStackTrace();
             }
         }
+
         controller.join();
         System.out.println("Whole file transfer process is completed");
+        
     }
 
     private static void startTimerForOptimisticallyUnchoking() {

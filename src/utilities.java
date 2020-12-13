@@ -7,15 +7,10 @@ import java.nio.*;
 import java.io.*;
 import java.util.*;
 
-//import java.util.stream.Collector;
-
-//import org.graalvm.util.CollectionsUtil;
-
-
 
 public class utilities {
     
-    
+    //Utility function to convert byte array to long integer value
     public static long fromByteArrayToLong(byte[] value) 
     {   
         
@@ -31,18 +26,9 @@ public class utilities {
             e.printStackTrace();
         }
         return buffer.getLong(0);
-    
     }
 
-    public static String[] convertToStrings(byte[][] byteStrings) {
-        String[] data = new String[byteStrings.length];
-        for (int i = 0; i < byteStrings.length; i++) {
-            data[i] = new String(byteStrings[i], Charset.defaultCharset());
-    
-        }
-        return data;
-    }
-
+    //Synchronized outputstream writing function 
     public static synchronized void writeToOutputStream(ObjectOutputStream out, byte[] message){
         if(out == null){
             return;
@@ -56,16 +42,7 @@ public class utilities {
  
     }
 
-//    public static synchronized void writeToLoggerobj(FileLogger fl, byte[] message){
-//        try {
-//            out.write(message);
-//            out.flush();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
-
+    //Function to get k preferred neighbors 
     public static List<RemotePeerInfo> getKPreferredNeighbors(){
         List<RemotePeerInfo> kPreferredNeighbors = new ArrayList();
         int k = Constants.NumberOfPreferredNeighbors;
@@ -100,6 +77,7 @@ public class utilities {
         return kPreferredNeighbors;
     }
 
+    //Utility function to remove object from an array by index
     public static RemotePeerInfo[] removeObjectByIndexFromArray(RemotePeerInfo[] peers, int index){
         RemotePeerInfo[] returnPeers = new RemotePeerInfo[peers.length - 1];
         int count = 0;
@@ -113,16 +91,8 @@ public class utilities {
         return returnPeers;
     }
     
-    private static byte[][] convertToBytes(String[] strings) {
-        byte[][] data = new byte[strings.length][];
-        for (int i = 0; i < strings.length; i++) {
-            String string = strings[i];
-            data[i] = string.getBytes(Charset.defaultCharset()); // you can chose charset
-        }
-        return data;
-    }
 
-    //broadcasting have message to all it's neighbors
+    //broadcasting 'have' message to all it's neighbors
     public static void broadcastHaveMessage(String peerID, byte[] pieceIndex){
         for (RemotePeerInfo peer : Constants.listOfAllPeers) {
             if(!peer.peerID.equals(peerID)){
@@ -137,6 +107,7 @@ public class utilities {
         }
     }
 
+    //getting already received indexes of a input bitfield
     public static List<Integer> getIndexListFromBitset(BitSet bitSet) {
         List<Integer> indexes = new ArrayList<>(); 
         for (int i = bitSet.nextSetBit(0); i != -1; i = bitSet.nextSetBit(i + 1)) {
@@ -145,6 +116,7 @@ public class utilities {
         return indexes;
     }
 
+    //function to check if the complete file is downloaded by all the peers
     public static boolean isDownloadComplete(){
         if((Constants.peerIDToBitfield.size() == Constants.listOfAllPeers.length - 1)){
             for(Map.Entry<String, BitSet> setEntry : Constants.peerIDToBitfield.entrySet()){
@@ -152,13 +124,14 @@ public class utilities {
                     return false;
                 }
             }
-            //Constants.fl.downloadCompleteLog();
             Constants.isShutDownMessageReceived = true;
             return true;
         }
         return false;
     }
 
+    //Utility function to read the given initial file 
+    //to break and read into chunks
    public static Piece[] readFileIntoChunks() {
         Piece[] fileChunks = new Piece[Constants.numberOfChunks];
        try {
@@ -179,6 +152,7 @@ public class utilities {
        return fileChunks;
    }
 
+   //Broadcasting shutdown message to all peers once the shutdown is complete
     public static void broadcastShutdownMessage() {
         for (RemotePeerInfo peer : Constants.listOfAllPeers) {
             if(!(peer.peerID.equals(Constants.selfPeerInfo.peerID))){
@@ -188,6 +162,8 @@ public class utilities {
         }
     }
 
+
+    //Meging all the chunks and writing back into file
     public static synchronized void mergeFileChunks(){
         String path = "../peer_" + Constants.selfPeerInfo.peerID + "/file.txt";
         

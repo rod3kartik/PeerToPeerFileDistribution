@@ -5,9 +5,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+//A class to initially read peerInfo.cfg file and make a list of Peer Obejcts
 public class Connection {
     static int line;
     static List<RemotePeerInfo> hosts = new ArrayList<>();
+
     // Connecting new peers to existing peers already in the network 
     public static List<RemotePeerInfo> getPeerInfo(String peer){
         List<RemotePeerInfo> allPeersBefore = new ArrayList<>();
@@ -21,6 +23,7 @@ public class Connection {
         return allPeersBefore;
         }
     
+    //Geeting peers that are after self in the sequence
     public static List<RemotePeerInfo> getAfterPeersInfo(String peer){
         List<RemotePeerInfo> allPeersAfter = new ArrayList<>();
         for(int i=line-1;i<-1;i++){
@@ -32,6 +35,7 @@ public class Connection {
         return allPeersAfter;
         }
 
+    //File reader for "PeerInfo.cfg"
     public static RemotePeerInfo[] fileReader() {
         try {
 

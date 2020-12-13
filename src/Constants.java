@@ -3,9 +3,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.Remote;
 import java.util.*;
+
+//Class to store all the global variables and required functions
 public class Constants {
 
-    
     public static int NumberOfPreferredNeighbors;
     public static int UnchokingInterval;
     public static int OptimisticUnchokingInterval;
@@ -23,7 +24,7 @@ public class Constants {
     public static BitSet selfBitfield;
     public static BitSet chunksLeft;
     public static HashMap<String, Boolean> chokeUnchokeMap = new HashMap<>();
-    public static HashSet<RemotePeerInfo> interestedNeighbors = new HashSet();
+    public static HashSet<RemotePeerInfo> interestedNeighbors = new HashSet<>();
     public static List<RemotePeerInfo> preferredNeighbors = new ArrayList<>();
     public static List<Integer> requestedPieceIndexes = new ArrayList<>();
     public static FileLogger fl;
@@ -32,7 +33,7 @@ public class Constants {
     public static List<Thread> listOfThreads = new ArrayList<>();
     public static List<Socket> listOfAllSockets = new ArrayList<>();
     public static boolean isFileMerged = false;
-    // public static 
+  
     //Mapping of message type to value
     public static Map<String,RemotePeerInfo> peerIDToPeerInfo = new HashMap<>();
     public static Map<String, Integer> messageTypeToVal = new HashMap(){{
@@ -60,17 +61,23 @@ public class Constants {
 
     public static Map<String, BitSet> peerIDToBitfield = new HashMap<>();
 
+    //Constructor to set all the configuration variabless
     Constants(){
-        //Setting configuration variables
+
         CommonFileReader.confReader();
+
         NumberOfPreferredNeighbors = CommonFileReader.getNumberOfPreferredNeighbours();
+
         UnchokingInterval = CommonFileReader.getUnchokingInterval();
+
         OptimisticUnchokingInterval = CommonFileReader.getOptimisticUnchokingInterval();
+
         FileName = CommonFileReader.getFileName();
+
         FileSize = CommonFileReader.getFileSize();
 
         PieceSize = CommonFileReader.getPieceSize();
-        //System.out.println(FileSize + " " + PieceSize + " " + Math.ceil(FileSize/PieceSize) + " " + (int)Math.ceil(FileSize*1.0/PieceSize*1.0));
+
         try {
             numberOfChunks = (int)Math.ceil((FileSize * 1.0)/(PieceSize*1.0));
         } catch (Exception e) {
@@ -78,8 +85,6 @@ public class Constants {
         }
 
         listOfAllPeers = Connection.fileReader();
-        //System.out.println("list of all peers "+ listOfAllPeers[listOfAllPeers.length-2].peerID);
-        //printArrayOfPeers(listOfAllPeers);
     }
 
 
@@ -98,16 +103,25 @@ public class Constants {
         }
     }
 
+    //setting self peer's bit field
     public static void setSelfBit() {
         selfBitfield = listOfAllPeers[selfPeerIndex].bitfield;
     }
 
+    //Initializer
+    public static void setFileChunks(){
+        if(selfPeerInfo.fileAvailable.equals("1")){
+            fileChunks = utilities.readFileIntoChunks();
+        } else {
+            fileChunks = new Piece[Constants.numberOfChunks];
+    }
+    }
+
+    //Initializing chunks left variable
     public static void setChunksLeft() {
         if (selfBitfield.length() ==0){
             chunksLeft = new BitSet(Constants.numberOfChunks);
             chunksLeft.set(0,Constants.numberOfChunks);
-            //this.chunksLeft = chunksLeft;
-
         }
         else {
             chunksLeft = (BitSet) selfBitfield.clone();
@@ -131,23 +145,7 @@ public class Constants {
         selfPeerInfo = listOfAllPeers[selfPeerIndex];
     }
 
-    public static void setFileChunks(){
-        if(selfPeerInfo.fileAvailable.equals("1")){
-            fileChunks = utilities.readFileIntoChunks();
-            // printFileChunks(fileChunks);
-        } else {
-            fileChunks = new Piece[Constants.numberOfChunks];
-    }
-    }
-
-    private static void printFileChunks(Piece[] fileChunks2) {
-
-        for(Piece piece : Constants.fileChunks){
-            //System.out.println("2 . Final chunks stored are: " + new String(piece.getPieceContent()));
-        }
-    }
-
-
+    //Updating whenver a piece index is requested or downloaded
     public static synchronized void updateRequestedPieceIndexes(int index, boolean add) {
         if(add){
             requestedPieceIndexes.add(index);

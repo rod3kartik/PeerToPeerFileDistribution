@@ -12,6 +12,7 @@ import java.util.HashSet;
  * It is your responsibility to adapt this program to your running environment.
  */
 
+ //This class is used to store all attributes of each Peer
 public class RemotePeerInfo {
     public String peerID;
     public String peerAddress;
@@ -54,11 +55,6 @@ public class RemotePeerInfo {
     public void updateBitField(int pieceIndex) {
         bitfield.set(pieceIndex);
     }
-
-    // @Override
-    // public int compareTo(RemotePeerInfo p1) {
-    //     return this.getDownloadRate().compareTo(p1.getDownloadRate());
-    // }
 
     public synchronized void setIsUnchoked(boolean flag){
         this.isUnchoked = flag;

@@ -1,3 +1,5 @@
+
+//Class to designate each filechunk as a piece
 public class Piece {
     private byte[] piece;
 
