@@ -34,13 +34,6 @@ public class utilities {
     
     }
 
-    // public static int fromFourByteArrayToInteger(byte[] bytes) {
-    //     return ((bytes[0] & 0xFF) << 24) | 
-    //            ((bytes[1] & 0xFF) << 16) | 
-    //            ((bytes[2] & 0xFF) << 8 ) | 
-    //            ((bytes[3] & 0xFF) << 0 );
-    // }
-
     public static String[] convertToStrings(byte[][] byteStrings) {
         String[] data = new String[byteStrings.length];
         for (int i = 0; i < byteStrings.length; i++) {
@@ -76,17 +69,15 @@ public class utilities {
     public static List<RemotePeerInfo> getKPreferredNeighbors(){
         List<RemotePeerInfo> kPreferredNeighbors = new ArrayList();
         int k = Constants.NumberOfPreferredNeighbors;
-        // System.out.println("value of K is " + k);
+      
 
         RemotePeerInfo[] peers = new RemotePeerInfo[Constants.interestedNeighbors.size()];
         int index = 0;
-        System.out.println("Interested neighhours are " + Constants.interestedNeighbors);
         for (RemotePeerInfo remotePeerInfo : Constants.interestedNeighbors) {
             if(index >= peers.length) break;
             peers[index] = remotePeerInfo;
             index++;
         }
-        System.out.println("Peers array length is " + peers.length);
         if(peers.length < 1){
             return kPreferredNeighbors;
         }
@@ -95,7 +86,6 @@ public class utilities {
            for (int i : randomNumbers) {
                kPreferredNeighbors.add(peers[i]);
            }
-        //    System.out.println("in equals 2");
         } else {
 
             Arrays.sort(peers, Comparator.comparing(RemotePeerInfo::getDownloadRate));
@@ -182,7 +172,7 @@ public class utilities {
             offset += Constants.PieceSize;
         }
        } catch (Exception e) {
-           System.out.println("Couldn't read the file");
+           System.out.println("Error in the file reading operation");
            e.printStackTrace();
        }
         
@@ -204,16 +194,15 @@ public class utilities {
         File file = new File(path);
         if(!file.exists()){
             
-                System.out.println("folder has been created");
                 file.getParentFile().mkdirs(); 
                 try{
                 file.createNewFile();
-                System.out.println("FIle has been created");
+                System.out.println("File and Folder has been created");
                 }
                 catch(Exception e){
                     System.out.println("Error in creating file");
+                    e.printStackTrace();
                 }
-                System.out.println("folder has been created");
 
         }
         Constants.fl.downloadCompleteLog(Calendar.getInstance());
@@ -230,13 +219,5 @@ public class utilities {
             e.printStackTrace();
         }
     }
-
-    // public static void shutdownAllThreads(){
-    //     for (Thread thread: Constants.listOfThreads) {
-    //         if(thread.isAlive()){
-    //             thread.interrupt();
-    //         }
-    //     }
-    // }
 
 }

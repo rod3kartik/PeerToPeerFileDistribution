@@ -70,7 +70,7 @@ public class Constants {
         FileSize = CommonFileReader.getFileSize();
 
         PieceSize = CommonFileReader.getPieceSize();
-        System.out.println(FileSize + " " + PieceSize + " " + Math.ceil(FileSize/PieceSize) + " " + (int)Math.ceil(FileSize*1.0/PieceSize*1.0));
+        //System.out.println(FileSize + " " + PieceSize + " " + Math.ceil(FileSize/PieceSize) + " " + (int)Math.ceil(FileSize*1.0/PieceSize*1.0));
         try {
             numberOfChunks = (int)Math.ceil((FileSize * 1.0)/(PieceSize*1.0));
         } catch (Exception e) {
@@ -79,22 +79,18 @@ public class Constants {
 
         listOfAllPeers = Connection.fileReader();
         //System.out.println("list of all peers "+ listOfAllPeers[listOfAllPeers.length-2].peerID);
-         printArrayOfPeers(listOfAllPeers);
+        //printArrayOfPeers(listOfAllPeers);
     }
 
-    // public void generateMapOfSocketToPeerID() {
-    //     for (RemotePeerInfo peer : listOfAllPeers) {
-    //         System.out.println(peer.peerAddress + peer.peerID);
-    //         socketToPeerID.put(peer.peerAddress + ":" + peer.peerPort, Integer.parseInt(peer.peerID));
-    //     }
-    // }
 
+    //Function to print array of all peers present
     public static void printArrayOfPeers(RemotePeerInfo[] listOfAllPeers) {
         for (RemotePeerInfo peer : listOfAllPeers) {
             System.out.println(peer.peerID + peer.bitfield);
         }
     }
 
+    //Function to print list of all peers present
     public static void printListOfPeers(List<RemotePeerInfo> listOfAllPeers) {
         for (RemotePeerInfo peer : listOfAllPeers) {
 

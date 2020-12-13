@@ -32,7 +32,7 @@ public class Peer {
 
         // connecting to other peers and starting Client and Server
         List<RemotePeerInfo> allBeforePeerInfo = Connection.getPeerInfo(peerFromCommandLine);
-        System.out.println(allBeforePeerInfo);
+        
         RemotePeerInfo selfInfo = allBeforePeerInfo.get(allBeforePeerInfo.size() - 1);
 
         // Global self peer index
@@ -50,7 +50,7 @@ public class Peer {
         try {
             allBeforePeerInfo.remove(allBeforePeerInfo.size() - 1);
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
 
         sPort = Integer.parseInt(selfInfo.peerPort);
@@ -62,7 +62,7 @@ public class Peer {
         ServerSocket serverSocket = new ServerSocket(sPort);
         Constants.selfServerSocket = serverSocket;
         for (int outgoingPeer = 0; outgoingPeer < Constants.selfPeerIndex; outgoingPeer++) {
-            System.out.println("Outgoing peer " + allBeforePeerInfo.get(outgoingPeer));
+
             Socket neighborPeer = new Socket(allBeforePeerInfo.get(outgoingPeer).peerAddress,
                     Integer.parseInt(allBeforePeerInfo.get(outgoingPeer).peerPort));
             Constants.listOfAllSockets.add(neighborPeer);
@@ -87,12 +87,11 @@ public class Peer {
                 Constants.listOfThreads.add(newP);
                 newP.start();
             } catch (SocketException e) {
-                System.out.println("received an exception server");
-                // serverSocket.close();
+                e.printStackTrace();
             }
         }
         controller.join();
-        System.out.println("Compeleted Everything");
+        System.out.println("Whole file transfer process is completed");
     }
 
     private static void startTimerForOptimisticallyUnchoking() {
@@ -101,7 +100,7 @@ public class Peer {
         optimisticUnchokingUnchokedTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println("optimistic timer running again: " + Constants.isShutDownMessageReceived );
+                //System.out.println("optimistic timer running again: " + Constants.isShutDownMessageReceived );
                 if (Constants.isShutDownMessageReceived) {
                     optimisticUnchokingUnchokedTimer.cancel();
                     if(!Constants.isFileMerged){
@@ -111,7 +110,6 @@ public class Peer {
                     System.exit(0);
                     return;
                 }
-                System.out.println("After the condition check");
                 List<RemotePeerInfo> interestedChokedNeighbors = new ArrayList<>();
                 for (RemotePeerInfo rpI : Constants.interestedNeighbors) {
                     if (!rpI.isUnchoked) {
@@ -130,7 +128,7 @@ public class Peer {
             }
 
         }, unchokeTimeInterval);
-        System.out.println("startTimerForOptimisticallyUnchoking Closed");
+        //System.out.println("startTimerForOptimisticallyUnchoking Closed");
     }
 
     private static void startTimerForUnchoking() {
@@ -140,8 +138,8 @@ public class Peer {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                // call the method
-                System.out.println(" unchoking timer running again: " + Constants.isShutDownMessageReceived);
+               
+                //System.out.println(" unchoking timer running again: " + Constants.isShutDownMessageReceived);
                 if (Constants.isShutDownMessageReceived | Thread.currentThread().isInterrupted()) {
                     if(!Constants.isFileMerged){
                         utilities.mergeFileChunks();
@@ -157,12 +155,11 @@ public class Peer {
                             e.printStackTrace();
                         }
                     }
-                    System.out.println("returning from timer");
+                    System.out.println("Whole file transfer process is completed");
                     System.exit(0);
                     return;
                 }
                 if (Constants.selfPeerInfo.fileAvailable.equals("1") && utilities.isDownloadComplete()) {
-                    System.out.println("Shutting down controller");
                     
                     for(Map.Entry<String, BitSet> setEntry : Constants.peerIDToBitfield.entrySet()){
                         System.out.println("Final bitfields are: " + setEntry.getKey() + setEntry.getValue());
@@ -170,16 +167,15 @@ public class Peer {
                     utilities.broadcastShutdownMessage();
                     Constants.isShutDownMessageReceived = true;
                     timer.cancel();
-                    System.out.println("timer cancel nhi hua " + Constants.isShutDownMessageReceived);
+                    System.out.println("Whole file transfer process is completed");
                     System.exit(0);
                 }
                 
                 List<RemotePeerInfo> preferredNeighbors = utilities.getKPreferredNeighbors();
-                System.out.println("Hey there");
+               
                 if(preferredNeighbors.size() > 0){
                     Constants.setListOfPreferredNeighbours(preferredNeighbors);
-                    System.out.println("List of pref neighours " + preferredNeighbors.size());
-                    // Constants.printListOfPeers(preferredNeighbors);
+                   
                     for(RemotePeerInfo rpI: Constants.listOfAllPeers){
                         if (Constants.selfPeerInfo.equals(rpI)) continue;
 
@@ -197,7 +193,7 @@ public class Peer {
                 }
             }
             }, begin, timeInterval);
-        System.out.println("startTimerForUnchoking closed!");
+        //System.out.println("startTimerForUnchoking closed!");
     }
 }
 

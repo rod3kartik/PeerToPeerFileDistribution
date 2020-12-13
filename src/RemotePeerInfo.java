@@ -34,7 +34,12 @@ public class RemotePeerInfo {
         if(fileAvailable.equals("1")){
             bitfield.set(0, Constants.numberOfChunks);
         }
-        System.out.println(bitfield.length() + " " + fileAvailable + " "+ bitfield + " " + peerID);
+    }
+
+    public RemotePeerInfo(String pId, String pAddress, String pPort) {
+        peerID = pId;
+        peerAddress = pAddress;
+        peerPort = pPort;
     }
 
     public void setBitfield(int bit) {

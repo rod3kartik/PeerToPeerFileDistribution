@@ -111,9 +111,8 @@ public class Message {
                 }
                 break;
             case -1:
-                System.out.println("$$$$ Shutdown Message Received");
+                System.out.println("Shutdown Message Received. Proceeding to close all threads.");
                 Constants.isShutDownMessageReceived = true;
-                // Runtime.getRuntime().exit(0);
                 break;
 
         }

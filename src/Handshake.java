@@ -33,7 +33,7 @@ public class Handshake {
     public void sendHandshake(ObjectOutputStream out){
         try {       
             byte[] finalMsg = generateByteArrayMessage(this.handshakeHeader, this.zeroBytes, this.peerID);
-            System.out.println("sent message: "+ new String(finalMsg));
+            //System.out.println("sent message: "+ new String(finalMsg));
             utilities.writeToOutputStream(out, finalMsg);
            
         }
@@ -42,30 +42,10 @@ public class Handshake {
         }
     }
 
-    // public int isHandshake(String msg) {
-    //     try {
-    //        ObjectInputStream in;
-    //        in = new ObjectInputStream(socket.getInputStream());
-    //        String incomingMessage = (String)in.readObject();
-    //         if(msg.substring(0,18).contentEquals(headerHandshake)){
-    //             try {
-    //                 return Integer.parseInt(msg.substring(28));
-    //             }
-    //             catch(Exception ex){
-    //                 System.out.println("PeerId Cannot be converted to Integer");
-    //             }
-    //         }
-    //     }
-    //     catch(Exception ex){
-    //         System.out.println(ex.getMessage());
-    //     }
-    //     return 0;
-    // }
-
     public void handleHandShakeMessage(byte[] bytePeerID){
         long peerID = utilities.fromByteArrayToLong(bytePeerID);
         Constants.handshakedPeers.put(Long.toString(peerID), true);
-        System.out.println("PeerID received in handshake " + peerID);
+        System.out.println("PeerID received in handshake: " + peerID);
         // System.out.println(Constants.handshakedPeers);
     }
 }
